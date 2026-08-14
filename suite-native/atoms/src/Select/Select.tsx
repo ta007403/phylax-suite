@@ -4,6 +4,7 @@ import { Translation } from '@suite-native/intl';
 
 import { Box } from '../Box';
 import { Button } from '../Button/Button';
+import { type TextInputType } from '../Input/Input';
 import { ScreenFooterGradient } from '../ScreenFooterGradient';
 import { BottomSheetModal } from '../Sheet/BottomSheetModal';
 import { useBottomSheetModal } from '../Sheet/hooks/useBottomSheetModal';
@@ -18,16 +19,19 @@ export type SelectItemType<TItemValue extends SelectItemValue> = {
     badge?: ReactNode;
 };
 
+export type SelectLabelType = Exclude<TextInputType, 'outsideLabel'>;
+
 export type SelectProps<TItemValue extends SelectItemValue> = {
     title: ReactNode;
     items: SelectItemType<TItemValue>[];
-    value: TItemValue;
+    value: TItemValue | null;
     onSelectItem: (value: TItemValue) => void;
     rightIcon?: ReactNode;
     isConfirmable?: boolean;
-    isLabelShown?: boolean;
+    labelType?: SelectLabelType;
     isReadOnly?: boolean;
     hasError?: boolean;
+    isDisabled?: boolean;
     testID?: string;
 };
 
@@ -38,9 +42,10 @@ export const Select = <TItemValue extends SelectItemValue>({
     onSelectItem,
     rightIcon,
     isConfirmable = false,
-    isLabelShown = false,
+    labelType = 'noLabel',
     isReadOnly = false,
-    hasError,
+    hasError = false,
+    isDisabled = false,
     testID,
 }: SelectProps<TItemValue>) => {
     const { bottomSheetRef, openModal, closeModal } = useBottomSheetModal();
@@ -54,6 +59,7 @@ export const Select = <TItemValue extends SelectItemValue>({
     const [isConfirmButtonVisible, setIsConfirmButtonVisible] = useState(false);
 
     const openBottomSheet = () => {
+        if (isDisabled) return;
         setSelectedItemValue(value);
         setIsConfirmButtonVisible(false);
         openModal();
@@ -73,6 +79,14 @@ export const Select = <TItemValue extends SelectItemValue>({
         }
     };
 
+    const handleConfirmSelection = () => {
+        if (selectedItemValue !== null) {
+            confirmSelection(selectedItemValue);
+        }
+    };
+
+    const triggerLabel = labelType === 'innerLabel' ? title : undefined;
+
     return (
         <>
             <BottomSheetModal
@@ -83,7 +97,7 @@ export const Select = <TItemValue extends SelectItemValue>({
                         <>
                             <ScreenFooterGradient />
                             <Box marginHorizontal="sp16" marginBottom="sp16">
-                                <Button onPress={() => confirmSelection(selectedItemValue)}>
+                                <Button onPress={handleConfirmSelection}>
                                     <Translation id="generic.buttons.confirm" />
                                 </Button>
                             </Box>
@@ -107,12 +121,13 @@ export const Select = <TItemValue extends SelectItemValue>({
                 </VStack>
             </BottomSheetModal>
             <SelectTrigger
-                label={isLabelShown && title}
+                label={triggerLabel}
                 value={selectTriggerItem?.label ?? null}
                 icon={selectTriggerItem?.icon}
                 handlePress={!isReadOnly ? openBottomSheet : undefined}
                 rightIcon={rightIcon}
                 hasError={hasError}
+                isDisabled={isDisabled}
                 testID={testID}
             />
         </>
