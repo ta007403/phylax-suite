@@ -1,12 +1,12 @@
 import type { ReactNode } from 'react';
 
 import {
+    Box,
     ComponentWithSubIcon,
     type ComponentWithSubIconIntent,
     Icon,
     type IconComponent,
     type ManagedTooltipProps,
-    Row,
     Tooltip,
 } from '@trezor/components';
 
@@ -40,7 +40,14 @@ export const QuickActionButton = ({
 
     return (
         <Tooltip content={tooltip?.content} cursor="pointer" {...tooltip} isOpen={isOpen}>
-            <Row data-testid={dataTest} onClick={onClick} justifyContent="center">
+            <Box
+                as="button"
+                data-testid={dataTest}
+                onClick={onClick}
+                padding={10}
+                type="button"
+                cursor="pointer"
+            >
                 {subIcon ? (
                     <ComponentWithSubIcon
                         intent={subIconIntent}
@@ -53,7 +60,7 @@ export const QuickActionButton = ({
                 ) : (
                     icon
                 )}
-            </Row>
+            </Box>
         </Tooltip>
     );
 };

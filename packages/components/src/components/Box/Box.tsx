@@ -101,7 +101,7 @@ const Container = styled.div<
 
 export type BoxProps = Pick<
     HTMLProps<HTMLElement>,
-    'onClick' | 'onMouseEnter' | 'onMouseLeave' | 'tabIndex'
+    'onClick' | 'onMouseEnter' | 'onMouseLeave' | 'tabIndex' | 'type'
 > &
     AllowedFrameProps & {
         children?: React.ReactNode;
@@ -135,6 +135,7 @@ export const Box = ({
     onMouseLeave,
     tabIndex,
     ref,
+    type,
     ...rest
 }: BoxProps) => {
     const frameProps = pickAndPrepareFrameProps(rest, allowedBoxFrameProps);
@@ -156,6 +157,7 @@ export const Box = ({
             $shadow={shadow}
             tabIndex={tabIndex}
             ref={ref}
+            type={type}
             {...frameProps}
         >
             {children}
