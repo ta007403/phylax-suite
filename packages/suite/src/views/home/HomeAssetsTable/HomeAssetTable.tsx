@@ -21,8 +21,9 @@ import { Card, Table } from '@trezor/components';
 import { useServices } from '@trezor/dependency-injection';
 import { injectDispatch } from '@trezor/redux-utils';
 
-import { useSelector } from 'src/hooks/suite';
+import { useDiscovery, useSelector } from 'src/hooks/suite';
 
+import { AssetRowsSkeleton } from './AssetRowsSkeleton';
 import { HomeAssetExpandRow } from './HomeAssetExpandRow';
 import { HomeAssetNetworkSection } from './HomeAssetNetworkSection';
 import { HomeAssetNewBanner } from './HomeAssetNewBanner';
@@ -38,6 +39,7 @@ export const HomeAssetTable = () => {
     const grouping = useSelector(selectHomeAssetsTableGrouping);
     const areSmallBalancesShown = useSelector(selectAreHomeAssetSmallBalancesShown);
     const hasAssets = useSelector(selectHasShownWalletAssets);
+    const { isDiscoveryRunning } = useDiscovery();
     const isFoldable = useSelector(state =>
         selectIsHomeAssetTableFoldable(state, HOME_ASSET_ROW_LIMIT),
     );
@@ -68,7 +70,9 @@ export const HomeAssetTable = () => {
     );
 
     if (!hasAssets) {
-        return null;
+        return isDiscoveryRunning ? (
+            <AssetRowsSkeleton data-testid="@dashboard/home-asset-table/loading" />
+        ) : null;
     }
 
     return (
