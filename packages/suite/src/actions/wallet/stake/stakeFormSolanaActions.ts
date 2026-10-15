@@ -8,7 +8,6 @@ import {
     WALLET_SDK_SOURCE,
     composeSolanaStakingTransaction,
     getSolanaStakingUserAgent,
-    isEarnSigningCancelled,
     prepareSolanaStakingSignContext,
     selectBlockchainUrlBySymbol,
     signPreparedSolanaStakingTransactionThunk,
@@ -19,12 +18,13 @@ import {
     type StakeFormState,
 } from '@suite-common/wallet-types';
 import { type SelectedAccountRootState, selectFullSelectedAccount } from '@suite/account';
-
 import { events } from '@suite/analytics';
+
 import {
     type StakeSignResult,
     type StakeSignThunkDeps,
     handleStakeSignRejection,
+    isStakeSignCancelled,
     reportStakeSignFailure,
 } from './stakeSignUtils';
 
@@ -86,7 +86,7 @@ export const signTransactionThunk =
         );
 
         if (signPreparedSolanaStakingTransactionThunk.rejected.match(signed)) {
-            if (isEarnSigningCancelled(signed.error)) {
+            if (isStakeSignCancelled(signed.payload)) {
                 extra.services.analytics.report({
                     type: events.transactionCancelEvent.name,
                     payload: {
