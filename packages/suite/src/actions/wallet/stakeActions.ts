@@ -1,6 +1,13 @@
 import { type Dispatch, type UnknownAction } from '@reduxjs/toolkit';
 import { type ThunkDispatch } from 'redux-thunk';
 
+import { type SelectedAccountRootState, selectSelectedAccount } from '@suite/account';
+import {
+    type DesktopAnalyticsDep,
+    type StakingCardanoPoolDelegationPayload,
+    events,
+} from '@suite/analytics';
+import { closeModal, openDeferredModal, openModal, preserveModal } from '@suite/modal';
 import { type DeviceRootState, selectSelectedDevice } from '@suite-common/device';
 import {
     type MevProtectionRootState,
@@ -28,13 +35,6 @@ import {
     type StakeFormState,
     type StakeType,
 } from '@suite-common/wallet-types';
-import { type SelectedAccountRootState, selectSelectedAccount } from '@suite/account';
-import {
-    type DesktopAnalyticsDep,
-    type StakingCardanoPoolDelegationPayload,
-    events,
-} from '@suite/analytics';
-import { closeModal, openDeferredModal, openModal, preserveModal } from '@suite/modal';
 import TrezorConnect from '@trezor/connect';
 import { type SerializedError } from '@trezor/connect-common/src/constants/errors';
 import { type WithServices } from '@trezor/redux-utils';
