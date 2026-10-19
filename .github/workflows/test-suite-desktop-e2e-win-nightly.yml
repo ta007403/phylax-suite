@@ -31,6 +31,11 @@ on:
         required: false
         default: "T3W1"
         type: string
+      playwright-args:
+        description: "Extra Playwright CLI arguments, e.g. --repeat-each=3 --retries=0"
+        required: false
+        default: ""
+        type: string
       wsl-networking:
         description: "WSL networking mode (nat | mirrored)"
         required: false
@@ -137,6 +142,9 @@ jobs:
         with:
           path: ~\AppData\Local\ms-playwright
           key: playwright-browsers-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+
+      - name: Prefetch Electron binary
+        run: node node_modules/electron/install.js
 
       - name: Build message system config
         run: yarn message-system-sign-config
@@ -250,8 +258,6 @@ jobs:
           (async () => {
               console.log(`node ${process.version} ${process.platform} ${process.arch}`);
               await step('http.get 127.0.0.1:9002', () => httpGet('http://127.0.0.1:9002/'));
-              await step('global fetch 127.0.0.1:9002', () => fetch('http://127.0.0.1:9002/').then(r => `status ${r.status}`));
-              await step('cross-fetch 127.0.0.1:9002', () => load('cross-fetch')('http://127.0.0.1:9002/').then(r => `status ${r.status}`));
               await step('ws 127.0.0.1:9001', wsProbe);
           })();
           '@
@@ -260,7 +266,7 @@ jobs:
           Write-Host "::endgroup::"
 
           Push-Location suite/e2e
-          yarn playwright test --config=./playwright-config/playwright-desktop.config.ts ${{ inputs.test }} --project=${{ inputs.project }} '--reporter=list,html'
+          yarn playwright test --config=./playwright-config/playwright-desktop.config.ts ${{ inputs.test }} --project=${{ inputs.project }} '--reporter=list,html' ${{ inputs.playwright-args }}
           $testExitCode = $LASTEXITCODE
           Pop-Location
 
