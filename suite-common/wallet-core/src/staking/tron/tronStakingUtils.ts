@@ -213,17 +213,15 @@ export const getTronPendingUnstakingBatches = ({
             resource: batch.resource,
         }));
 
-export const getTronWithdrawableBalance = (account: Account): string => {
-    const nowSeconds = Date.now() / 1000;
+export const getTronWithdrawableBalance = (
+    account: Account,
+    nowSeconds: number = Date.now() / 1000,
+): string => sumUnstakingBatchesSun(account, batch => batch.expireTime <= nowSeconds);
 
-    return sumUnstakingBatchesSun(account, batch => batch.expireTime <= nowSeconds);
-};
-
-export const getTronPendingUnstakeBalance = (account: Account): string => {
-    const nowSeconds = Date.now() / 1000;
-
-    return sumUnstakingBatchesSun(account, batch => batch.expireTime > nowSeconds);
-};
+export const getTronPendingUnstakeBalance = (
+    account: Account,
+    nowSeconds: number = Date.now() / 1000,
+): string => sumUnstakingBatchesSun(account, batch => batch.expireTime > nowSeconds);
 
 export const getTronVotes = (account?: Account): TronVote[] =>
     getTronStakingInfo(account)?.votes ?? [];
