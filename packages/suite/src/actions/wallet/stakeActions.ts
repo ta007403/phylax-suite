@@ -1,7 +1,6 @@
 import { type Dispatch, type UnknownAction } from '@reduxjs/toolkit';
 import { type ThunkDispatch } from 'redux-thunk';
 
-import { type SelectedAccountRootState, selectSelectedAccount } from '@suite/account';
 import {
     type DesktopAnalyticsDep,
     type StakingCardanoPoolDelegationPayload,
@@ -31,6 +30,7 @@ import {
     replaceTransactionThunk,
     selectIsMevProtectionEnabled,
     selectStake,
+    selectStakeAccount,
     stakeActions,
     syncAccountsWithBlockchainThunk,
 } from '@suite-common/wallet-core';
@@ -60,7 +60,7 @@ import * as stakeFormCardanoActions from './stake/stakeFormCardanoActions';
 import * as stakeFormEthereumActions from './stake/stakeFormEthereumActions';
 import * as stakeFormSolanaActions from './stake/stakeFormSolanaActions';
 
-type ComposeTransactionThunkState = BlockchainRootState & SelectedAccountRootState & StakeRootState;
+type ComposeTransactionThunkState = BlockchainRootState & StakeRootState;
 
 export const composeTransaction =
     (formValues: StakeFormState, formState: ComposeActionContext) =>
@@ -116,7 +116,6 @@ export const cancelSignTxThunk =
 type PushTransactionThunkState = DeviceRootState &
     MevProtectionRootState &
     ReplaceTransactionThunkState &
-    SelectedAccountRootState &
     StakeRootState &
     SyncAccountsWithBlockchainThunkState &
     WalletSettingsRootState;
@@ -133,7 +132,7 @@ const pushTransactionThunk =
         extra: PushTransactionThunkDeps,
     ) => {
         const { serializedTx, precomposedTx } = selectStake(getState());
-        const account = selectSelectedAccount(getState());
+        const account = selectStakeAccount(getState());
         const device = selectSelectedDevice(getState());
         const isMevProtectionEnabled = selectIsMevProtectionEnabled(getState());
         const isMevProtectionFeatureEnabled = selectIsMevProtectionFeatureEnabled(getState());
@@ -257,28 +256,32 @@ const pushTransactionThunk =
         return sentTx;
     };
 
-type SignTransactionThunkState = DeviceRootState &
+export type SignTransactionThunkState = DeviceRootState &
     EthereumGetCurrentNonceThunkState &
     MevProtectionRootState &
     ReplaceTransactionThunkState &
-    SelectedAccountRootState &
     StakeRootState &
     SyncAccountsWithBlockchainThunkState &
     WalletSettingsRootState;
 
-type SignTransactionThunkDeps = PushTransactionThunkDeps;
+export type SignTransactionThunkDeps = PushTransactionThunkDeps;
+
+export type SignTransactionThunkParams = {
+    account: Account;
+    formValues: StakeFormState;
+    transactionInfo: PrecomposedTransactionFinal;
+};
 
 export const signTransactionThunk =
-    (formValues: StakeFormState, transactionInfo: PrecomposedTransactionFinal) =>
+    ({ account, formValues, transactionInfo }: SignTransactionThunkParams) =>
     async (
         dispatch: ThunkDispatch<SignTransactionThunkState, SignTransactionThunkDeps, UnknownAction>,
         getState: () => SignTransactionThunkState,
         extra: SignTransactionThunkDeps,
     ) => {
         const device = selectSelectedDevice(getState());
-        const account = selectSelectedAccount(getState());
 
-        if (!device || !account) return;
+        if (!device) return;
 
         const enhancedTxInfo: PrecomposedTransactionFinal = {
             ...transactionInfo,
@@ -289,6 +292,7 @@ export const signTransactionThunk =
             stakeActions.requestSignTransaction({
                 formValues,
                 transactionInfo: enhancedTxInfo,
+                accountKey: account.key,
             }),
         );
 
@@ -301,20 +305,32 @@ export const signTransactionThunk =
         let serializedTx: undefined | string | Err<SerializedError>;
         if (isSupportedEthStakingNetworkSymbol(account.symbol)) {
             serializedTx = await dispatch(
-                stakeFormEthereumActions.signTransactionThunk(formValues, enhancedTxInfo),
+                stakeFormEthereumActions.signTransactionThunk({
+                    account,
+                    formValues,
+                    transactionInfo: enhancedTxInfo,
+                }),
             );
         }
 
         if (isSupportedSolStakingNetworkSymbol(account.symbol)) {
             serializedTx = await dispatch(
-                stakeFormSolanaActions.signTransactionThunk(formValues, enhancedTxInfo),
+                stakeFormSolanaActions.signTransactionThunk({
+                    account,
+                    formValues,
+                    transactionInfo: enhancedTxInfo,
+                }),
             );
         }
 
         let cardanoPoolDelegation: StakingCardanoPoolDelegationPayload | undefined;
         if (isSupportedAdaStakingNetworkSymbol(account.symbol)) {
             const signResult = await dispatch(
-                stakeFormCardanoActions.signTransactionThunk(formValues, enhancedTxInfo),
+                stakeFormCardanoActions.signTransactionThunk({
+                    account,
+                    formValues,
+                    transactionInfo: enhancedTxInfo,
+                }),
             );
 
             if (signResult && 'serializedTx' in signResult) {
@@ -355,7 +371,7 @@ export const signTransactionThunk =
             }),
         );
 
-        if (account?.networkType === 'cardano') {
+        if (account.networkType === 'cardano') {
             extra.services.analytics.report({
                 type: events.transactionCreatedEvent.name,
                 payload: getTransactionCreatedEventPayload({
