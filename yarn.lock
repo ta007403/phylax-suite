@@ -18062,7 +18062,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@trezor/coinjoin-analysis@workspace:packages/coinjoin-analysis":
+"@trezor/coinjoin-analysis@workspace:*, @trezor/coinjoin-analysis@workspace:packages/coinjoin-analysis":
   version: 0.0.0-use.local
   resolution: "@trezor/coinjoin-analysis@workspace:packages/coinjoin-analysis"
   languageName: unknown
@@ -18076,6 +18076,7 @@ __metadata:
     "@trezor/blockchain-link": "workspace:*"
     "@trezor/blockchain-link-types": "workspace:*"
     "@trezor/blockchain-link-utils": "workspace:*"
+    "@trezor/coinjoin-analysis": "workspace:*"
     "@trezor/eslint": "workspace:*"
     "@trezor/logger": "workspace:*"
     "@trezor/node-utils": "workspace:*"
