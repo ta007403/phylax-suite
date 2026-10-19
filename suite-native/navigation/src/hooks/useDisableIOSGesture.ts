@@ -1,30 +1,52 @@
-import { useCallback, useLayoutEffect } from 'react';
+import { useLayoutEffect } from 'react';
 import { Platform } from 'react-native';
 
-import { useNavigation } from '@react-navigation/native';
+import { type NavigationProp, type ParamListBase, useNavigation } from '@react-navigation/native';
+
+type Navigation = NavigationProp<ParamListBase>;
+
+const gestureBlockers = new WeakMap<Navigation, number>();
+
+const getNavigationChain = (navigation: Navigation) => {
+    const chain: Navigation[] = [];
+    let current: Navigation | undefined = navigation;
+
+    while (current) {
+        chain.push(current);
+        current = current.getParent?.();
+    }
+
+    return chain;
+};
 
 export const useDisableIOSGesture = () => {
-    const navigation = useNavigation();
-
-    const toggleGestures = useCallback((nav: typeof navigation, enable: boolean) => {
-        nav?.setOptions({ gestureEnabled: enable });
-        const parent = nav?.getParent?.();
-        if (parent) {
-            // This code is OK, but the eslint plugin crashes on recursive calls
-            // eslint-disable-next-line react-hooks/immutability
-            toggleGestures(parent, enable);
-        }
-    }, []);
+    const navigation = useNavigation<Navigation>();
 
     useLayoutEffect(() => {
-        if (Platform.OS === 'ios') {
-            toggleGestures(navigation, false);
+        if (Platform.OS !== 'ios') {
+            return;
         }
 
-        return () => {
-            if (Platform.OS === 'ios') {
-                toggleGestures(navigation, true);
+        const navigationChain = getNavigationChain(navigation);
+
+        navigationChain.forEach(routeNavigation => {
+            const blockers = gestureBlockers.get(routeNavigation) ?? 0;
+            gestureBlockers.set(routeNavigation, blockers + 1);
+            if (blockers === 0) {
+                routeNavigation.setOptions({ gestureEnabled: false });
             }
+        });
+
+        return () => {
+            navigationChain.forEach(routeNavigation => {
+                const blockers = gestureBlockers.get(routeNavigation) ?? 1;
+                if (blockers > 1) {
+                    gestureBlockers.set(routeNavigation, blockers - 1);
+                } else {
+                    gestureBlockers.delete(routeNavigation);
+                    routeNavigation.setOptions({ gestureEnabled: true });
+                }
+            });
         };
-    }, [navigation, toggleGestures]);
+    }, [navigation]);
 };
