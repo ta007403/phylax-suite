@@ -115,11 +115,13 @@ const getTestState = (accounts: Account[]) =>
                     lastSuccessAt: null,
                     data: {
                         eth: {
-                            stats: {
-                                apy: 3.08,
-                                nextRewardPayout: 5,
+                            everstake: {
+                                stats: {
+                                    apy: 3.08,
+                                    nextRewardPayout: 5,
+                                },
+                                validators: {},
                             },
-                            validators: {},
                         },
                         sol: {
                             stats: {
