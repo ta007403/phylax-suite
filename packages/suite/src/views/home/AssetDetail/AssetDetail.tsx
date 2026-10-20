@@ -9,6 +9,7 @@ import { useDiscovery, useLayout, useSelector } from 'src/hooks/suite';
 import { type AppState } from 'src/types/suite';
 
 import { AssetDetailBalance, AssetDetailBalanceSkeleton } from './AssetDetailBalance';
+import { AssetDetailTransactions } from './AssetDetailTransactions';
 import { AssetNotExists } from './AssetNotExists';
 import { RoutedAsset } from './RoutedAsset';
 import { selectRoutedAssetKey } from './selectRoutedAssetKey';
@@ -37,6 +38,7 @@ export const AssetDetail = () => {
             {assetKey => (
                 <Column gap={16} alignItems="stretch" data-testid="@asset-detail">
                     <AssetDetailBalance assetKey={assetKey} />
+                    <AssetDetailTransactions assetKey={assetKey} />
                 </Column>
             )}
         </RoutedAsset>

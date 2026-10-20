@@ -1836,6 +1836,10 @@ export const messages = defineMessages({
         defaultMessage: 'on {count, plural, one {# account} other {# accounts}}',
         id: 'TR_ASSET_DETAIL_ACCOUNT_COUNT',
     },
+    TR_ASSET_DETAIL_NO_TRANSACTIONS: {
+        defaultMessage: 'No transactions yet.',
+        id: 'TR_ASSET_DETAIL_NO_TRANSACTIONS',
+    },
     TR_HOME_ASSET_SMALL_BALANCES: {
         defaultMessage: 'Show small balances',
         id: 'TR_HOME_ASSET_SMALL_BALANCES',
