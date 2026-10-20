@@ -11,7 +11,8 @@ const tryCalculateLiquidityClue = (foreignOutputsValues: number[]) => {
 
     // Take top 10% of denominations.
     const take = Math.ceil(denoms.length * 0.1);
-    const topDenoms = denoms.toSorted((a, b) => b - a).slice(0, take);
+    // Hermes does not support `toSorted`; `denoms` is a fresh array that is safe to sort in place.
+    const topDenoms = denoms.sort((a, b) => b - a).slice(0, take);
 
     // `Average` of an empty sequence is upstream's `DefaultIfEmpty(Money.Zero)`, and the `(ulong)`
     // cast of its `double` result truncates.
