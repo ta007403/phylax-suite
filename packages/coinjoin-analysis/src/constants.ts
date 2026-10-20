@@ -28,6 +28,9 @@ export const isStdDenom = (satoshi: number) => STD_DENOMS_SET.has(satoshi);
  */
 export const MAXIMUM_NUMBER_OF_SATOSHIS = 2099999997690000;
 
+// Anonymity scoring is not ported yet, so the two constants below have no consumer in this package
+// and are not re-exported from `index.ts`.
+
 /**
  * `HdPubKey.DefaultHighAnonymitySet`, which upstream defines as `int.MaxValue`. It marks an address
  * whose anonymity set has never been assigned, so it must stay exactly this value rather than become

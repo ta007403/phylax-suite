@@ -6,6 +6,11 @@ the liquidity clue. Suite used to obtain these values by spawning the bundled ~3
 driving it over localhost HTTP, which made them unavailable on web and mobile and impossible to unit
 test.
 
+Only the liquidity clue is ported so far; anonymity scoring follows in a separate change. The symbols
+that exist for it alone — `DEFAULT_HIGH_ANONYMITY_SET` and `MAX_RECURSION_DEPTH` in
+`src/constants.ts`, and the `Analyze*` request and response types in `src/types.ts` — have no
+consumer in this package yet.
+
 The port targets **exact parity** with the pinned upstream release, so it must not "fix" upstream
 behaviour we disagree with. Divergence is a bug, never a conservative choice — the anonymity set
 decides which UTXOs coin control treats as private.
@@ -24,9 +29,11 @@ hex — exactly the shapes the HTTP boundary used — so no bitcoin library is n
 
 Fixtures in `src/__fixtures__/` are labelled by origin:
 
-- transcribed from upstream `WalletWasabi.WabiSabiClientLibrary.Tests/IntegrationTests/TestVectors/GetAnonymityScores.json`,
-- transcribed from upstream `WalletWasabi.Tests/UnitTests/BlockchainAnalysis/*.cs`,
 - captured from the bundled binary, each group recording the `get-version` it was captured against.
+
+Upstream's own vectors (`WalletWasabi.WabiSabiClientLibrary.Tests/IntegrationTests/TestVectors/GetAnonymityScores.json`)
+and unit tests (`WalletWasabi.Tests/UnitTests/BlockchainAnalysis/*.cs`) cover anonymity scoring only,
+so transcriptions of them arrive with that port.
 
 Captured fixtures age with the binary: bumping `suite/app-assets/files/bin/coinjoin/update.sh` means
 re-capturing them against the new binary.
