@@ -4,7 +4,6 @@ import { Translation } from '@suite-native/intl';
 
 import { Box } from '../Box';
 import { Button } from '../Button/Button';
-import { type TextInputType } from '../Input/Input';
 import { ScreenFooterGradient } from '../ScreenFooterGradient';
 import { BottomSheetModal } from '../Sheet/BottomSheetModal';
 import { useBottomSheetModal } from '../Sheet/hooks/useBottomSheetModal';
@@ -19,7 +18,7 @@ export type SelectItemType<TItemValue extends SelectItemValue> = {
     badge?: ReactNode;
 };
 
-export type SelectLabelType = Exclude<TextInputType, 'outsideLabel'>;
+export type SelectLabelType = 'innerLabel' | 'noLabel';
 
 export type SelectProps<TItemValue extends SelectItemValue> = {
     title: ReactNode;
@@ -30,8 +29,8 @@ export type SelectProps<TItemValue extends SelectItemValue> = {
     isConfirmable?: boolean;
     labelType?: SelectLabelType;
     isReadOnly?: boolean;
-    hasError?: boolean;
     isDisabled?: boolean;
+    hasError?: boolean;
     testID?: string;
 };
 
@@ -44,8 +43,8 @@ export const Select = <TItemValue extends SelectItemValue>({
     isConfirmable = false,
     labelType = 'noLabel',
     isReadOnly = false,
-    hasError = false,
     isDisabled = false,
+    hasError = false,
     testID,
 }: SelectProps<TItemValue>) => {
     const { bottomSheetRef, openModal, closeModal } = useBottomSheetModal();
@@ -59,7 +58,6 @@ export const Select = <TItemValue extends SelectItemValue>({
     const [isConfirmButtonVisible, setIsConfirmButtonVisible] = useState(false);
 
     const openBottomSheet = () => {
-        if (isDisabled) return;
         setSelectedItemValue(value);
         setIsConfirmButtonVisible(false);
         openModal();
