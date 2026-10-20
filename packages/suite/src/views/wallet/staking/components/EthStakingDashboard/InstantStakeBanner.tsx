@@ -3,7 +3,10 @@ import { useEffect, useRef, useState } from 'react';
 import { selectSelectedAccount } from '@suite/account';
 import { Translation } from '@suite/intl';
 import { getNetworkDisplaySymbol } from '@suite-common/wallet-config';
-import { getChangedInternalTx, getInstantStakeType } from '@suite-common/wallet-core';
+import {
+    classifyEthereumInternalTransfer,
+    findChangedEthereumStakingInternalTransfer,
+} from '@suite-common/wallet-core';
 import { type StakeType, type WalletAccountTransaction } from '@suite-common/wallet-types';
 import { fromWei } from '@suite-common/wallet-utils';
 import { Banner } from '@trezor/components';
@@ -44,7 +47,10 @@ export const InstantStakeBanner = ({
 
     useEffect(() => {
         if (!address || !symbol) return;
-        const changedInternalTx = getChangedInternalTx(prevTxs.current, txs, address, symbol);
+        const changedInternalTx = findChangedEthereumStakingInternalTransfer(prevTxs.current, txs, {
+            descriptor: address,
+            symbol,
+        });
 
         if (changedInternalTx) {
             setInstantStakeTransfer(changedInternalTx);
@@ -61,7 +67,10 @@ export const InstantStakeBanner = ({
     };
 
     const amount = fromWei(instantStakeTransfer?.amount ?? '0').toEther();
-    const stakeType = getInstantStakeType(instantStakeTransfer, address, symbol);
+    const stakeType = classifyEthereumInternalTransfer(instantStakeTransfer, {
+        descriptor: address,
+        symbol,
+    })?.type;
 
     if (!stakeType || stakeType === 'claim') return null; // claim is not supported
 

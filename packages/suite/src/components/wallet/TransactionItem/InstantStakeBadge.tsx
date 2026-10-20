@@ -3,7 +3,7 @@ import { memo } from 'react';
 import { selectSelectedAccount } from '@suite/account';
 import { Translation } from '@suite/intl';
 import { type NetworkSymbol, isNetworkSymbol } from '@suite-common/wallet-config';
-import { getInstantStakeType } from '@suite-common/wallet-core';
+import { classifyEthereumInternalTransfer } from '@suite-common/wallet-core';
 import { type StakeType } from '@suite-common/wallet-types';
 import { formatNetworkAmount } from '@suite-common/wallet-utils';
 import { Badge, Row } from '@trezor/components';
@@ -30,7 +30,10 @@ const getInternalTransaction = (
     symbol: NetworkSymbol,
 ) =>
     transaction.internalTransfers.find(internalTx =>
-        getInstantStakeType(internalTx, selectedAccountDescriptor, symbol),
+        classifyEthereumInternalTransfer(internalTx, {
+            descriptor: selectedAccountDescriptor,
+            symbol,
+        }),
     );
 
 interface InstantStakeBadgeProps {
@@ -46,7 +49,10 @@ export const InstantStakeBadge = memo(({ transaction, symbol }: InstantStakeBadg
     const internalTx = getInternalTransaction(transaction, selectedAccountAddress, symbol);
     if (!internalTx) return null;
 
-    const instantStakeType = getInstantStakeType(internalTx, selectedAccountAddress, symbol);
+    const instantStakeType = classifyEthereumInternalTransfer(internalTx, {
+        descriptor: selectedAccountAddress,
+        symbol,
+    })?.type;
     if (!instantStakeType) return null;
 
     const translationId = getTranslationId(instantStakeType);
