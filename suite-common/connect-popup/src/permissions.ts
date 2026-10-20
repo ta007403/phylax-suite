@@ -9,7 +9,7 @@ import {
 } from '@trezor/connect';
 import { unique } from '@trezor/utils/src/unique';
 
-import { type ConnectCallSource } from './connectPopupTypes';
+import { CALL_SOURCE_WALLETCONNECT, type ConnectCallSource } from './connectPopupTypes';
 
 // A `PermissionRequest.coin` is the canonical lowercase `CoinSymbol`: call-derived permissions are
 // lowercased in `coinPerm`, host-declared ones in `sanitizeRequestedPermissions`. Everything below
@@ -74,11 +74,13 @@ export const isSameConnectApp = (app: ConnectCallSource, source: ConnectCallSour
     app.process?.fullPath === source.process?.fullPath;
 
 /**
- * Permissions are remembered only for a caller that can be told apart from others, not for the
- * origin `null` that browsers send for every sandboxed or local page.
+ * Permissions are remembered only for a caller that can be told apart from others: never for
+ * walletconnect, and not for the origin `null` that browsers send for every sandboxed or local
+ * page. The single place to ask "can this grant be remembered?" — every consent UI gates its
+ * Remember option on it, so widening it here cannot leave a call site behind.
  */
 export const canRememberPermissions = (source: ConnectCallSource): boolean =>
-    source.origin !== 'null';
+    source.type !== CALL_SOURCE_WALLETCONNECT && source.origin !== 'null';
 
 export const groupPermissionsByCoin = (permissions: PermissionRequest[]): GroupedPermissions[] => {
     const order: (CoinSymbol | undefined)[] = [];
