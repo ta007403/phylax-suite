@@ -615,6 +615,46 @@ describe('HttpServer', () => {
             expect(handler).toHaveBeenCalledTimes(1);
         });
 
+        test('accepts a valid token on a parameterized route', async () => {
+            const handler = jest.fn((_request, response) => {
+                response.end('ok');
+            });
+            server.get('/param/:id', [server.requireToken(), handler]);
+            server.deactivateRoute('/param');
+            await server.start();
+            const address = server.getServerAddress();
+            const base = `http://${address.address}:${address.port}`;
+            const activated = server.activateRoute('/param')!;
+
+            expect((await fetch(`${base}/param/42?token=${activated.token}`)).status).toEqual(200);
+            expect(handler).toHaveBeenCalledTimes(1);
+        });
+
+        test('token issued for one method is not accepted by another method on the same pathname', async () => {
+            const getHandler = jest.fn((_request, response) => {
+                response.end('ok');
+            });
+            const deleteHandler = jest.fn((_request, response) => {
+                response.end('ok');
+            });
+            server.get('/dual', [server.requireToken(), getHandler]);
+            server.delete('/dual', [server.requireToken(), deleteHandler]);
+            await server.start();
+            const address = server.getServerAddress();
+            const base = `http://${address.address}:${address.port}`;
+            // the token is issued to the first registered /dual route, the GET one
+            const activated = server.activateRoute('/dual')!;
+
+            const deleted = await fetch(`${base}/dual?token=${activated.token}`, {
+                method: 'DELETE',
+            });
+            expect(deleted.status).toEqual(404);
+            expect(deleteHandler).not.toHaveBeenCalled();
+
+            expect((await fetch(`${base}/dual?token=${activated.token}`)).status).toEqual(200);
+            expect(getHandler).toHaveBeenCalledTimes(1);
+        });
+
         test('calls onReject when the token is missing or wrong', async () => {
             const onReject = jest.fn();
             const handler = jest.fn((_request, response) => {

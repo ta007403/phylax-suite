@@ -451,7 +451,12 @@ export class HttpServer<T extends EventMap> extends TypedEmitter<T & BaseEvents>
             };
 
             const { pathname, query } = parseRequestUrl(request.url);
-            const route = pathname ? this.routes.find(r => r.pathname === pathname) : undefined;
+            // Resolve the route the same way `onRequest` does (parameterized paths,
+            // method), so the middleware can never disagree with the server about
+            // which route is currently being handled.
+            const route = pathname
+                ? this.findBestMatchingRoute(pathname, request.method)
+                : undefined;
             if (!route) {
                 return reject();
             }
