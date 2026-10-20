@@ -91,6 +91,36 @@ describe('http receiver', () => {
         }
     });
 
+    it('buy-post forwards a partner field named token appended after the receiver one', async () => {
+        const receiver = createHttpReceiver({ logger, port: 0 });
+        try {
+            const startResult = await receiver.start();
+            if (!startResult.success) throw new Error('start failed');
+            const address = receiver.getServerAddress();
+
+            const activated = receiver.activateRoute('/buy-post');
+            expect(activated).toBeDefined();
+
+            // Suite appends the partner fields after its own `token` and `a`
+            const action = 'https://partner.example/pay';
+            const url =
+                `http://${address.address}:${address.port}/buy-post` +
+                `?token=${activated!.token}&a=${encodeURIComponent(action)}` +
+                `&token=partner-session-123&amount=42`;
+            const res = await fetch(url);
+            const body = await res.text();
+
+            expect(res.status).toEqual(200);
+            expect(body).toContain('name="amount"');
+            // the partner's own `token` field survives...
+            expect(body).toContain('value="partner-session-123"');
+            // ...while the receiver's single-use token never reaches the partner
+            expect(body).not.toContain(activated!.token);
+        } finally {
+            await receiver.stop();
+        }
+    });
+
     it('oauth reports a rejected redirect so the renderer stops waiting for a response', async () => {
         const receiver = createHttpReceiver({ logger, port: 0 });
         const spy = jest.spyOn(receiver, 'emit');
