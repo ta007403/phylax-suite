@@ -420,8 +420,15 @@ export class HttpServer<T extends EventMap> extends TypedEmitter<T & BaseEvents>
      * `from` selects the query parameter name carrying the token (default `token`).
      * Use `from: 'state'` for OAuth flows where the provider only echoes the
      * `state` parameter back to the redirect URL.
+     *
+     * `onReject` is called before the rejection is written. The rejected request
+     * never reaches the route handler, so a route whose caller is waiting for an
+     * event needs this hook to report the failure instead of waiting forever.
      */
-    public requireToken({ from = 'token' }: { from?: string } = {}): AnyRequestHandler {
+    public requireToken({
+        from = 'token',
+        onReject,
+    }: { from?: string; onReject?: (request: Request) => void } = {}): AnyRequestHandler {
         return (request, response, next, { logger }) => {
             // Reject with a bare 404 that is indistinguishable from the "route not
             // found / inactive" response produced by `onRequest`. Upstream common
@@ -429,6 +436,7 @@ export class HttpServer<T extends EventMap> extends TypedEmitter<T & BaseEvents>
             // so strip them to avoid leaking that the route exists and is currently
             // activated (route-discovery signal).
             const reject = () => {
+                onReject?.(request);
                 response.removeHeader('Content-Type');
                 response.statusCode = 404;
 

@@ -196,7 +196,14 @@ export const createHttpReceiver = ({ logger, ...options }: CreateHttpReceiverPar
     httpReceiver.get('/oauth', [
         // OAuth providers only echo the `state` parameter back, so the per-flow
         // single-use token is carried there.
-        httpReceiver.requireToken({ from: 'state' }),
+        httpReceiver.requireToken({
+            from: 'state',
+            // A rejected redirect never reaches the handler below, so the app would
+            // keep waiting for an `oauth/response` that can no longer arrive. The
+            // response itself stays a bare 404 for stealth; the app is told
+            // out-of-band instead.
+            onReject: () => httpReceiver.emit('oauth/error', 'Invalid response from data provider'),
+        }),
         allowReferers(['', '127.0.0.1', 'www.dropbox.com']), // No referer is sent by Google, Dropbox sends referer when using Safari
         (request, response) => {
             const { search, hash } = parseRequestUrl(request.url);

@@ -91,6 +91,26 @@ describe('http receiver', () => {
         }
     });
 
+    it('oauth reports a rejected redirect so the renderer stops waiting for a response', async () => {
+        const receiver = createHttpReceiver({ logger, port: 0 });
+        const spy = jest.spyOn(receiver, 'emit');
+        try {
+            const startResult = await receiver.start();
+            if (!startResult.success) throw new Error('start failed');
+            const address = receiver.getServerAddress();
+            expect(receiver.activateRoute('/oauth')).toBeDefined();
+
+            // the implicit flow returns `state` in the URL fragment, so the server
+            // sees no token at all
+            const res = await fetch(`http://${address.address}:${address.port}/oauth`);
+
+            expect(res.status).toEqual(404);
+            expect(spy).toHaveBeenLastCalledWith('oauth/error', expect.any(String));
+        } finally {
+            await receiver.stop();
+        }
+    });
+
     it.each([
         { path: '/oauth', tokenParam: 'state' },
         { path: '/buy-redirect', tokenParam: 'token' },

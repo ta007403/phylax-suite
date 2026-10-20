@@ -193,12 +193,29 @@ export const extractCredentialsFromAuthorizationFlow = (deps: OauthDesktopApiDep
     if (deps.desktopApi.available) {
         // to make sure that there is always only one listener registered remove all listeners before creating a new one
         deps.desktopApi.removeAllListeners('oauth/response');
+        deps.desktopApi.removeAllListeners('oauth/error');
         // this listener may never be called in some cases
         deps.desktopApi.once(
             'oauth/response',
             getDesktopHandlerInstance(deps, dfd, url.searchParams),
         );
+        // the HTTP receiver refused the redirect (missing, expired or replayed token),
+        // so `oauth/response` will never arrive for this flow
+        deps.desktopApi.once('oauth/error', message => dfd.reject(new Error(message)));
         window.open(url, METADATA_PROVIDER.AUTH_WINDOW_TITLE, METADATA_PROVIDER.AUTH_WINDOW_PROPS);
+
+        // Safety timeout — the redirect may never reach the receiver at all, e.g. the
+        // implicit flow returns its parameters in the URL fragment, which the browser
+        // never sends to the server. Settle the flow instead of waiting forever.
+        const timeoutId = window.setTimeout(() => {
+            dfd.reject(new Error('window closed'));
+        }, POPUP_TIMEOUT_MS);
+
+        void dfd.promise.finally(() => {
+            window.clearTimeout(timeoutId);
+            deps.desktopApi.removeAllListeners('oauth/response');
+            deps.desktopApi.removeAllListeners('oauth/error');
+        });
     } else {
         const channel = createWebBroadcastChannel(dfd, url.searchParams);
 

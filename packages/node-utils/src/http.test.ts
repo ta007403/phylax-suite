@@ -597,6 +597,28 @@ describe('HttpServer', () => {
             expect(handler).toHaveBeenCalledTimes(1);
         });
 
+        test('calls onReject when the token is missing or wrong', async () => {
+            const onReject = jest.fn();
+            const handler = jest.fn((_request, response) => {
+                response.end('ok');
+            });
+            server.get('/foo', [server.requireToken({ onReject }), handler]);
+            server.deactivateRoute('/foo');
+            await server.start();
+            const address = server.getServerAddress();
+            const base = `http://${address.address}:${address.port}`;
+            const activated = server.activateRoute('/foo')!;
+
+            expect((await fetch(`${base}/foo`)).status).toEqual(404);
+            expect((await fetch(`${base}/foo?token=wrong`)).status).toEqual(404);
+            expect(onReject).toHaveBeenCalledTimes(2);
+
+            // a valid token goes to the handler, not to onReject
+            expect((await fetch(`${base}/foo?token=${activated.token}`)).status).toEqual(200);
+            expect(handler).toHaveBeenCalledTimes(1);
+            expect(onReject).toHaveBeenCalledTimes(2);
+        });
+
         test('deactivateRoute clears all live tokens', async () => {
             const { handler, base } = await setup();
             const activated = server.activateRoute('/foo')!;
