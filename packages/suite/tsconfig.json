@@ -60,6 +60,7 @@
         {
             "path": "../../suite-common/fiat-services"
         },
+        { "path": "../../suite-common/finprom" },
         { "path": "../../suite-common/firmware" },
         {
             "path": "../../suite-common/firmware-authenticity"
@@ -185,6 +186,7 @@
         {
             "path": "../../suite/feature-feedback"
         },
+        { "path": "../../suite/finprom" },
         {
             "path": "../../suite/firmware-upgrade"
         },
