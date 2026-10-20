@@ -16,6 +16,7 @@ export * from './components/AccountDetailScreenHeaderContent';
 export * from './components/AccountDiscoveryFailedBanner';
 export * from './components/TokenReceiveCard';
 export * from './hooks/useAccountLabelForm';
+export * from './hooks/useNavigateToAccount';
 export * from './hooks/useResolvedAccountKey';
 export * from './selectors';
 export * from './hooks/useAccountAlerts';
