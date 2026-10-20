@@ -214,9 +214,9 @@ export const exposeConnectWs = ({
                 });
             } else if (message.type === CORE_CALL) {
                 if (!processOnPort) {
-                    // ts check, should be set
-                    // The endpoints tell a lookup that matched no socket apart from one that
-                    // could not run, so an lsof or netstat format difference is diagnosable.
+                    // The lookup can legitimately miss, so log both endpoints of the connection:
+                    // it tells an lsof or netstat format difference apart from a lookup that
+                    // could not run at all.
                     logger.error(
                         LOG_PREFIX,
                         `processOnPort result not found for ${ip}:${port} -> ${req.socket.localAddress}:${req.socket.localPort}`,
