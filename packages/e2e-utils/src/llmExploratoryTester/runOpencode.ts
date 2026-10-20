@@ -43,6 +43,7 @@ type Session = {
     client: OpencodeClient;
     sessionId: string;
     budgetGuard: BudgetGuard;
+    signal: AbortSignal;
 };
 
 type Turn = {
@@ -213,8 +214,9 @@ async function watchUntilIdle(
 }
 
 async function subscribeToEvents(session: Session) {
-    const { client } = session;
-    const { stream } = await client.event.subscribe();
+    const { client, signal } = session;
+    // Without the signal the SDK reconnects forever once the timeout kills the server.
+    const { stream } = await client.event.subscribe({}, { signal });
     const first = await stream.next();
 
     if (first.done || first.value.type !== 'server.connected') {
@@ -279,6 +281,7 @@ export async function runOpencode({
             client,
             sessionId: await createSession(client),
             budgetGuard,
+            signal,
         };
         await runTurn(session, { prompt });
         const verdict = await requestVerdict(session);
