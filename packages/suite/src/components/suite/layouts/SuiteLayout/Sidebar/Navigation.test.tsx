@@ -20,6 +20,7 @@ import {
     routerReducer,
 } from '@suite/router';
 import { mockSuiteRouterHistory } from '@suite/router/mocks';
+import { mockFinpromMessageSystemState } from '@suite-common/finprom/mocks';
 import { createTestCompositionRoot } from '@suite-common/test-utils';
 import { type TransactionNotification } from '@suite-common/toast-notifications';
 import { asNetworkSymbol } from '@suite-common/wallet-config';
@@ -52,6 +53,7 @@ type RenderNavigationParams = {
     isCollapsed?: boolean;
     seenNewContentIndicators?: FlagsState['seenNewContentIndicators'];
     notifications?: AppState['notifications'];
+    isFinpromRestricted?: boolean;
 };
 
 const renderNavigation = ({
@@ -61,9 +63,13 @@ const renderNavigation = ({
     // Empty object simulates an existing user, which hasn't seen any content, migrating to a new version.
     seenNewContentIndicators = {},
     notifications = [],
+    isFinpromRestricted = false,
 }: RenderNavigationParams = {}) => {
     const preloadedState: AppState = {
         ...mockInitialAppState,
+        messageSystem: isFinpromRestricted
+            ? mockFinpromMessageSystemState({ flag: true, payload: { countries: ['US'] } })
+            : mockInitialAppState.messageSystem,
         flags: { ...flagsInitialState, seenNewContentIndicators },
         router: routerReducer(
             mockInitialAppState.router,
@@ -357,4 +363,13 @@ describe('Navigation new-content indicators', () => {
             expect(screen.queryByTestId(activityIndicator)).not.toBeInTheDocument();
         },
     );
+});
+
+describe('Navigation FinProm restriction', () => {
+    it('hides Swap and keeps Earn when FinProm is restricted', () => {
+        renderNavigation({ isFinpromRestricted: true });
+
+        expect(screen.queryByTestId(swapButton)).not.toBeInTheDocument();
+        expect(screen.getByTestId(earnButton)).toBeInTheDocument();
+    });
 });
