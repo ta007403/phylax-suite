@@ -8,10 +8,11 @@ import { type TestCompositionStore, createTestCompositionRoot } from '@suite-com
 import { createNotificationsReducer } from '@suite-common/toast-notifications';
 import { asNetworkSymbol } from '@suite-common/wallet-config';
 import {
+    DEFAULT_ETHEREUM_STAKING_PROVIDER_ID,
     type SendState,
     WALLET_SDK_SOURCE_MOBILE,
-    buildStakeData,
     earnTransactionsReducer,
+    getEthereumStakingAdapter,
     prepareSendFormReducer,
 } from '@suite-common/wallet-core';
 import {
@@ -240,7 +241,10 @@ const buildEthStakeFormDraft = (): FormState =>
             },
         ],
         options: ['transactionData'],
-        transactionData: buildStakeData(WALLET_SDK_SOURCE_MOBILE),
+        transactionData: getEthereumStakingAdapter(DEFAULT_ETHEREUM_STAKING_PROVIDER_ID).buildStep(
+            { type: 'stake', amount: '1' },
+            { symbol: asNetworkSymbol('eth'), source: WALLET_SDK_SOURCE_MOBILE },
+        )?.data,
         isCoinControlEnabled: false,
         hasCoinControlBeenOpened: false,
         selectedUtxos: [],

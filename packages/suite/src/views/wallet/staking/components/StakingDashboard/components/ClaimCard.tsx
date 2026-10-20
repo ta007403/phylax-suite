@@ -5,7 +5,7 @@ import { events, injectDesktopAnalytics } from '@suite/analytics';
 import { Translation } from '@suite/intl';
 import { openModal } from '@suite/modal';
 import {
-    getStakingDataForNetwork,
+    getLegacyStakingDataForNetwork,
     selectAccountClaimTransactions,
 } from '@suite-common/wallet-core';
 import { isPending } from '@suite-common/wallet-utils';
@@ -31,7 +31,7 @@ export const ClaimCard = () => {
     const isClaimPending = useMemo(() => claimTxs.some(tx => isPending(tx)), [claimTxs]);
 
     const { canClaim = false, claimableAmount = '0' } =
-        getStakingDataForNetwork(selectedAccount) ?? {};
+        getLegacyStakingDataForNetwork(selectedAccount) ?? {};
     const isClaimButtonDisabled = isClaimingDisabled || !selectedAccount;
 
     const openClaimModal = () => {

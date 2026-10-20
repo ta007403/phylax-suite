@@ -4,7 +4,7 @@ import { createWeakMapSelector, returnStableArrayIfEmpty } from '@trezor/redux-u
 
 import { type AccountsRootState } from '../../accounts/accountsReducer';
 import { selectAccountByKey, selectDeviceAccounts } from '../../accounts/accountsSelectors';
-import { getStakingDataForNetwork } from '../shared/stakingUtils';
+import { getLegacyStakingDataForNetwork } from '../shared/stakingUtils';
 import { type StakeRootState } from '../stakingReducerTypes';
 import {
     type TronStakeRootState,
@@ -49,7 +49,7 @@ export const selectTronStakedBalanceByAccountKey = (
     const account = selectAccountByKey(state, accountKey);
     if (account?.networkType !== 'tron') return null;
 
-    const stakingData = getStakingDataForNetwork(account);
+    const stakingData = getLegacyStakingDataForNetwork(account);
 
     return stakingData?.autocompoundBalance ?? '0';
 };
@@ -61,7 +61,7 @@ export const selectTronRewardsBalanceByAccountKey = (
     const account = selectAccountByKey(state, accountKey);
     if (account?.networkType !== 'tron') return null;
 
-    const stakingData = getStakingDataForNetwork(account);
+    const stakingData = getLegacyStakingDataForNetwork(account);
 
     return stakingData?.restakedReward ?? '0';
 };
