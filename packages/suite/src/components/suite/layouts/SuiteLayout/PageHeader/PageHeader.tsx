@@ -16,7 +16,9 @@ import { zIndices } from '@trezor/theme';
 
 import { HEADER_HEIGHT } from 'src/constants/suite/layout';
 import { useSelector } from 'src/hooks/suite';
+import { RoutedAsset } from 'src/views/home/AssetDetail/RoutedAsset';
 
+import { AssetDetailActions } from './AssetDetailActions';
 import { GlobalSendReceive } from './GlobalSendReceive/GlobalSendReceive';
 import { HeaderActions } from './HeaderActions';
 import { HeaderDropdown } from './HeaderDropdown';
@@ -87,6 +89,9 @@ export const PageHeader = ({ children, expandable }: PageHeaderProps) => {
             <PageName />
 
             {effectiveRouteName === 'suite-index' && <PageHeaderIndex />}
+            {effectiveRouteName === 'suite-asset' && (
+                <RoutedAsset>{assetKey => <AssetDetailActions assetKey={assetKey} />}</RoutedAsset>
+            )}
             {!!selectedAccountKey && isAccountTabPage && <HeaderActions />}
         </Container>
     );

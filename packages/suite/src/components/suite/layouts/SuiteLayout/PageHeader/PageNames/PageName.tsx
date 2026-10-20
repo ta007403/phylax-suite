@@ -10,9 +10,11 @@ import { ExperimentId, useIsExperimentVariantActive } from '@suite-common/messag
 import { useServices } from '@trezor/dependency-injection';
 
 import { useSelector } from 'src/hooks/suite';
+import { RoutedAsset } from 'src/views/home/AssetDetail/RoutedAsset';
 
 import { AccountName } from './AccountName/AccountName';
 import { AccountSubpageName } from './AccountName/AccountSubpageName';
+import { AssetDetailBackButton, AssetDetailName } from './AssetDetailName';
 import { BasicName } from './BasicName';
 import { HiddenTokensName } from './HiddenTokensName';
 import { SettingsName } from './SettingsName';
@@ -36,6 +38,14 @@ export const PageName = () => {
     // (however location.pathname does)
     if (currentRoute === 'suite-hidden-tokens') {
         return <HiddenTokensName />;
+    }
+
+    if (currentRoute === 'suite-asset') {
+        return (
+            <RoutedAsset fallback={<AssetDetailBackButton />}>
+                {assetKey => <AssetDetailName assetKey={assetKey} />}
+            </RoutedAsset>
+        );
     }
 
     if (currentRoute?.includes('settings')) {
