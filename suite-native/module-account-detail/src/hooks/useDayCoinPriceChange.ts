@@ -13,12 +13,11 @@ export const useDayCoinPriceChange = ({
     tokenContract,
     isErc4626Token,
 }: UseDayCoinPriceChangeProps) => {
-    const { price, sevenDayPercentageChange, isLoading, underlyingAssetContract } =
-        useAssetPrice({
-            networkSymbol: symbol,
-            tokenContract,
-            isErc4626Token,
-        });
+    const { price, sevenDayPercentageChange, isLoading, underlyingAssetContract } = useAssetPrice({
+        networkSymbol: symbol,
+        tokenContract,
+        isErc4626Token,
+    });
 
     return {
         currentValue: price,
