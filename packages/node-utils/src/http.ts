@@ -374,8 +374,15 @@ export class HttpServer<T extends EventMap> extends TypedEmitter<T & BaseEvents>
      * The token must be passed in the URL by the caller and validated by the
      * `requireToken` middleware on the route. Returns the base URL and the token,
      * or `undefined` if the route is unknown or the server is not listening.
+     *
+     * `ttlMs` overrides the server-wide token lifetime for this one token. Use it
+     * for routes whose token is only redeemed after a long detour through a third
+     * party; the token stays unguessable and single-use either way.
      */
-    public activateRoute(pathname: string): ActivatedRoute | undefined {
+    public activateRoute(
+        pathname: string,
+        { ttlMs = this.tokenTtlMs }: { ttlMs?: number } = {},
+    ): ActivatedRoute | undefined {
         const route = this.routes.find(r => r.pathname === pathname);
         if (!route) return;
 
@@ -388,7 +395,7 @@ export class HttpServer<T extends EventMap> extends TypedEmitter<T & BaseEvents>
 
         const token = randomUUID();
         this.purgeExpiredTokens(route);
-        route.tokens.set(token, Date.now() + this.tokenTtlMs);
+        route.tokens.set(token, Date.now() + ttlMs);
         route.isActive = true;
 
         return {

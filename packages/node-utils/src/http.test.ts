@@ -579,6 +579,24 @@ describe('HttpServer', () => {
             expect(handler).not.toHaveBeenCalled();
         });
 
+        test('per-activation ttlMs overrides the server-wide token lifetime', async () => {
+            // server-wide TTL is already expired, so only the override can keep a token alive
+            server = new HttpServer<Events>({ logger: muteLogger, tokenTtlMs: 0 });
+            const handler = jest.fn((_request, response) => {
+                response.end('ok');
+            });
+            server.get('/foo', [server.requireToken(), handler]);
+            server.deactivateRoute('/foo');
+            await server.start();
+            const address = server.getServerAddress();
+            const base = `http://${address.address}:${address.port}`;
+            const longLived = server.activateRoute('/foo', { ttlMs: 24 * 60 * 60 * 1000 })!;
+
+            await new Promise(r => setTimeout(r, 10));
+            expect((await fetch(`${base}/foo?token=${longLived.token}`)).status).toEqual(200);
+            expect(handler).toHaveBeenCalledTimes(1);
+        });
+
         test('reads token from custom query param (state) for OAuth flows', async () => {
             const handler = jest.fn((_request, response) => {
                 response.end('ok');
