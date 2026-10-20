@@ -512,6 +512,7 @@ describe('HttpServer', () => {
             server.use([
                 (request, response, next) => {
                     response.setHeader('Content-Type', 'text/html; charset=UTF-8');
+                    response.setHeader('X-Content-Type-Options', 'nosniff');
                     next(request, response);
                 },
             ]);
@@ -527,8 +528,13 @@ describe('HttpServer', () => {
             server.activateRoute('/foo');
             const res = await fetch(`${base}/foo?token=wrong`);
             expect(res.status).toEqual(404);
-            expect(res.headers.get('content-type')).toBeNull();
             expect(handler).not.toHaveBeenCalled();
+
+            // the whole header set must match the 404 of a never registered route,
+            // not just the one header the common middleware happens to set today
+            const unregistered = await fetch(`${base}/not-a-route`);
+            expect(unregistered.status).toEqual(404);
+            expect([...res.headers.keys()]).toEqual([...unregistered.headers.keys()]);
         });
 
         test('accepts valid token, then auto-deactivates after single use', async () => {

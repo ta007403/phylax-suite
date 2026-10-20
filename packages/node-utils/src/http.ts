@@ -441,10 +441,11 @@ export class HttpServer<T extends EventMap> extends TypedEmitter<T & BaseEvents>
             // found / inactive" response produced by `onRequest`. Upstream common
             // middleware may already have set headers (e.g. a global Content-Type),
             // so strip them to avoid leaking that the route exists and is currently
-            // activated (route-discovery signal).
+            // activated (route-discovery signal). `getHeaderNames` lists only what
+            // was set explicitly, so Node's own Date/Connection stay untouched.
             const reject = () => {
                 onReject?.(request);
-                response.removeHeader('Content-Type');
+                response.getHeaderNames().forEach(name => response.removeHeader(name));
                 response.statusCode = 404;
 
                 return response.end();
