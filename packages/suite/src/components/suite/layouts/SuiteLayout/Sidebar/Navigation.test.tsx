@@ -20,7 +20,8 @@ import {
     routerReducer,
 } from '@suite/router';
 import { mockSuiteRouterHistory } from '@suite/router/mocks';
-import { mockFinpromMessageSystemState } from '@suite-common/finprom/mocks';
+import { Feature } from '@suite-common/message-system';
+import { mockMessageSystemStateWithFeatureFlags } from '@suite-common/message-system/mocks';
 import { createTestCompositionRoot } from '@suite-common/test-utils';
 import { type TransactionNotification } from '@suite-common/toast-notifications';
 import { asNetworkSymbol } from '@suite-common/wallet-config';
@@ -68,7 +69,10 @@ const renderNavigation = ({
     const preloadedState: AppState = {
         ...mockInitialAppState,
         messageSystem: isFinpromRestricted
-            ? mockFinpromMessageSystemState({ flag: true, payload: { countries: ['US'] } })
+            ? mockMessageSystemStateWithFeatureFlags(
+                  { [Feature.finprom.presenceRestriction]: true },
+                  { [Feature.finprom.presenceRestriction]: { countries: ['US'] } },
+              )
             : mockInitialAppState.messageSystem,
         flags: { ...flagsInitialState, seenNewContentIndicators },
         router: routerReducer(
