@@ -1,4 +1,5 @@
-import { mockFinpromMessageSystemState } from '@suite-common/finprom/mocks';
+import { Feature } from '@suite-common/message-system';
+import { mockMessageSystemStateWithFeatureFlags } from '@suite-common/message-system/mocks';
 import { type AppLocaleOption, type LocaleCode, localeInitialState } from '@suite-native/intl';
 
 import { selectIsFinpromRestricted } from './finpromSelectors';
@@ -19,10 +20,10 @@ describe(selectIsFinpromRestricted.name, () => {
         '%s',
         (_description, appLocaleCode, systemLocaleCode, countries, expected) => {
             const state = {
-                messageSystem: mockFinpromMessageSystemState({
-                    flag: true,
-                    payload: { countries },
-                }),
+                messageSystem: mockMessageSystemStateWithFeatureFlags(
+                    { [Feature.finprom.presenceRestriction]: true },
+                    { [Feature.finprom.presenceRestriction]: { countries } },
+                ),
                 locale: { ...localeInitialState, appLocaleCode, systemLocaleCode },
             };
 
