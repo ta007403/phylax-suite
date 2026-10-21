@@ -37,8 +37,7 @@ export const fetchStoreText = async (
     try {
         const response = await fetchImpl(url, { signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) });
 
-        // 403 is what a bucket without public listing returns for a key that is not there.
-        if (response.status === 404 || response.status === 403) {
+        if (response.status === 404) {
             return { status: 'absent' };
         }
         if (!response.ok) {

@@ -38,9 +38,10 @@ describe('fetchStoreText', () => {
         });
     });
 
-    it('treats a bucket 403 as absent, which is what a missing key returns', async () => {
+    it('treats a 403 as unavailable: the bucket answers a missing key with 404', async () => {
         await expect(fetchStoreText('https://x/y', respondWith(403, ''))).resolves.toEqual({
-            status: 'absent',
+            status: 'unavailable',
+            reason: 'HTTP 403',
         });
     });
 });
