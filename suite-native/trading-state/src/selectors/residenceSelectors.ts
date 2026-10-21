@@ -1,7 +1,7 @@
 import {
     Feature,
     type MessageSystemRootState,
-    getTradingResidenceWhitelist,
+    getFeaturePayloadCountries,
     selectFeatureConfig,
 } from '@suite-common/message-system';
 import { type TradingCountryCode, isCountrySubdivisionEmpty } from '@suite-common/trading';
@@ -24,7 +24,7 @@ export const selectWasTradingResidenceOnboardingVisited = (state: TradingResiden
 
 export const selectTradingResidenceWhitelist = createMessageSystemMemoizedSelector(
     [state => selectFeatureConfig(state, Feature.trading.restrictions.residenceWhitelistRequired)],
-    feature => new Set<TradingCountryCode>(getTradingResidenceWhitelist(feature)),
+    feature => new Set<TradingCountryCode>(getFeaturePayloadCountries(feature, 'allowedCountries')),
 );
 
 export const selectIsTradingEnabledForLocation = (

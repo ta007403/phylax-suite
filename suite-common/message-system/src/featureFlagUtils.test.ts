@@ -3,7 +3,7 @@ import fs from 'fs';
 import { type Feature, type MessageSystem } from '@suite-common/suite-types';
 
 import {
-    getTradingResidenceWhitelist,
+    getFeaturePayloadCountries,
     isYieldFeatureApplicableForVault,
     parseTimeoutThresholdsPerModel,
 } from './featureFlagUtils';
@@ -88,7 +88,7 @@ describe(isYieldFeatureApplicableForVault.name, () => {
     );
 });
 
-describe('getTradingResidenceWhitelist', () => {
+describe(getFeaturePayloadCountries.name, () => {
     const residenceFeature = (payload?: Feature['payload']): Feature => ({
         domain: FeatureDefinitions.trading.restrictions.residenceWhitelistRequired,
         flag: true,
@@ -100,6 +100,7 @@ describe('getTradingResidenceWhitelist', () => {
         ['feature without payload', residenceFeature(), []],
         ['allowedCountries not an array', residenceFeature({ allowedCountries: 'CZ' }), []],
         ['empty allowedCountries', residenceFeature({ allowedCountries: [] }), []],
+        ['countries under another key', residenceFeature({ countries: ['CZ'] }), []],
         [
             'mixed countries',
             residenceFeature({ allowedCountries: ['CZ', 'ZZ', 1, null, 'US'] }),
@@ -110,10 +111,15 @@ describe('getTradingResidenceWhitelist', () => {
             residenceFeature({ allowedCountries: ['cz', 'Us', 'sK', 'zz'] }),
             ['CZ', 'US', 'SK'],
         ],
+        [
+            'unknown and special codes',
+            residenceFeature({ allowedCountries: ['GB', 'T1', 'XX', 'GBR', ''] }),
+            ['GB'],
+        ],
     ] as const satisfies [string, Feature | undefined, readonly string[]][])(
         'returns countries for %s',
         (_description, feature, expected) => {
-            expect(getTradingResidenceWhitelist(feature)).toEqual(expected);
+            expect(getFeaturePayloadCountries(feature, 'allowedCountries')).toEqual(expected);
         },
     );
 
@@ -128,7 +134,7 @@ describe('getTradingResidenceWhitelist', () => {
             );
 
         residenceFeatures.forEach(feature => {
-            expect(getTradingResidenceWhitelist(feature)).toEqual(
+            expect(getFeaturePayloadCountries(feature, 'allowedCountries')).toEqual(
                 feature.payload?.allowedCountries,
             );
         });
