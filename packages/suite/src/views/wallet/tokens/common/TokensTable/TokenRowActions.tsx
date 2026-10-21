@@ -13,7 +13,7 @@ import { gotoThunk } from '@suite/router';
 import { events as sharedEvents } from '@suite-common/analytics';
 import { selectSelectedDevice } from '@suite-common/device';
 import { type YieldDtoV2 } from '@suite-common/earn-stablecoin-api';
-import { EarnFlow, EarnProvider } from '@suite-common/suite-types/src/staking';
+import { EarnFlow } from '@suite-common/suite-types';
 import {
     DefinitionType,
     type TokenInfo,
@@ -196,7 +196,7 @@ const TokenRowBasicActions = ({
             openModal({
                 type: 'earn-in-a-nutshell',
                 flow: EarnFlow.Yield,
-                provider: EarnProvider.Morpho,
+                provider: 'morpho',
                 account,
                 analyticsStep: 'earn-dashboard',
                 yieldContext: {
