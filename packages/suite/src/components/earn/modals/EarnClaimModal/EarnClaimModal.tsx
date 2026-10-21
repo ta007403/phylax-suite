@@ -98,6 +98,16 @@ export const EarnClaimModal = ({ onCancel, account }: EarnClaimModalProps) => {
     }, [onClaimChange, claimableAmount]);
 
     const onClaimClick = () => {
+        analytics.report({
+            type: events.stakingClaimEvent.name,
+            payload: {
+                action: 'continue',
+                deviceConnectionRequired: !isDeviceConnected,
+                step: 'claim-form-modal',
+                networkSymbol: account.symbol,
+            },
+        });
+
         if (!isDeviceConnected) {
             if (device?.descriptor?.apiType === 'bluetooth') {
                 dispatch(setConnectionMode('bluetooth'));
@@ -108,15 +118,6 @@ export const EarnClaimModal = ({ onCancel, account }: EarnClaimModalProps) => {
         }
 
         handleSubmit(signTx)();
-
-        analytics.report({
-            type: events.stakingClaimEvent.name,
-            payload: {
-                action: 'continue',
-                step: 'claim-form-modal',
-                networkSymbol: account.symbol,
-            },
-        });
     };
 
     const onCancelClick = () => {

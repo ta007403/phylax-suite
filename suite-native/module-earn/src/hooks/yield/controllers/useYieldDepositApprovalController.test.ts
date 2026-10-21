@@ -93,6 +93,7 @@ const renderApprovalController = () => {
     const services: NativeAnalyticsDep = { analytics: mockNativeAnalytics(jest.fn()) };
     const store = createLightStore({
         reducer: {
+            device: createStaticReducer({ selectedDevice: { connected: true } }),
             locale: createStaticReducer({
                 appLocaleCode: 'en-US',
                 systemLocaleCode: 'en-US',

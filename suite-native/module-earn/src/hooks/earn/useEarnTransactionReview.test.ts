@@ -45,6 +45,7 @@ const PUSHED_PAYLOAD = { txid: 'test-txid' };
 
 const createParams = (overrides: Record<string, unknown> = {}) => ({
     formType: 'yield-deposit' as const,
+    networkSymbol: 'eth',
     isSigned: false,
     navigation: { pop: jest.fn() },
     onPushSuccess: jest.fn(),

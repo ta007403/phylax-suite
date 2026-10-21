@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 
 import { type RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 
+import { selectIsDeviceConnected } from '@suite-common/device';
 import { getNetworkDisplaySymbol } from '@suite-common/wallet-config';
 import { type AccountsRootState, selectAccountNetworkSymbol } from '@suite-common/wallet-core';
 import { events, injectNativeAnalytics } from '@suite-native/analytics';
@@ -46,7 +47,8 @@ export const UnstakeFlowScreen = () => {
         selectAccountNetworkSymbol(state, accountKey),
     );
     const { analytics } = useServices(injectNativeAnalytics);
-    const [currency, setCurrency] = useState<'crypto' | 'fiat' | undefined>(undefined);
+    const isDeviceConnected = useSelector(selectIsDeviceConnected);
+    const [currency, setCurrency] = useState<'crypto' | 'fiat'>('crypto');
     const handleCurrencyChange = useCallback((activeView: ActiveView) => {
         setCurrency(activeView === 'primary' ? 'crypto' : 'fiat');
     }, []);
@@ -96,6 +98,7 @@ export const UnstakeFlowScreen = () => {
             type: events.stakingUnstakeEvent.name,
             payload: {
                 action: 'continue',
+                deviceConnectionRequired: !isDeviceConnected,
                 step: 'unstake-form-modal',
                 networkSymbol: networkSymbol ?? undefined,
                 currency,

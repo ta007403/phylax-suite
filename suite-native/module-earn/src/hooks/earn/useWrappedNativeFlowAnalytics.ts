@@ -1,6 +1,8 @@
 import { useCallback } from 'react';
+import { useSelector } from 'react-redux';
 
 import { events } from '@suite-common/analytics';
+import { selectIsDeviceConnected } from '@suite-common/device';
 import { type NetworkSymbol } from '@suite-common/wallet-config';
 import { type WrappedNativeFlowType } from '@suite-common/wallet-core';
 import { injectNativeAnalytics } from '@suite-native/analytics';
@@ -19,11 +21,17 @@ export const useWrappedNativeFlowAnalytics = ({
     networkSymbol,
 }: UseWrappedNativeFlowAnalyticsParams) => {
     const { analytics } = useServices(injectNativeAnalytics);
+    const isDeviceConnected = useSelector(selectIsDeviceConnected);
     const report = useWrappedNativeFlowReport(flowType);
 
     const reportSubmit = useCallback(() => {
-        report({ type: 'submit', action: 'continue', networkSymbol });
-    }, [report, networkSymbol]);
+        report({
+            type: 'submit',
+            action: 'continue',
+            networkSymbol,
+            deviceConnectionRequired: !isDeviceConnected,
+        });
+    }, [report, networkSymbol, isDeviceConnected]);
 
     const reportSimulation = useCallback(
         (action: 'continue' | 'cancel') => {

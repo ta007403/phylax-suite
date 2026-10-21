@@ -13,6 +13,7 @@ const renderFlowAnalytics = async (
         networkSymbol: ethSymbol,
         vaultId: VAULT_ID,
     },
+    isDeviceConnected = true,
 ) => {
     const services: NativeAnalyticsDep = {
         analytics: mockNativeAnalytics(jest.fn()),
@@ -21,12 +22,32 @@ const renderFlowAnalytics = async (
     const view = await renderHookWithStoreProvider(useYieldFlowAnalytics, {
         initialProps: context,
         services,
+        preloadedState: { device: { selectedDevice: { connected: isDeviceConnected } } },
     });
 
     return { ...view, analytics: services.analytics };
 };
 
 describe('useYieldFlowAnalytics', () => {
+    it.each([true, false])(
+        'reports the connection requirement at submit (connected=%s)',
+        async connected => {
+            const { result, analytics } = await renderFlowAnalytics(undefined, connected);
+
+            await act(() => {
+                result.current.reportDeposit({ action: 'continue', type: 'approve' });
+                result.current.reportWithdraw({ action: 'continue', type: 'withdraw' });
+            });
+
+            expect(analytics.report).toHaveBeenCalledTimes(2);
+            for (const [event] of jest.mocked(analytics.report).mock.calls) {
+                expect(event).toMatchObject({
+                    payload: { deviceConnectionRequired: !connected },
+                });
+            }
+        },
+    );
+
     it('reports an interaction with the bound flow context', async () => {
         const { result, analytics } = await renderFlowAnalytics();
 
@@ -59,6 +80,7 @@ describe('useYieldFlowAnalytics', () => {
                 wrappedNative: true,
                 networkSymbol: ethSymbol,
                 vaultId: VAULT_ID,
+                deviceConnectionRequired: false,
             },
         });
     });

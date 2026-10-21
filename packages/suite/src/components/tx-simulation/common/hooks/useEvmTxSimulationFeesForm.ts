@@ -146,6 +146,7 @@ export function useEvmTxSimulationFeesForm({
         ) {
             return {
                 type: 'eip1559',
+                label: values.selectedFee ?? 'normal',
                 gasLimit: fromIntegerString(values.feeLimit).toHex(),
                 maxFeePerGas: fromGwei(eip1559payload.maxFeePerGas).toWei('hex'),
                 maxPriorityFeePerGas: fromGwei(eip1559payload.maxPriorityFeePerGas).toWei('hex'),
@@ -158,6 +159,7 @@ export function useEvmTxSimulationFeesForm({
         if (gasPrice) {
             return {
                 type: 'legacy',
+                label: values.selectedFee ?? 'normal',
                 gasLimit: fromIntegerString(values.feeLimit).toHex(),
                 gasPrice: fromGwei(gasPrice).toWei('hex'),
             };

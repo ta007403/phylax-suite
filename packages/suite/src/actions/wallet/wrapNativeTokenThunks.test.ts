@@ -97,6 +97,9 @@ describe('submitWrapNativeTokenThunk', () => {
             type: 'transaction/cancel',
             payload: { txType: 'yield', networkSymbol: 'eth', stage },
         });
+        expect(report).not.toHaveBeenCalledWith(
+            expect.objectContaining({ payload: expect.objectContaining({ type: 'error' }) }),
+        );
     });
 
     beforeAll(() => {
@@ -420,7 +423,7 @@ describe('submitWrapNativeTokenThunk', () => {
             expectDepositError(report, 'wrap-fee-estimation-failed');
         });
 
-        it('reports a device rejection on the deposit event', async () => {
+        it('reports a device rejection as cancellation without a deposit error', async () => {
             const report = jest.fn();
             mockOpenDeferredModal.mockImplementation(
                 () => () => Promise.resolve({ value: true, resolve: jest.fn(), selectedFee: null }),
@@ -429,7 +432,13 @@ describe('submitWrapNativeTokenThunk', () => {
 
             await dispatchInFlowWrap(report);
 
-            expectDepositError(report, 'wrap-submit-failed');
+            expect(report).toHaveBeenCalledWith({
+                type: 'transaction/cancel',
+                payload: { txType: 'yield', networkSymbol: 'eth', stage: 'signing' },
+            });
+            expect(report).not.toHaveBeenCalledWith(
+                expect.objectContaining({ payload: expect.objectContaining({ type: 'error' }) }),
+            );
         });
 
         it('reports a thrown signing failure on the deposit event', async () => {
@@ -502,7 +511,7 @@ describe('submitWrapNativeTokenThunk', () => {
         );
     });
 
-    it('reports tx-simulation-modal continue and submit-failed when the tx is not broadcast', async () => {
+    it('reports simulation continue and cancellation without an error when signing is cancelled', async () => {
         const report = jest.fn();
         mockOpenDeferredModal.mockImplementation(
             () => () => Promise.resolve({ value: true, resolve: jest.fn(), selectedFee: null }),
@@ -519,7 +528,7 @@ describe('submitWrapNativeTokenThunk', () => {
                 }),
             }),
         );
-        expect(report).toHaveBeenCalledWith(
+        expect(report).not.toHaveBeenCalledWith(
             expect.objectContaining({
                 type: events.yieldWrapEvent.name,
                 payload: expect.objectContaining({

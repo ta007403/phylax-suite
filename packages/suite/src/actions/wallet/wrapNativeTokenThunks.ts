@@ -157,8 +157,6 @@ export const submitWrapNativeTokenThunk = createThunk<
 
             userAcceptedTxSimulation.resolve();
 
-            // Unlike the main yield transactions, a cancelled wrap is reported: the wrap-step
-            // failure values documented on the deposit event include user rejections.
             if (sendResult.status === 'cancelled') {
                 extra.services.analytics.report({
                     type: events.transactionCancelEvent.name,
@@ -168,8 +166,6 @@ export const submitWrapNativeTokenThunk = createThunk<
                         stage: sendResult.stage,
                     },
                 });
-
-                reportError('submit-failed');
 
                 return undefined;
             }

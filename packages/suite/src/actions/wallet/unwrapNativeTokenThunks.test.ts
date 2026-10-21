@@ -92,6 +92,9 @@ describe('submitUnwrapNativeTokenThunk', () => {
             type: 'transaction/cancel',
             payload: { txType: 'yield', networkSymbol: 'eth', stage },
         });
+        expect(report).not.toHaveBeenCalledWith(
+            expect.objectContaining({ payload: expect.objectContaining({ type: 'error' }) }),
+        );
     });
 
     beforeAll(() => {
@@ -262,7 +265,7 @@ describe('submitUnwrapNativeTokenThunk', () => {
             expectWithdrawError(report, 'unwrap-fee-estimation-failed');
         });
 
-        it('reports a device rejection on the withdraw event', async () => {
+        it('reports a device rejection as cancellation without a withdraw error', async () => {
             const report = jest.fn();
             mockOpenDeferredModal.mockImplementation(
                 () => () => Promise.resolve({ value: true, resolve: jest.fn(), selectedFee: null }),
@@ -271,7 +274,13 @@ describe('submitUnwrapNativeTokenThunk', () => {
 
             await dispatchInFlowUnwrap(report);
 
-            expectWithdrawError(report, 'unwrap-submit-failed');
+            expect(report).toHaveBeenCalledWith({
+                type: 'transaction/cancel',
+                payload: { txType: 'yield', networkSymbol: 'eth', stage: 'signing' },
+            });
+            expect(report).not.toHaveBeenCalledWith(
+                expect.objectContaining({ payload: expect.objectContaining({ type: 'error' }) }),
+            );
         });
 
         it('reports a thrown signing failure on the withdraw event', async () => {
@@ -347,7 +356,7 @@ describe('submitUnwrapNativeTokenThunk', () => {
         );
     });
 
-    it('reports tx-simulation-modal continue and submit-failed when the tx is not broadcast', async () => {
+    it('reports simulation continue and cancellation without an error when signing is cancelled', async () => {
         const report = jest.fn();
         mockOpenDeferredModal.mockImplementation(
             () => () => Promise.resolve({ value: true, resolve: jest.fn(), selectedFee: null }),
@@ -364,7 +373,7 @@ describe('submitUnwrapNativeTokenThunk', () => {
                 }),
             }),
         );
-        expect(report).toHaveBeenCalledWith(
+        expect(report).not.toHaveBeenCalledWith(
             expect.objectContaining({
                 type: events.yieldUnwrapEvent.name,
                 payload: expect.objectContaining({

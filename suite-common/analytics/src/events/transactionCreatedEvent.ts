@@ -83,7 +83,13 @@ export const transactionCreatedEvent: EventDef<Attributes, EventType.Transaction
             description: 'Whether the destination-tag option is enabled in the signing form',
         },
         selectedFee: {
-            changelog: [{ version: '1.9.0', notes: 'added' }],
+            changelog: [
+                { version: '1.9.0', notes: 'added' },
+                {
+                    version: '26.11.0',
+                    notes: 'Desktop yield preserves the fee level selected in simulation instead of always reporting custom.',
+                },
+            ],
             description:
                 'The selected fee level for the transaction (e.g., `custom`, `normal`, `economy`, `high`, `low`)',
         },

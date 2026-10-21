@@ -90,6 +90,19 @@ export const YieldClaim = ({ account }: YieldClaimProps) => {
             return;
         }
 
+        const { account, rewards } = accountRewards;
+
+        analytics.report({
+            type: events.yieldClaimEvent.name,
+            payload: {
+                action: 'continue',
+                deviceConnectionRequired: !isDeviceConnected,
+                type: 'claim',
+                networkSymbol: account.symbol,
+                rewardCount: rewards.length,
+            },
+        });
+
         if (!isDeviceConnected) {
             if (device?.descriptor?.apiType === 'bluetooth') {
                 dispatch(setConnectionMode('bluetooth'));
@@ -98,18 +111,6 @@ export const YieldClaim = ({ account }: YieldClaimProps) => {
 
             return;
         }
-
-        const { account, rewards } = accountRewards;
-
-        analytics.report({
-            type: events.yieldClaimEvent.name,
-            payload: {
-                action: 'continue',
-                type: 'claim',
-                networkSymbol: account.symbol,
-                rewardCount: rewards.length,
-            },
-        });
 
         const isSessionReady = await ensureDeviceSession();
 

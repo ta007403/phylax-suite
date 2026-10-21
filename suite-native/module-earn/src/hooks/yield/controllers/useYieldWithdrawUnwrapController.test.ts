@@ -3,7 +3,7 @@ import { mockResolvedYieldFlowData, mockYieldSessionState } from '@suite-common/
 import { type NativeAnalyticsDep } from '@suite-native/analytics';
 import { mockNativeAnalytics } from '@suite-native/analytics/mocks';
 import { YieldStackRoutes } from '@suite-native/navigation';
-import { renderHookWithStoreProvider } from '@suite-native/test-utils-store';
+import { act, renderHookWithStoreProvider } from '@suite-native/test-utils-store';
 
 import { useYieldWithdrawUnwrapController } from './useYieldWithdrawUnwrapController';
 import { mockYieldWrappedNativeStepResult } from '../../../../mocks/mockYieldWrappedNativeStepResult';
@@ -42,15 +42,21 @@ const buildUnwrapStep = (
         ...overrides,
     });
 
-const renderUnwrapController = () => {
+const renderUnwrapController = async () => {
     const services: NativeAnalyticsDep = { analytics: mockNativeAnalytics(jest.fn()) };
 
-    return renderHookWithStoreProvider(useYieldWithdrawUnwrapController, { services });
+    const view = await renderHookWithStoreProvider(useYieldWithdrawUnwrapController, {
+        services,
+        preloadedState: { device: { selectedDevice: { connected: true } } },
+    });
+
+    return { ...view, analytics: services.analytics };
 };
 
 describe('useYieldWithdrawUnwrapController', () => {
     beforeEach(() => {
         jest.clearAllMocks();
+        mockRouteParams.withdrawFlowType = 'redeem';
         useYieldFlowDataMock.mockReturnValue(resolvedYieldFlowData);
         useYieldWrappedNativeStepMock.mockReturnValue(buildUnwrapStep());
         useMessageSystemWrappedNativeMock.mockReturnValue({
@@ -59,6 +65,47 @@ describe('useYieldWithdrawUnwrapController', () => {
             variant: undefined,
         } as ReturnType<typeof useMessageSystemWrappedNative>);
     });
+
+    it.each([
+        { operation: 'withdraw', action: 'continue' },
+        { operation: 'withdraw', action: 'cancel' },
+        { operation: 'redeem', action: 'continue' },
+        { operation: 'redeem', action: 'cancel' },
+    ] as const)(
+        'reports an unwrap simulation decision ($operation, $action)',
+        async ({ operation, action }) => {
+            mockRouteParams.withdrawFlowType = operation;
+            const step = buildUnwrapStep();
+            step.simulation.preparedTx = {
+                amount: '1',
+                unsignedTransaction: 'prepared-transaction',
+            };
+            useYieldWrappedNativeStepMock.mockReturnValue(step);
+            const { result, analytics } = await renderUnwrapController();
+
+            if (result.current.status !== 'ready' || !result.current.simulationSheet) {
+                throw new Error('Simulation sheet is not ready');
+            }
+            const sheet = result.current.simulationSheet;
+            await act(() => sheet[action === 'continue' ? 'onConfirm' : 'onCancel']());
+
+            expect(analytics.report).toHaveBeenCalledWith({
+                type: 'yield/withdraw',
+                payload: {
+                    action,
+                    type: 'tx-simulation-modal',
+                    operation,
+                    networkSymbol: resolvedYieldFlowData.account.symbol,
+                    vaultId: resolvedYieldFlowData.vault.id,
+                },
+            });
+            expect(
+                step.simulation[
+                    action === 'continue' ? 'handleConfirmSimulation' : 'handleCancelSimulation'
+                ],
+            ).toHaveBeenCalledTimes(1);
+        },
+    );
 
     it('reports loading for a vault that is not wrapped-native', async () => {
         useYieldFlowDataMock.mockReturnValue({

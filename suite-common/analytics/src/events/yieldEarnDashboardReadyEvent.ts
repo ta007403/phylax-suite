@@ -18,7 +18,7 @@ export const yieldEarnDashboardReadyEvent: EventDef<Attributes, EventType.YieldE
             { version: '26.7.1', notes: 'moved to suite-common, reported from mobile as well' },
             {
                 version: '26.11.0',
-                notes: 'Mobile waits for successful opportunities and claim rewards requests instead of reporting empty data after API errors.',
+                notes: 'Mobile waits for successful opportunities and claim rewards requests instead of reporting empty data after API errors, and also reports dashboards without existing positions or rewards.',
             },
         ],
 

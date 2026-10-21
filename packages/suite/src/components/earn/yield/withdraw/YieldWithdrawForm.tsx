@@ -30,6 +30,7 @@ export const YieldWithdrawForm = () => {
     const { analytics } = useServices(injectDesktopAnalytics);
 
     const {
+        isDeviceConnected,
         account,
         vault,
         token,
@@ -107,6 +108,7 @@ export const YieldWithdrawForm = () => {
                 type: 'withdraw',
                 operation: flowType,
                 action: 'continue',
+                deviceConnectionRequired: !isDeviceConnected,
                 networkSymbol: token.networkSymbol,
                 vaultId: vault.id,
                 wrappedNative: flow.isWrappedNativeVault,
@@ -124,6 +126,7 @@ export const YieldWithdrawForm = () => {
                 type: 'unwrap',
                 operation: flowType,
                 action: 'continue',
+                deviceConnectionRequired: !isDeviceConnected,
                 networkSymbol: token.networkSymbol,
                 vaultId: vault.id,
             },

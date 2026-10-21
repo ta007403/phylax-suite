@@ -30,20 +30,17 @@ export const TronWithdrawSubmitButton = () => {
             return;
         }
 
-        submitAction();
-
-        if (!device?.connected || !device?.available) {
-            return;
-        }
-
         analytics.report({
             type: events.stakingUnstakeEvent.name,
             payload: {
                 action: 'continue',
+                deviceConnectionRequired: !device?.connected || !device?.available,
                 step: 'withdraw-form-modal',
                 networkSymbol: account.symbol,
             },
         });
+
+        submitAction();
     };
 
     return (

@@ -108,6 +108,7 @@ export const sendYieldTransaction = async ({
     const transactionReview = buildStablecoinYieldTransactionReview({
         unsignedTransaction,
         selectedFee,
+        selectedFeeLevel: selectedFee?.label,
         amount,
         token,
         symbol: account.symbol,

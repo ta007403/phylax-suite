@@ -45,7 +45,11 @@ jest.mock('@suite-native/forms', () => ({
 }));
 jest.mock('@suite-native/transaction-management', () => ({ FeeSelector: () => null }));
 jest.mock('../../components/staking/StakingFormScreenFooter', () => ({
-    StakingFormScreenFooter: () => null,
+    StakingFormScreenFooter: ({ onPress }: { onPress: () => void }) => {
+        const { Pressable } = jest.requireActual('react-native');
+
+        return <Pressable onPress={onPress} testID="submit-stake" />;
+    },
 }));
 jest.mock('../../hooks/staking/useStakingForm');
 jest.mock('../../utils/staking/isBalanceBelowStakingMinimum', () => ({
@@ -69,9 +73,12 @@ jest.mock('../../components/earn/EarnOutputFields', () => ({
     },
 }));
 
-const renderStakingForm = async () => {
+const renderStakingForm = async (isDeviceConnected = true) => {
     const services: NativeAnalyticsDep = { analytics: mockNativeAnalytics(jest.fn()) };
-    const view = await renderWithStoreProvider(<StakingFormScreen />, { services });
+    const view = await renderWithStoreProvider(<StakingFormScreen />, {
+        services,
+        preloadedState: { device: { selectedDevice: { connected: isDeviceConnected } } },
+    });
 
     return {
         ...view,
@@ -85,6 +92,23 @@ const renderStakingForm = async () => {
 };
 
 describe('StakingFormScreen analytics', () => {
+    it.each([true, false])(
+        'reports connection state on a submit attempt (connected=%s)',
+        async connected => {
+            const view = await renderStakingForm(connected);
+            await fireEvent.press(view.getByTestId('submit-stake'));
+            expect(view.analytics.report).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    type: 'staking/stake',
+                    payload: expect.objectContaining({
+                        action: 'continue',
+                        deviceConnectionRequired: !connected,
+                    }),
+                }),
+            );
+        },
+    );
+
     beforeEach(() => {
         jest.clearAllMocks();
         mockNavigation.addListener.mockReturnValue(jest.fn());
@@ -98,6 +122,7 @@ describe('StakingFormScreen analytics', () => {
     });
 
     it.each([
+        ['crypto', []],
         ['fiat', ['Fiat input']],
         ['crypto', ['Fiat input', 'Crypto input']],
     ] as const)(

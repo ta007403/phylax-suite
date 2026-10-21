@@ -5,7 +5,7 @@ import { mockWalletAccount } from '@suite-common/wallet-types/mocks';
 import { type NativeAnalyticsDep } from '@suite-native/analytics';
 import { mockNativeAnalytics } from '@suite-native/analytics/mocks';
 import { YieldStackRoutes } from '@suite-native/navigation';
-import { renderHookWithStoreProvider } from '@suite-native/test-utils-store';
+import { act, renderHookWithStoreProvider } from '@suite-native/test-utils-store';
 
 import { mockYieldWrappedNativeStepResult } from '../../../../mocks/mockYieldWrappedNativeStepResult';
 import { useMessageSystemWrappedNative } from '../../earn/useMessageSystemWrappedNative';
@@ -49,9 +49,12 @@ const enabledMessageSystem = { isDisabled: false, content: undefined, variant: u
 
 const renderWrapController = async () => {
     const services: NativeAnalyticsDep = { analytics: mockNativeAnalytics(jest.fn()) };
-    const view = await renderHookWithStoreProvider(useYieldDepositWrapController, { services });
+    const view = await renderHookWithStoreProvider(useYieldDepositWrapController, {
+        services,
+        preloadedState: { device: { selectedDevice: { connected: true } } },
+    });
 
-    return view;
+    return { ...view, analytics: services.analytics };
 };
 
 describe('useYieldDepositWrapController', () => {
@@ -67,6 +70,40 @@ describe('useYieldDepositWrapController', () => {
             enabledMessageSystem as ReturnType<typeof useMessageSystemWrappedNative>,
         );
     });
+
+    it.each(['continue', 'cancel'] as const)(
+        'reports a wrap simulation decision (%s)',
+        async action => {
+            const step = mockYieldWrappedNativeStepResult();
+            step.simulation.preparedTx = {
+                amount: '1',
+                unsignedTransaction: 'prepared-transaction',
+            };
+            useYieldWrappedNativeStepMock.mockReturnValue(step);
+            const { result, analytics } = await renderWrapController();
+
+            if (result.current.status !== 'ready' || !result.current.simulationSheet) {
+                throw new Error('Simulation sheet is not ready');
+            }
+            const sheet = result.current.simulationSheet;
+            await act(() => sheet[action === 'continue' ? 'onConfirm' : 'onCancel']());
+
+            expect(analytics.report).toHaveBeenCalledWith({
+                type: 'yield/deposit',
+                payload: {
+                    action,
+                    type: 'tx-simulation-modal',
+                    networkSymbol: resolvedYieldFlowData.account.symbol,
+                    vaultId: resolvedYieldFlowData.vault.id,
+                },
+            });
+            expect(
+                step.simulation[
+                    action === 'continue' ? 'handleConfirmSimulation' : 'handleCancelSimulation'
+                ],
+            ).toHaveBeenCalledTimes(1);
+        },
+    );
 
     it('reports loading for a vault that is not wrapped-native', async () => {
         useYieldFlowDataMock.mockReturnValue({

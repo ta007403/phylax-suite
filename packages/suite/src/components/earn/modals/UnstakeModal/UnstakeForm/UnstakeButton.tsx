@@ -33,6 +33,17 @@ export const UnstakeButton = () => {
     const areFeesLoading = useSelector(state => selectAreFeesLoading(state, network.symbol));
 
     const onWithdrawalClick = () => {
+        analytics.report({
+            type: events.stakingUnstakeEvent.name,
+            payload: {
+                action: 'continue',
+                deviceConnectionRequired: !isDeviceConnected,
+                step: 'unstake-form-modal',
+                currency,
+                networkSymbol: account.symbol,
+            },
+        });
+
         if (!isDeviceConnected) {
             if (device?.descriptor?.apiType === 'bluetooth') {
                 dispatch(setConnectionMode('bluetooth'));
@@ -43,16 +54,6 @@ export const UnstakeButton = () => {
         }
 
         handleSubmit(signTx)();
-
-        analytics.report({
-            type: events.stakingUnstakeEvent.name,
-            payload: {
-                action: 'continue',
-                step: 'unstake-form-modal',
-                currency,
-                networkSymbol: account.symbol,
-            },
-        });
     };
 
     const isLoading = isComposing || isSubmitting || isDiscoveryRunning || areFeesLoading;

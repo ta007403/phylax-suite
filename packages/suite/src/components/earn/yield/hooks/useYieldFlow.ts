@@ -727,6 +727,7 @@ export const useYieldFlow = ({
         });
 
     return {
+        isDeviceConnected,
         account,
         vault,
         token,

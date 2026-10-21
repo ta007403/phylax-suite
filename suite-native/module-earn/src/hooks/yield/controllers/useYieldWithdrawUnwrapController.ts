@@ -223,8 +223,22 @@ export const useYieldWithdrawUnwrapController = () => {
             ? {
                   bottomSheetRef: simulation.simulationBottomSheetRef,
                   unsignedTransaction: simulation.preparedTx.unsignedTransaction,
-                  onConfirm: simulation.handleConfirmSimulation,
-                  onCancel: simulation.handleCancelSimulation,
+                  onConfirm: () => {
+                      reportWithdraw({
+                          action: 'continue',
+                          type: 'tx-simulation-modal',
+                          operation: flowType,
+                      });
+                      simulation.handleConfirmSimulation();
+                  },
+                  onCancel: () => {
+                      reportWithdraw({
+                          action: 'cancel',
+                          type: 'tx-simulation-modal',
+                          operation: flowType,
+                      });
+                      simulation.handleCancelSimulation();
+                  },
               }
             : null,
     };

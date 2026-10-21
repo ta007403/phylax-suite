@@ -61,16 +61,11 @@ export const TronVoteSubmitButton = () => {
             return;
         }
 
-        submitAction();
-
-        if (!device?.connected || !device?.available) {
-            return;
-        }
-
         analytics.report({
             type: events.stakingUpdateProviderEvent.name,
             payload: {
                 action: 'continue',
+                deviceConnectionRequired: !device?.connected || !device?.available,
                 step: 'stake-form-modal',
                 networkSymbol: account.symbol,
                 votingDelegation: getVotingDelegationAnalyticsValue(
@@ -79,6 +74,8 @@ export const TronVoteSubmitButton = () => {
                 ),
             },
         });
+
+        submitAction();
     };
 
     return (

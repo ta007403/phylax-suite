@@ -1,10 +1,15 @@
-import type { AttributeDef, EventDef } from '@suite-common/analytics';
+import {
+    type AttributeDef,
+    type EventDef,
+    deviceConnectionRequiredAttribute,
+} from '@suite-common/analytics';
 import type { EarnAnalyticsStep, EarnModalAction } from '@suite-common/suite-types';
 
 import { EventType } from '../constants';
 
 type Attributes = {
     action: AttributeDef<EarnModalAction>;
+    deviceConnectionRequired?: AttributeDef<boolean>;
     step: AttributeDef<
         Extract<
             EarnAnalyticsStep,
@@ -26,6 +31,7 @@ export const stakingUpdateProviderEvent: EventDef<Attributes, EventType.StakingU
     changelog: [{ version: '25.12.0', notes: 'added' }],
 
     attributes: {
+        deviceConnectionRequired: deviceConnectionRequiredAttribute,
         action: {
             changelog: [
                 { version: '25.12.0', notes: 'added' },

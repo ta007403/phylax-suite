@@ -9,6 +9,9 @@ import { ServicesProvider } from '@trezor/dependency-injection';
 import { useWrappedNativeFlowAnalytics } from './useWrappedNativeFlowAnalytics';
 
 const mockReport = jest.fn();
+let mockDevice = { connected: true, available: true };
+
+jest.mock('@suite/device', () => ({ useDevice: () => ({ device: mockDevice }) }));
 
 type Props = Parameters<typeof useWrappedNativeFlowAnalytics>[0];
 
@@ -33,7 +36,30 @@ const renderFlowAnalytics = (initialProps: Props) => {
 describe('useWrappedNativeFlowAnalytics', () => {
     beforeEach(() => {
         jest.clearAllMocks();
+        mockDevice = { connected: true, available: true };
     });
+
+    it.each([
+        { connected: true, available: true },
+        { connected: false, available: false },
+        { connected: true, available: false },
+    ])(
+        'reports the connection requirement before the device guard ($connected/$available)',
+        device => {
+            mockDevice = device;
+            const { result } = renderFlowAnalytics({ ...pendingWrap, status: null, txid: null });
+
+            act(() => result.current.reportSubmit());
+
+            expect(mockReport).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    payload: expect.objectContaining({
+                        deviceConnectionRequired: !device.connected || !device.available,
+                    }),
+                }),
+            );
+        },
+    );
 
     it('reportSubmit fires the submit event', () => {
         const { result } = renderFlowAnalytics({

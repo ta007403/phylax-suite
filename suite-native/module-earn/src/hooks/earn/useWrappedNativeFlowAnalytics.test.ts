@@ -5,7 +5,10 @@ import { act, renderHookWithStoreProvider } from '@suite-native/test-utils-store
 
 import { useWrappedNativeFlowAnalytics } from './useWrappedNativeFlowAnalytics';
 
-const renderFlowAnalytics = async (props: Parameters<typeof useWrappedNativeFlowAnalytics>[0]) => {
+const renderFlowAnalytics = async (
+    props: Parameters<typeof useWrappedNativeFlowAnalytics>[0],
+    isDeviceConnected = true,
+) => {
     const services: NativeAnalyticsDep = {
         analytics: mockNativeAnalytics(jest.fn()),
     };
@@ -13,27 +16,41 @@ const renderFlowAnalytics = async (props: Parameters<typeof useWrappedNativeFlow
     const view = await renderHookWithStoreProvider(useWrappedNativeFlowAnalytics, {
         initialProps: props,
         services,
+        preloadedState: { device: { selectedDevice: { connected: isDeviceConnected } } },
     });
 
     return { ...view, analytics: services.analytics };
 };
 
 describe('useWrappedNativeFlowAnalytics', () => {
-    it('reports submit as yield/wrap for the wrap flow', async () => {
-        const { result, analytics } = await renderFlowAnalytics({
-            flowType: 'wrap',
-            networkSymbol: asNetworkSymbol('eth'),
-        });
+    it.each([
+        { flowType: 'wrap', connected: true },
+        { flowType: 'wrap', connected: false },
+        { flowType: 'unwrap', connected: true },
+        { flowType: 'unwrap', connected: false },
+    ] as const)(
+        'reports the connection requirement for $flowType (connected=$connected)',
+        async ({ flowType, connected }) => {
+            const { result, analytics } = await renderFlowAnalytics(
+                { flowType, networkSymbol: asNetworkSymbol('eth') },
+                connected,
+            );
 
-        await act(() => {
-            result.current.reportSubmit();
-        });
+            await act(() => {
+                result.current.reportSubmit();
+            });
 
-        expect(analytics.report).toHaveBeenCalledWith({
-            type: 'yield/wrap',
-            payload: { type: 'submit', action: 'continue', networkSymbol: 'eth' },
-        });
-    });
+            expect(analytics.report).toHaveBeenCalledWith({
+                type: `yield/${flowType}`,
+                payload: {
+                    type: 'submit',
+                    action: 'continue',
+                    networkSymbol: 'eth',
+                    deviceConnectionRequired: !connected,
+                },
+            });
+        },
+    );
 
     it('reports a cancelled simulation', async () => {
         const { result, analytics } = await renderFlowAnalytics({

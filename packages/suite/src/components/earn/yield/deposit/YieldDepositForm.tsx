@@ -33,6 +33,7 @@ export const YieldDepositForm = () => {
     const { CryptoAmountFormatter } = useFormatters();
 
     const {
+        isDeviceConnected,
         account,
         vault,
         token,
@@ -195,6 +196,7 @@ export const YieldDepositForm = () => {
             payload: {
                 type: approvalAction === 'revoke' ? 'revoke' : 'approve',
                 action: 'continue',
+                deviceConnectionRequired: !isDeviceConnected,
                 networkSymbol: token.networkSymbol,
                 vaultId: vault.id,
             },
@@ -223,6 +225,7 @@ export const YieldDepositForm = () => {
             payload: {
                 type: 'revoke',
                 action: 'continue',
+                deviceConnectionRequired: !isDeviceConnected,
                 networkSymbol: token.networkSymbol,
                 vaultId: vault.id,
             },
@@ -252,6 +255,7 @@ export const YieldDepositForm = () => {
             payload: {
                 type: 'deposit',
                 action: 'continue',
+                deviceConnectionRequired: !isDeviceConnected,
                 networkSymbol: token.networkSymbol,
                 vaultId: vault.id,
                 wrappedNative: flow.isWrappedNativeVault,
@@ -268,6 +272,7 @@ export const YieldDepositForm = () => {
             payload: {
                 type: 'wrap',
                 action: 'continue',
+                deviceConnectionRequired: !isDeviceConnected,
                 networkSymbol: token.networkSymbol,
                 vaultId: vault.id,
             },

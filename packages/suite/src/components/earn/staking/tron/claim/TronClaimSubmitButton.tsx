@@ -48,20 +48,17 @@ export const TronClaimSubmitButton = () => {
             return;
         }
 
-        submitAction();
-
-        if (!device?.connected || !device?.available) {
-            return;
-        }
-
         analytics.report({
             type: events.stakingClaimEvent.name,
             payload: {
                 action: 'continue',
+                deviceConnectionRequired: !device?.connected || !device?.available,
                 step: 'claim-form-modal',
                 networkSymbol: account.symbol,
             },
         });
+
+        submitAction();
     };
 
     return (

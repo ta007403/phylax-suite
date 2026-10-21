@@ -1,10 +1,15 @@
-import type { AttributeDef, EventDef } from '@suite-common/analytics';
+import {
+    type AttributeDef,
+    type EventDef,
+    deviceConnectionRequiredAttribute,
+} from '@suite-common/analytics';
 import type { EarnAnalyticsStep, EarnModalAction } from '@suite-common/suite-types';
 
 import { EventType } from '../constants';
 
 type Attributes = {
     action: AttributeDef<EarnModalAction>;
+    deviceConnectionRequired?: AttributeDef<boolean>;
     step: AttributeDef<Extract<EarnAnalyticsStep, 'staking-dashboard' | 'claim-form-modal'>>;
     networkSymbol?: AttributeDef<string>;
 };
@@ -16,6 +21,7 @@ export const stakingClaimEvent: EventDef<Attributes, EventType.StakingClaim> = {
     changelog: [{ version: '25.4.0', notes: 'added' }],
 
     attributes: {
+        deviceConnectionRequired: deviceConnectionRequiredAttribute,
         action: {
             description:
                 'The user action: `continue` to proceed with claiming, `cancel` to abort, or `close` to dismiss the modal',

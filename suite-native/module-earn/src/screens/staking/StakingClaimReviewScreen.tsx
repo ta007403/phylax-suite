@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 
 import { type RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 
+import { selectIsDeviceConnected } from '@suite-common/device';
 import { getNetworkDisplaySymbol } from '@suite-common/wallet-config';
 import {
     type AccountsRootState,
@@ -94,6 +95,7 @@ export const StakingClaimReviewScreen = () => {
         useSolanaStakingLimit({ accountKey, type: 'claim', amount: claimableAmount });
 
     const { analytics } = useServices(injectNativeAnalytics);
+    const isDeviceConnected = useSelector(selectIsDeviceConnected);
     const registerNavigateBackAnalytics = useNavigateBackAnalytics({
         type: events.stakingClaimEvent.name,
         payload: {
@@ -110,6 +112,7 @@ export const StakingClaimReviewScreen = () => {
             type: events.stakingClaimEvent.name,
             payload: {
                 action: 'continue',
+                deviceConnectionRequired: !isDeviceConnected,
                 step: 'claim-form-modal',
                 networkSymbol: symbol,
             },

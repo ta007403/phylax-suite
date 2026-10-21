@@ -31,22 +31,19 @@ export const TronUnstakeSubmitButton = () => {
             return;
         }
 
-        submitAction();
-
-        if (!device?.connected || !device?.available) {
-            return;
-        }
-
         analytics.report({
             type: events.stakingUnstakeEvent.name,
             payload: {
                 action: 'continue',
+                deviceConnectionRequired: !device?.connected || !device?.available,
                 step: 'unstake-form-modal',
                 networkSymbol: account.symbol,
                 currency: amountInput.currency,
                 resource: form.methods.getValues().resourceType,
             },
         });
+
+        submitAction();
     };
 
     return (

@@ -70,6 +70,20 @@ export const StakeButton = ({ flow }: StakeButtonProps) => {
         !isFormInputsValid || isSubmitting || isSigning || (isDeviceConnected && isLocked());
 
     const onStakeClick = () => {
+        analytics.report({
+            type: earnFlowToEventTypeMap[flow],
+            payload: {
+                action: 'continue',
+                deviceConnectionRequired: !isDeviceConnected,
+                step: 'stake-form-modal',
+                currency,
+                networkSymbol: account.symbol,
+                ...(flow === EarnFlow.UpdateProvider && isCardano
+                    ? { votingDelegation: selectedVotingDelegation.type }
+                    : {}),
+            },
+        });
+
         if (!isDeviceConnected) {
             if (device?.descriptor?.apiType === 'bluetooth') {
                 dispatch(setConnectionMode('bluetooth'));
@@ -85,19 +99,6 @@ export const StakeButton = ({ flow }: StakeButtonProps) => {
         } else {
             handleSubmit(onSubmit)();
         }
-
-        analytics.report({
-            type: earnFlowToEventTypeMap[flow],
-            payload: {
-                action: 'continue',
-                step: 'stake-form-modal',
-                currency,
-                networkSymbol: account.symbol,
-                ...(flow === EarnFlow.UpdateProvider && isCardano
-                    ? { votingDelegation: selectedVotingDelegation.type }
-                    : {}),
-            },
-        });
     };
 
     const isLoading =

@@ -1,4 +1,8 @@
-import type { AttributeDef, EventDef } from '@suite-common/analytics';
+import {
+    type AttributeDef,
+    type EventDef,
+    deviceConnectionRequiredAttribute,
+} from '@suite-common/analytics';
 import type { EarnModalAction } from '@suite-common/suite-types';
 
 import { EventType } from '../constants';
@@ -6,6 +10,7 @@ import { type StakingClaimStep } from '../definitions';
 
 type Attributes = {
     action: AttributeDef<EarnModalAction>;
+    deviceConnectionRequired?: AttributeDef<boolean>;
     step: AttributeDef<StakingClaimStep>;
     networkSymbol?: AttributeDef<string>;
 };
@@ -16,6 +21,7 @@ export const stakingClaimEvent: EventDef<Attributes, EventType.StakingClaim> = {
         'User navigates through the staking claim/reward collection flow, with tracking at each step of the process',
     changelog: [{ version: '26.4.1', notes: 'added' }],
     attributes: {
+        deviceConnectionRequired: deviceConnectionRequiredAttribute,
         action: {
             changelog: [{ version: '26.4.1', notes: 'added' }],
             description:

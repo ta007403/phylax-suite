@@ -16,6 +16,7 @@ import {
 } from '../../earnScreenSelectors';
 import { useMessageSystemEarnDashboard } from '../../hooks/earn/useMessageSystemEarnDashboard';
 import { useClaimRewardsWithFiat } from '../../hooks/yield/useClaimRewardsWithFiat';
+import { useReportYieldDashboardReadyEvent } from '../../hooks/yield/useReportYieldDashboardReadyEvent';
 import { useYieldOpportunities } from '../../hooks/yield/useYieldOpportunities';
 import { CardanoStakingInfoBanner } from '../staking/CardanoStakingInfoBanner';
 import { StakingPositionsCard } from '../staking/StakingPositionsCard';
@@ -27,7 +28,11 @@ export const EarnScreenHeader = () => {
     const { isDisabled: isStakingDisabled } = useMessageSystemEarnDashboard('staking');
     const { isDisabled: isYieldDisabled } = useMessageSystemEarnDashboard('yield');
 
-    const { yieldOpportunities } = useYieldOpportunities();
+    const {
+        yieldOpportunities,
+        isLoading: isYieldOpportunitiesLoading,
+        isError: isYieldOpportunitiesError,
+    } = useYieldOpportunities();
 
     const stakingPositions = useSelector((state: EarnListRootState) =>
         !isStakingDisabled ? selectStakingListItems(state) : EMPTY_ARRAY,
@@ -37,7 +42,7 @@ export const EarnScreenHeader = () => {
         !isYieldDisabled ? selectYieldListItems(state, yieldOpportunities) : EMPTY_ARRAY,
     );
 
-    const { claimRewardsWithFiat } = useClaimRewardsWithFiat();
+    const { claimRewardsWithFiat, isClaimLoading, isClaimError } = useClaimRewardsWithFiat();
 
     const claimItems = useSelector((state: EarnListRootState) =>
         selectYieldClaimListItems(state, claimRewardsWithFiat),
@@ -50,6 +55,14 @@ export const EarnScreenHeader = () => {
 
     const hasEarnPositions = stakingPositions.length > 0 || yieldPositions.length > 0;
     const hasClaimItems = claimItems.length > 0;
+
+    useReportYieldDashboardReadyEvent({
+        yieldOpportunities,
+        isLoading: isYieldOpportunitiesLoading || isClaimLoading,
+        isError: isYieldOpportunitiesError || isClaimError || isYieldDisabled,
+        positionsCount: yieldPositions.length,
+        claimItemsCount: isYieldDisabled ? 0 : claimItems.length,
+    });
 
     if (!hasEarnPositions && !hasClaimItems) return null;
 

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef } from 'react';
 
 import { injectDesktopAnalytics } from '@suite/analytics';
+import { useDevice } from '@suite/device';
 import { type EventInstance, events } from '@suite-common/analytics';
 import { type EvmPendingTxStatus, type WrappedNativeFlowType } from '@suite-common/wallet-core';
 import { useServices } from '@trezor/dependency-injection';
@@ -28,6 +29,8 @@ export const useWrappedNativeFlowAnalytics = ({
     networkSymbol,
 }: UseWrappedNativeFlowAnalyticsParams) => {
     const { analytics } = useServices(injectDesktopAnalytics);
+    const { device } = useDevice();
+    const deviceConnectionRequired = !device?.connected || !device?.available;
     const hasReportedResolutionRef = useRef(false);
     const startRef = useRef<{ txid: string; startedAt: number } | null>(null);
 
@@ -43,8 +46,8 @@ export const useWrappedNativeFlowAnalytics = ({
     );
 
     const reportSubmit = useCallback(() => {
-        report({ type: 'submit', action: 'continue', networkSymbol });
-    }, [report, networkSymbol]);
+        report({ type: 'submit', action: 'continue', networkSymbol, deviceConnectionRequired });
+    }, [report, networkSymbol, deviceConnectionRequired]);
 
     // No `vaultId` — that is what separates these from the in-flow deposit-max / withdraw-max.
     const reportMaxClick = useCallback(() => {

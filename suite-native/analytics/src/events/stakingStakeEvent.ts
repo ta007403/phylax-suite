@@ -1,4 +1,8 @@
-import type { AttributeDef, EventDef } from '@suite-common/analytics';
+import {
+    type AttributeDef,
+    type EventDef,
+    deviceConnectionRequiredAttribute,
+} from '@suite-common/analytics';
 import type { EarnModalAction } from '@suite-common/suite-types';
 
 import { EventType } from '../constants';
@@ -6,6 +10,7 @@ import { type StakingStakeStep } from '../definitions';
 
 type Attributes = {
     action: AttributeDef<EarnModalAction>;
+    deviceConnectionRequired?: AttributeDef<boolean>;
     step: AttributeDef<StakingStakeStep>;
     networkSymbol?: AttributeDef<string>;
     currency?: AttributeDef<'crypto' | 'fiat'>;
@@ -19,10 +24,11 @@ export const stakingStakeEvent: EventDef<Attributes, EventType.StakingStake> = {
         { version: '26.4.1', notes: 'added' },
         {
             version: '26.11.0',
-            notes: 'Form cancellation reports the latest selected crypto/fiat currency.',
+            notes: 'Form events report crypto by default and the latest selected crypto/fiat currency on cancellation.',
         },
     ],
     attributes: {
+        deviceConnectionRequired: deviceConnectionRequiredAttribute,
         action: {
             changelog: [{ version: '26.4.1', notes: 'added' }],
             description:

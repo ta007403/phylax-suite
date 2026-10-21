@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { type RouteProp, useIsFocused, useNavigation, useRoute } from '@react-navigation/native';
 
 import { events } from '@suite-common/analytics';
+import { selectIsDeviceConnected } from '@suite-common/device';
 import { Context } from '@suite-common/message-system';
 import { asNetworkSymbol, getNetwork } from '@suite-common/wallet-config';
 import {
@@ -180,6 +181,8 @@ export const YieldClaimScreen = () => {
         }
     }, [isSheetPresented, navigation, route.params, session?.step]);
 
+    const isDeviceConnected = useSelector(selectIsDeviceConnected);
+
     const reportClaimEvent = useCallback(
         (payload: { action: 'continue' | 'cancel'; type: 'claim' | 'tx-simulation-modal' }) => {
             analytics.report({
@@ -188,10 +191,13 @@ export const YieldClaimScreen = () => {
                     ...payload,
                     networkSymbol: account?.symbol,
                     rewardCount: accountRewards?.rewards.length,
+                    ...(payload.action === 'continue' && payload.type === 'claim'
+                        ? { deviceConnectionRequired: !isDeviceConnected }
+                        : {}),
                 },
             });
         },
-        [account?.symbol, accountRewards?.rewards.length, analytics],
+        [account?.symbol, accountRewards?.rewards.length, analytics, isDeviceConnected],
     );
 
     const handleContinue = useCallback(() => {

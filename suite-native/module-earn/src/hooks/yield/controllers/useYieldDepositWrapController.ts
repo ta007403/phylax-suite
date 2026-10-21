@@ -205,8 +205,14 @@ export const useYieldDepositWrapController = () => {
             ? {
                   bottomSheetRef: simulation.simulationBottomSheetRef,
                   unsignedTransaction: simulation.preparedTx.unsignedTransaction,
-                  onConfirm: simulation.handleConfirmSimulation,
-                  onCancel: simulation.handleCancelSimulation,
+                  onConfirm: () => {
+                      reportDeposit({ action: 'continue', type: 'tx-simulation-modal' });
+                      simulation.handleConfirmSimulation();
+                  },
+                  onCancel: () => {
+                      reportDeposit({ action: 'cancel', type: 'tx-simulation-modal' });
+                      simulation.handleCancelSimulation();
+                  },
               }
             : null,
     };

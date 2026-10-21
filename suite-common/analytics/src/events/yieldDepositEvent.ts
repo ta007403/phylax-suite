@@ -1,10 +1,12 @@
 import type { EarnModalAction } from '@suite-common/suite-types';
 
 import { EventType } from '../constants';
+import { deviceConnectionRequiredAttribute } from '../earnAttributes';
 import type { AttributeDef, EventDef } from '../eventDefinition';
 
 type Attributes = {
     action: AttributeDef<EarnModalAction>;
+    deviceConnectionRequired?: AttributeDef<boolean>;
     type: AttributeDef<
         | 'approve'
         | 'approve-modal'
@@ -43,11 +45,12 @@ export const yieldDepositEvent: EventDef<Attributes, EventType.YieldDeposit> = {
         { version: '26.9.0', notes: 'added pre-broadcast wrap-step failures' },
         {
             version: '26.11.0',
-            notes: 'Reusing an existing allowance reports approve-skipped/continue, including automatic skips on desktop and mobile; explicit desktop skips no longer report approve/cancel.',
+            notes: 'Reusing an existing allowance reports approve-skipped/continue, including automatic skips on desktop and mobile; explicit desktop skips no longer report approve/cancel. Mobile simulation cancellation includes backdrop and gesture dismissal exactly once and excludes dismissal after Continue.',
         },
     ],
 
     attributes: {
+        deviceConnectionRequired: deviceConnectionRequiredAttribute,
         action: {
             changelog: [{ version: '26.5.0', notes: 'added' }],
         },
@@ -83,10 +86,14 @@ export const yieldDepositEvent: EventDef<Attributes, EventType.YieldDeposit> = {
         },
         errorMessage: {
             description:
-                'Values prefixed with `wrap-` are failures of the wrap step of a wrapped-native deposit, all of them before the wrap transaction is broadcast: `wrap-submit-failed` (signing failed, or the user rejected the transaction on the device or in the review modal), `wrap-push-failed` (signed but the broadcast failed), and `wrap-<compose reason>` (e.g. `wrap-fee-estimation-failed`) when the transaction could not be composed. A wrap that fails on chain instead reports `on-chain-failure`, as does the deposit transaction itself.',
+                'Values prefixed with `wrap-` are failures of the wrap step of a wrapped-native deposit, all of them before the wrap transaction is broadcast: `wrap-submit-failed` (signing failed), `wrap-push-failed` (signed but the broadcast failed), and `wrap-<compose reason>` (e.g. `wrap-fee-estimation-failed`) when the transaction could not be composed. Intentional user cancellations use `transaction/cancel` instead of errors. A wrap that fails on chain instead reports `on-chain-failure`, as does the deposit transaction itself.',
             changelog: [
                 { version: '26.5.0', notes: 'added' },
                 { version: '26.9.0', notes: 'added `wrap-` prefixed values' },
+                {
+                    version: '26.11.0',
+                    notes: 'Mobile reports wrap signing and broadcast failures in the parent deposit event. Intentional wrap cancellations on both platforms use transaction/cancel instead of errors.',
+                },
                 {
                     version: '26.9.0',
                     notes: 'desktop no longer reports user cancellations of the deposit transaction (device button, PIN entry, review modal) as `submit-failed`',

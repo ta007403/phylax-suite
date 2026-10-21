@@ -1,4 +1,6 @@
-export type EvmSelectedFee =
+import { type FeeLevel } from '@trezor/connect';
+
+export type EvmSelectedFee = (
     | {
           type: 'eip1559';
           maxFeePerGas: string;
@@ -10,4 +12,5 @@ export type EvmSelectedFee =
           type: 'legacy';
           gasPrice: string;
           gasLimit: string;
-      };
+      }
+) & { label?: FeeLevel['label'] };

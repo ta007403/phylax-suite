@@ -77,7 +77,10 @@ jest.mock('../../components/earn/EarnOutputFields', () => ({
 
 const renderUnstakeForm = async () => {
     const services: NativeAnalyticsDep = { analytics: mockNativeAnalytics(jest.fn()) };
-    const view = await renderWithStoreProvider(<UnstakeFlowScreen />, { services });
+    const view = await renderWithStoreProvider(<UnstakeFlowScreen />, {
+        services,
+        preloadedState: { device: { selectedDevice: { connected: true } } },
+    });
 
     return {
         ...view,
@@ -104,6 +107,7 @@ describe('UnstakeFlowScreen analytics', () => {
     });
 
     it.each([
+        ['crypto', []],
         ['fiat', ['Fiat input']],
         ['crypto', ['Fiat input', 'Crypto input']],
     ] as const)(
