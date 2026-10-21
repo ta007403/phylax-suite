@@ -136,6 +136,28 @@ describe('findProcessFromIncomingPort for an accepted connection', () => {
         expect(processInfo?.fullPath).toBe('/usr/bin/client');
     });
 
+    test('keeps the Linux process lsof named when its executable cannot be read', async () => {
+        setPlatform('linux');
+        mockCommands([
+            [
+                'lsof',
+                'client 300 user 18u IPv4 207199 0t0 TCP 127.0.0.1:40000->127.0.0.1:21335 (ESTABLISHED)',
+            ],
+        ]);
+        jest.spyOn(fs, 'readlink').mockRejectedValue(
+            new Error("EACCES: permission denied, readlink '/proc/300/exe'"),
+        );
+
+        const processInfo = await findProcessFromIncomingPort(40000, true, connection);
+
+        expect(processInfo).toEqual({
+            name: 'client',
+            pid: '300',
+            fullPath: '',
+            warning: true,
+        });
+    });
+
     test('matches an IPv4-mapped IPv6 address as the plain IPv4 form lsof prints', async () => {
         setPlatform('linux');
         mockCommands([

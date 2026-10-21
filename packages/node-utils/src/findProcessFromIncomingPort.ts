@@ -130,9 +130,16 @@ export async function findProcessFromIncomingPort(
                     }
                 } else {
                     // The executable the kernel runs, not the argv[0] the process was started
-                    // with. Its path is the identity of the app, so a replaced binary keeps the
-                    // one it was installed at rather than the kernel's "(deleted)" rendering.
-                    const exe = await fs.readlink(`/proc/${pid}/exe`);
+                    // with. Reading it needs ptrace-level access to the target, which a process
+                    // of another user or a non-dumpable one denies; the socket still belongs to
+                    // the process lsof named, only its path stays unknown.
+                    const exe = await fs.readlink(`/proc/${pid}/exe`).catch(() => undefined);
+                    if (exe === undefined) {
+                        return { name: sanitizedName, pid, fullPath: '', warning: true };
+                    }
+
+                    // The path is the identity of the app, so a replaced binary keeps the one it
+                    // was installed at.
                     const fullPath = exe.replace(DELETED_EXE_SUFFIX, '');
                     // Binaries can be all over the place on Linux, so we don't check the path
 
