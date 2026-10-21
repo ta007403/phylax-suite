@@ -71,7 +71,7 @@ const readSnapshot = () => {
 
     // Advisory: these are compiled trees in name only. The opt-out is a side effect of a lint
     // suppression rather than a decision, so tidying the suppression away silently starts compiling
-    // code nobody chose to compile — which is how `useSendForm.ts` nearly shipped a regression.
+    // code nobody chose to compile.
     report.suppressedFiles.forEach(({ file, caches, cachesWithoutSuppressions }) =>
         console.warn(
             `Advisory ${file} is skipped by the compiler only because of a react-hooks ESLint ` +
