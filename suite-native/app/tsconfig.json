@@ -6,7 +6,6 @@
         {
             "path": "../../suite-common/discreet-mode"
         },
-        { "path": "../../suite-common/finprom" },
         {
             "path": "../../suite-common/firmware-authenticity"
         },
