@@ -22,13 +22,13 @@ import {
     reportWalletBalanceThunk,
     selectDeviceAccounts,
 } from '@suite-common/wallet-core';
-import { type Account } from '@suite-common/wallet-types';
+import { type Account, type AccountKey } from '@suite-common/wallet-types';
 import {
     getAvailableAccountTypes,
     isEvmNetwork,
     prepareNewAccountPayload,
 } from '@suite-common/wallet-utils';
-import { useAccountAlerts } from '@suite-native/accounts';
+import { useAccountAlerts, useNavigateToAccount } from '@suite-native/accounts';
 import { useBottomSheetModal } from '@suite-native/atoms';
 import {
     type DiscoveryRootState,
@@ -42,7 +42,6 @@ import {
     useStablecoinYieldFirmwareUpdateAlert,
 } from '@suite-native/module-earn';
 import {
-    AccountDetailStackRoutes,
     type AddCoinAccountStackParamList,
     AddCoinAccountStackRoutes,
     type AddCoinEarnFlowParams,
@@ -119,6 +118,10 @@ export const useAddCoinAccount = (networksSearchQuery?: string) => {
     const enabledDiscoveryNetworkSymbols = useSelector(selectDeviceEnabledDiscoveryNetworkSymbols);
 
     const navigation = useNavigation<AddCoinAccountNavigationProps>();
+    const navigateToAccount = useNavigateToAccount({
+        navigationMethod: 'replace',
+        overrideLegacyRoutingToAccountDetail: true,
+    });
 
     const { showViewOnlyAddAccountAlert } = useAccountAlerts();
     const {
@@ -209,12 +212,14 @@ export const useAddCoinAccount = (networksSearchQuery?: string) => {
 
     const navigateToSuccessorScreen = ({
         flowType,
+        accountKey,
         symbol,
         accountType,
         accountIndex,
         earnFlowParams,
     }: {
         flowType: AddCoinFlowType;
+        accountKey: AccountKey;
         symbol: NetworkSymbol;
         accountType: AccountType;
         accountIndex: number;
@@ -236,14 +241,11 @@ export const useAddCoinAccount = (networksSearchQuery?: string) => {
                 });
                 break;
             case 'accounts':
-                navigation.replace(RootStackRoutes.AccountDetailStack, {
-                    screen: AccountDetailStackRoutes.AccountDetail,
-                    params: {
-                        networkSymbol: symbol,
-                        accountType,
-                        accountIndex,
-                        closeActionType: 'close',
-                    },
+                navigateToAccount({
+                    accountKey,
+                    networkSymbol: symbol,
+                    accountIdentity: { accountType, accountIndex },
+                    closeActionType: 'close',
                 });
                 break;
             case 'receive':
@@ -403,10 +405,15 @@ export const useAddCoinAccount = (networksSearchQuery?: string) => {
             return;
         }
 
-        dispatch(accountsActions.createAccount(newAccountPayload, allNetworkSymbols));
+        const createAccountAction = accountsActions.createAccount(
+            newAccountPayload,
+            allNetworkSymbols,
+        );
+        dispatch(createAccountAction);
         dispatch(reportWalletBalanceThunk());
         navigateToSuccessorScreen({
             flowType,
+            accountKey: createAccountAction.payload.account.key,
             symbol,
             accountType,
             accountIndex: nextIndex,
@@ -471,6 +478,7 @@ export const useAddCoinAccount = (networksSearchQuery?: string) => {
                 dispatch(reportWalletBalanceThunk());
                 navigateToSuccessorScreen({
                     flowType,
+                    accountKey: firstHiddenEmptyAccount.key,
                     symbol,
                     accountType,
                     accountIndex: firstHiddenEmptyAccount.index ?? accounts.length,
