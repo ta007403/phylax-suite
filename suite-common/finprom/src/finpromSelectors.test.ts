@@ -2,11 +2,11 @@ import { type CountryCode } from '@suite-common/geolocation';
 import { Feature } from '@suite-common/message-system';
 import { mockMessageSystemStateWithFeatureFlags } from '@suite-common/message-system/mocks';
 
-import { selectIsFinpromRestrictedForCountry } from './finpromSelectors';
+import { selectIsFinpromRestrictedByCountry } from './finpromSelectors';
 
 const domain = Feature.finprom.presenceRestriction;
 
-describe(selectIsFinpromRestrictedForCountry.name, () => {
+describe(selectIsFinpromRestrictedByCountry.name, () => {
     it.each([
         ['not restricted: no finprom entry', undefined, undefined, 'GB', false],
         ['not restricted: flag off', false, { countries: ['GB'] }, 'GB', false],
@@ -36,6 +36,6 @@ describe(selectIsFinpromRestrictedForCountry.name, () => {
             ),
         };
 
-        expect(selectIsFinpromRestrictedForCountry(state, country)).toBe(expected);
+        expect(selectIsFinpromRestrictedByCountry(state, country)).toBe(expected);
     });
 });

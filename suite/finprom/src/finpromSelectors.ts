@@ -1,7 +1,7 @@
 import { type SuiteSettingsRootState, selectLanguage } from '@suite/settings';
 import {
     getPlaceholderCountryFromLocale,
-    selectIsFinpromRestrictedForCountry,
+    selectIsFinpromRestrictedByCountry,
 } from '@suite-common/finprom';
 import { type MessageSystemRootState } from '@suite-common/message-system';
 
@@ -11,4 +11,4 @@ const selectPresenceCountry = (state: SuiteSettingsRootState) =>
     getPlaceholderCountryFromLocale(selectLanguage(state));
 
 export const selectIsFinpromRestricted = (state: FinpromRootState): boolean =>
-    selectIsFinpromRestrictedForCountry(state, selectPresenceCountry(state));
+    selectIsFinpromRestrictedByCountry(state, selectPresenceCountry(state));

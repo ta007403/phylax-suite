@@ -6,7 +6,7 @@ import {
     selectFeatureConfig,
 } from '@suite-common/message-system';
 
-export const selectIsFinpromRestrictedForCountry = (
+export const selectIsFinpromRestrictedByCountry = (
     state: MessageSystemRootState,
     country: CountryCode | null,
 ): boolean => {
