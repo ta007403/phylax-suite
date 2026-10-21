@@ -1,3 +1,4 @@
+import net from 'net';
 import { type ServerOptions, type WebSocket, WebSocketServer } from 'ws';
 
 import { WebsocketClient } from './client';
@@ -213,5 +214,105 @@ describe('WebsocketClient', () => {
 
         sendSpy.mockRestore();
         cli.dispose();
+    });
+
+    describe('connect with AbortSignal', () => {
+        it('rejects with the reason of a signal which is already aborted', async () => {
+            const cli = new Client({ url: server.getUrl() });
+
+            await expect(
+                cli.connect({ signal: AbortSignal.abort(new Error('stop')) }),
+            ).rejects.toThrow('stop');
+
+            expect(cli.isConnected()).toEqual(false);
+        });
+
+        it('cancels a connection in progress and allows to connect again', async () => {
+            const cli = new Client({ url: server.getUrl() });
+            const controller = new AbortController();
+
+            const connecting = cli.connect({ signal: controller.signal });
+            controller.abort(new Error('stop'));
+
+            await expect(connecting).rejects.toThrow('stop');
+            expect(cli.isConnected()).toEqual(false);
+
+            await cli.connect();
+            expect(cli.isConnected()).toEqual(true);
+
+            cli.dispose();
+        });
+
+        it('closes the socket of a connection which never completes', async () => {
+            const hanging = net.createServer();
+            await new Promise<void>(resolve => hanging.listen(0, '127.0.0.1', resolve));
+            const { port } = hanging.address() as net.AddressInfo;
+            const accepted = new Promise<net.Socket>(resolve =>
+                hanging.once('connection', resolve),
+            );
+
+            const cli = new Client({ url: `ws://127.0.0.1:${port}` });
+            const controller = new AbortController();
+            const connecting = cli.connect({ signal: controller.signal });
+            const socket = await accepted;
+            const closed = new Promise<void>(resolve => socket.once('close', () => resolve()));
+
+            controller.abort(new Error('stop'));
+
+            await expect(connecting).rejects.toThrow('stop');
+            await closed;
+
+            await new Promise(resolve => hanging.close(resolve));
+        });
+
+        it('keeps an established connection when aborted afterwards', async () => {
+            const cli = new Client({ url: server.getUrl() });
+            const controller = new AbortController();
+
+            await cli.connect({ signal: controller.signal });
+            controller.abort();
+
+            expect(cli.isConnected()).toEqual(true);
+
+            cli.dispose();
+        });
+    });
+
+    describe('connection in progress', () => {
+        it('is cancelled by disconnect() and allows to connect again', async () => {
+            const cli = new Client({ url: server.getUrl() });
+
+            const connecting = cli.connect();
+            await cli.disconnect();
+
+            await expect(connecting).rejects.toThrow('websocket_disconnected');
+            expect(cli.isConnected()).toEqual(false);
+
+            await cli.connect();
+            expect(cli.isConnected()).toEqual(true);
+
+            cli.dispose();
+        });
+
+        it('is cancelled by dispose()', async () => {
+            const cli = new Client({ url: server.getUrl() });
+
+            const connecting = cli.connect();
+            cli.dispose();
+
+            await expect(connecting).rejects.toThrow('websocket_disconnected');
+            expect(cli.isConnected()).toEqual(false);
+        });
+
+        it('is cancelled for every caller sharing it', async () => {
+            const cli = new Client({ url: server.getUrl() });
+
+            const first = cli.connect();
+            const second = cli.connect();
+            await cli.disconnect();
+
+            await expect(first).rejects.toThrow('websocket_disconnected');
+            await expect(second).rejects.toThrow('websocket_disconnected');
+        });
     });
 });

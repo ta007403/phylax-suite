@@ -27,6 +27,8 @@ type WebsocketClientEvents = {
 
 export type WebsocketSendParams = { timeout?: number; onIdCreated?: (id: number) => void };
 
+export type WebsocketConnectParams = { signal?: AbortSignal };
+
 export type WebsocketRequest = Record<string, any>;
 export type WebsocketResponse = WebSocket.Data;
 
@@ -43,6 +45,7 @@ export class WebsocketClient<Events extends Record<string, any>> extends TypedEm
     private ws?: WebSocket;
     private pingTimeout?: ReturnType<typeof setTimeout>;
     private connectPromise?: Promise<void>;
+    private connectAbort?: (reason: Error) => void;
 
     protected createWebsocket?(): WebSocket;
     protected ping() {
@@ -180,7 +183,10 @@ export class WebsocketClient<Events extends Record<string, any>> extends TypedEm
         }
     }
 
-    async connect() {
+    // `signal` cancels only the attempt started by this call, not one it joins
+    async connect({ signal }: WebsocketConnectParams = {}) {
+        signal?.throwIfAborted();
+
         // if connecting already, just return the promise
         if (this.connectPromise) {
             return this.connectPromise;
@@ -190,6 +196,7 @@ export class WebsocketClient<Events extends Record<string, any>> extends TypedEm
 
         if (this.ws?.readyState === WebSocket.CLOSING) {
             await new Promise<void>(resolve => this.emitter.once('disconnected', resolve));
+            signal?.throwIfAborted();
         }
 
         // create deferred promise
@@ -226,8 +233,28 @@ export class WebsocketClient<Events extends Record<string, any>> extends TypedEm
 
         this.ws = ws;
 
+        const abort = (reason: Error) => {
+            // already open, the pending finally() has not cleared the abort yet
+            if (this.isConnected()) return;
+
+            clearTimeout(connectionTimeout);
+            this.onClose();
+            this.ws = undefined;
+            dfd.reject(reason);
+            try {
+                ws.close();
+            } catch {
+                // empty
+            }
+        };
+        const onSignalAbort = () => abort(signal?.reason);
+        this.connectAbort = abort;
+        signal?.addEventListener('abort', onSignalAbort, { once: true });
+
         // wait for onopen event
         return dfd.promise.finally(() => {
+            signal?.removeEventListener('abort', onSignalAbort);
+            this.connectAbort = undefined;
             this.connectPromise = undefined;
         });
     }
@@ -249,6 +276,8 @@ export class WebsocketClient<Events extends Record<string, any>> extends TypedEm
     }
 
     disconnect() {
+        this.connectAbort?.(new WebsocketError('websocket_disconnected'));
+
         if (this.isConnected()) {
             const disconnectPromise = new Promise<void>(resolve => {
                 this.ws?.once('close', resolve);
