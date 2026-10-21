@@ -6,23 +6,14 @@ import {
     selectWalletAssetSymbol,
     selectWalletAssetTokenSymbol,
 } from '@suite-common/assets';
-import { useFormatters } from '@suite-common/formatters';
 import { type WalletAssetKey } from '@suite-common/wallet-core';
-import {
-    Column,
-    Row,
-    TOOLTIP_DELAY_LONG,
-    Table,
-    Text,
-    TruncateWithTooltip,
-} from '@trezor/components';
-import { TokenIcon } from '@trezor/product-components';
+import { Column, Table } from '@trezor/components';
 
 import { PriceTicker, TrendTicker } from 'src/components/suite';
-import { TokenUrlBlur } from 'src/components/suite/TokenUrlBlur';
 import { useSelector } from 'src/hooks/suite';
 
 import { HomeAssetBalance } from './HomeAssetBalance';
+import { HomeAssetIdentity } from './HomeAssetIdentity';
 import { HOME_ASSET_CELL_PADDING, HOME_ASSET_LINE_GAP } from './homeAssetTableLayout';
 
 type HomeAssetRowProps = {
@@ -42,7 +33,6 @@ export const HomeAssetRow = memo(function HomeAssetRow({
     onSelect,
     testIdPrefix = '@dashboard/home-asset-item',
 }: HomeAssetRowProps) {
-    const { NetworkNameFormatter } = useFormatters();
     const symbol = useSelector(state => selectWalletAssetSymbol(state, assetKey, isHidden));
     const contractAddress = useSelector(state =>
         selectWalletAssetContractAddress(state, assetKey, isHidden),
@@ -65,30 +55,12 @@ export const HomeAssetRow = memo(function HomeAssetRow({
             data-testid={`${testIdPrefix}/${symbol}/${contractAddress ?? 'coin'}`}
         >
             <Table.Cell padding={HOME_ASSET_CELL_PADDING.first}>
-                <Row gap={12}>
-                    <TokenIcon
-                        symbol={symbol}
-                        contractAddress={contractAddress}
-                        size={32}
-                        showNetworkIcon
-                        placeholder={displaySymbol ?? ''}
-                    />
-                    <Column alignItems="flex-start" gap={HOME_ASSET_LINE_GAP} flex="1" minWidth={0}>
-                        <Text
-                            typographyStyle="body-md"
-                            ellipsisLineCount={1}
-                            maxWidth="100%"
-                            data-testid="@dashboard/home-asset/name"
-                        >
-                            <TruncateWithTooltip delayShow={TOOLTIP_DELAY_LONG}>
-                                <TokenUrlBlur text={tokenSymbol ?? displaySymbol} />
-                            </TruncateWithTooltip>
-                        </Text>
-                        <Text intent="neutral" priority="secondary" typographyStyle="body-sm">
-                            <NetworkNameFormatter value={symbol} />
-                        </Text>
-                    </Column>
-                </Row>
+                <HomeAssetIdentity
+                    symbol={symbol}
+                    contractAddress={contractAddress}
+                    displaySymbol={displaySymbol}
+                    tokenSymbol={tokenSymbol}
+                />
             </Table.Cell>
 
             <Table.Cell align="end">
