@@ -2,7 +2,8 @@ import '@suite-common/test-utils/globalOverrides';
 
 import { screen } from '@testing-library/react';
 
-import { mockFinpromMessageSystemState } from '@suite-common/finprom/mocks';
+import { Feature } from '@suite-common/message-system';
+import { mockMessageSystemStateWithFeatureFlags } from '@suite-common/message-system/mocks';
 import { type Localization } from '@suite-common/suite-types';
 import { createTestCompositionRoot } from '@suite-common/test-utils';
 
@@ -38,8 +39,9 @@ const renderGuard = ({ routeName, isFinpromRestricted, content }: RenderGuardPar
     const { services } = createTestCompositionRoot<void, AppState>({
         preloadedState: {
             ...mockInitialAppState,
-            messageSystem: mockFinpromMessageSystemState(
-                { flag: isFinpromRestricted, payload: { countries: ['US'] } },
+            messageSystem: mockMessageSystemStateWithFeatureFlags(
+                { [Feature.finprom.presenceRestriction]: isFinpromRestricted },
+                { [Feature.finprom.presenceRestriction]: { countries: ['US'] } },
                 content,
             ),
         },
