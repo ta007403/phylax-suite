@@ -1,6 +1,7 @@
 import { suiteSettingsInitialState } from '@suite/settings';
-import { mockFinpromMessageSystemState } from '@suite-common/finprom/mocks';
 import { type Locale } from '@suite-common/locale';
+import { Feature } from '@suite-common/message-system';
+import { mockMessageSystemStateWithFeatureFlags } from '@suite-common/message-system/mocks';
 
 import { selectIsFinpromRestricted } from './finpromSelectors';
 
@@ -10,10 +11,10 @@ describe(selectIsFinpromRestricted.name, () => {
         ['not restricted: English language with CZ listed', 'en-US', false],
     ] as const satisfies [string, Locale, boolean][])('%s', (_description, language, expected) => {
         const state = {
-            messageSystem: mockFinpromMessageSystemState({
-                flag: true,
-                payload: { countries: ['CZ'] },
-            }),
+            messageSystem: mockMessageSystemStateWithFeatureFlags(
+                { [Feature.finprom.presenceRestriction]: true },
+                { [Feature.finprom.presenceRestriction]: { countries: ['CZ'] } },
+            ),
             suiteSettings: { ...suiteSettingsInitialState, language },
         };
 
