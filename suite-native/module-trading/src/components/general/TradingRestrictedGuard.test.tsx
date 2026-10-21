@@ -1,6 +1,7 @@
 import { Text } from 'react-native';
 
-import { mockFinpromMessageSystemState } from '@suite-common/finprom/mocks';
+import { Feature } from '@suite-common/message-system';
+import { mockMessageSystemStateWithFeatureFlags } from '@suite-common/message-system/mocks';
 import { type Localization } from '@suite-common/suite-types';
 import { getTranslation } from '@suite-native/intl';
 import { renderWithStoreProvider } from '@suite-native/test-utils-store';
@@ -34,8 +35,9 @@ const renderGuard = ({ isFinpromRestricted, content }: RenderGuardParams) =>
         </TradingRestrictedGuard>,
         {
             preloadedState: {
-                messageSystem: mockFinpromMessageSystemState(
-                    { flag: isFinpromRestricted, payload: { countries: ['US'] } },
+                messageSystem: mockMessageSystemStateWithFeatureFlags(
+                    { [Feature.finprom.presenceRestriction]: isFinpromRestricted },
+                    { [Feature.finprom.presenceRestriction]: { countries: ['US'] } },
                     content,
                 ),
             },
