@@ -107,11 +107,13 @@ describe('findProcessFromIncomingPort for an accepted connection', () => {
 
     test('identifies a Linux process by its executable, not by the argv[0] it was started with', async () => {
         setPlatform('linux');
-        mockCommands([
+        const spawn = mockCommands([
             [
                 'lsof',
                 'node 300 user 18u IPv4 207199 0t0 TCP 127.0.0.1:40000->127.0.0.1:21335 (ESTABLISHED)',
             ],
+            // Answered so that an implementation reading argv[0] reports a different path
+            // instead of failing to spawn at all.
             ['cat /proc/300/cmdline', '/usr/bin/google-chrome\0script.js\0'],
         ]);
         jest.spyOn(fs, 'readlink').mockResolvedValue('/usr/local/bin/node');
@@ -119,6 +121,8 @@ describe('findProcessFromIncomingPort for an accepted connection', () => {
         const processInfo = await findProcessFromIncomingPort(40000, true, connection);
 
         expect(processInfo?.fullPath).toBe('/usr/local/bin/node');
+        // Only lsof is asked, so argv[0] is never consulted.
+        expect(spawn).toHaveBeenCalledTimes(1);
     });
 
     test('identifies a Linux process whose executable was replaced by the path it was installed at', async () => {
