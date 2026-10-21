@@ -113,6 +113,18 @@ export const launchSuiteElectronApp = async (params: LaunchSuiteParams) => {
     return electronApp;
 };
 
+// Suite quits a second instance while the first one still holds the single-instance lock, so a
+// test that launches its own app must wait for the fixture app's process to exit, not just close.
+export const closeSuiteAndWaitForExit = async (electronApp: ElectronApplication) => {
+    const process = electronApp.process();
+    if (process.exitCode !== null) {
+        return;
+    }
+    const exited = new Promise<void>(resolve => process.once('exit', () => resolve()));
+    await electronApp.close();
+    await exited;
+};
+
 export const launchSuite = async (params: LaunchSuiteParams): Promise<Suite> => {
     const electronApp = await launchSuiteElectronApp(params);
     const window = await electronApp.firstWindow();
