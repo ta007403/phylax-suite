@@ -584,8 +584,11 @@ export const Nearby = ({ allDevices }) => {
     });
 
     it('says nothing once the impure read moves inside the closure', () => {
-        // The fix. The compiler outlines the now-capture-free predicate to module scope, so there is
-        // no cache slot left to freeze and the read happens on every call.
+        // The shape of the fix. With no render-scoped capture left, the compiler outlines the
+        // predicate to module scope, so no closure is frozen behind the first-render sentinel.
+        // `devices` is still cached on `allDevices`, so the clock is read again only when
+        // `allDevices` changes: staleness bounded by a reactive input is ordinary memoization,
+        // not a frozen capture.
         const { frozenCaptures } = analyse(`const LIMIT = 3000;
 
 export const Nearby = ({ allDevices }) => {
