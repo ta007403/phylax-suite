@@ -121,6 +121,21 @@ describe('findProcessFromIncomingPort for an accepted connection', () => {
         expect(processInfo?.fullPath).toBe('/usr/local/bin/node');
     });
 
+    test('identifies a Linux process whose executable was replaced by the path it was installed at', async () => {
+        setPlatform('linux');
+        mockCommands([
+            [
+                'lsof',
+                'client 300 user 18u IPv4 207199 0t0 TCP 127.0.0.1:40000->127.0.0.1:21335 (ESTABLISHED)',
+            ],
+        ]);
+        jest.spyOn(fs, 'readlink').mockResolvedValue('/usr/bin/client (deleted)');
+
+        const processInfo = await findProcessFromIncomingPort(40000, true, connection);
+
+        expect(processInfo?.fullPath).toBe('/usr/bin/client');
+    });
+
     test('matches an IPv4-mapped IPv6 address as the plain IPv4 form lsof prints', async () => {
         setPlatform('linux');
         mockCommands([
