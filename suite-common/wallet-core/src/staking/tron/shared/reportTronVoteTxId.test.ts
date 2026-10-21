@@ -5,6 +5,12 @@ import type { EARN_API_BASE_URL } from '@suite-common/earn-staking-api';
 import type { reportTronVoteTxId } from './reportTronVoteTxId';
 
 jest.mock('@sentry/core', () => ({ captureException: jest.fn(), withScope: jest.fn() }));
+jest.mock('@trezor/env-utils', () => ({
+    ...jest.requireActual('@trezor/env-utils'),
+    getEnvironment: () => 'desktop',
+    getSuiteVersion: () => '26.10.1',
+    isCodesignBuild: () => true,
+}));
 
 const TXID = 'a'.repeat(64);
 
@@ -65,6 +71,17 @@ describe('reportTronVoteTxId', () => {
             kind: 'vote',
         });
         expect(captureExceptionMock).not.toHaveBeenCalled();
+    });
+
+    it('describes the reporting Suite build in request headers', async () => {
+        respondWithStatus(200);
+
+        await report(TXID);
+
+        const request = fetchSpy.mock.calls[0]?.[0] as Request;
+        expect(request.headers.get('X-Suite-Version')).toBe('26.10.1');
+        expect(request.headers.get('X-Suite-Platform')).toBe('desktop');
+        expect(request.headers.get('X-Suite-Build')).toBe('prod');
     });
 
     it('resolves false and captures a Sentry event on HTTP 503', async () => {
