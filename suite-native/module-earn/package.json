@@ -23,7 +23,6 @@
         "@suite-common/earn-stablecoin-api": "workspace:*",
         "@suite-common/earn-staking-api": "workspace:*",
         "@suite-common/feedback": "workspace:*",
-        "@suite-common/finprom": "workspace:*",
         "@suite-common/formatters": "workspace:*",
         "@suite-common/message-system": "workspace:*",
         "@suite-common/mev": "workspace:*",

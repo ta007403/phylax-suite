@@ -17,7 +17,6 @@
             "path": "../../suite-common/earn-staking-api"
         },
         { "path": "../../suite-common/feedback" },
-        { "path": "../../suite-common/finprom" },
         {
             "path": "../../suite-common/formatters"
         },

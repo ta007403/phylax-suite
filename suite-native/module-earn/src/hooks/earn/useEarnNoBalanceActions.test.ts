@@ -1,5 +1,6 @@
 import { deviceInitialState } from '@suite-common/device';
-import { mockFinpromMessageSystemState } from '@suite-common/finprom/mocks';
+import { Feature } from '@suite-common/message-system';
+import { mockMessageSystemStateWithFeatureFlags } from '@suite-common/message-system/mocks';
 import { type AccountKey } from '@suite-common/wallet-types';
 import { renderHookWithStoreProvider } from '@suite-native/test-utils-store';
 
@@ -16,10 +17,10 @@ const renderNoBalanceActions = (isFinpromRestricted: boolean) =>
     renderHookWithStoreProvider(() => useEarnNoBalanceActions({ accountKey }), {
         preloadedState: {
             device: deviceInitialState,
-            messageSystem: mockFinpromMessageSystemState({
-                flag: isFinpromRestricted,
-                payload: { countries: ['US'] },
-            }),
+            messageSystem: mockMessageSystemStateWithFeatureFlags(
+                { [Feature.finprom.presenceRestriction]: isFinpromRestricted },
+                { [Feature.finprom.presenceRestriction]: { countries: ['US'] } },
+            ),
             wallet: { trading: { residence: { wasOnboardingVisited: false } } },
         },
     });
