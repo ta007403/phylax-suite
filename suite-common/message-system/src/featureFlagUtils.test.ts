@@ -3,7 +3,8 @@ import fs from 'fs';
 import { type Feature, type MessageSystem } from '@suite-common/suite-types';
 
 import {
-    getFeaturePayloadCountries,
+    getFinpromRestrictedCountries,
+    getTradingResidenceWhitelist,
     isYieldFeatureApplicableForVault,
     parseTimeoutThresholdsPerModel,
 } from './featureFlagUtils';
@@ -88,7 +89,7 @@ describe(isYieldFeatureApplicableForVault.name, () => {
     );
 });
 
-describe(getFeaturePayloadCountries.name, () => {
+describe('getTradingResidenceWhitelist', () => {
     const residenceFeature = (payload?: Feature['payload']): Feature => ({
         domain: FeatureDefinitions.trading.restrictions.residenceWhitelistRequired,
         flag: true,
@@ -100,7 +101,6 @@ describe(getFeaturePayloadCountries.name, () => {
         ['feature without payload', residenceFeature(), []],
         ['allowedCountries not an array', residenceFeature({ allowedCountries: 'CZ' }), []],
         ['empty allowedCountries', residenceFeature({ allowedCountries: [] }), []],
-        ['countries under another key', residenceFeature({ countries: ['CZ'] }), []],
         [
             'mixed countries',
             residenceFeature({ allowedCountries: ['CZ', 'ZZ', 1, null, 'US'] }),
@@ -111,15 +111,10 @@ describe(getFeaturePayloadCountries.name, () => {
             residenceFeature({ allowedCountries: ['cz', 'Us', 'sK', 'zz'] }),
             ['CZ', 'US', 'SK'],
         ],
-        [
-            'unknown and special codes',
-            residenceFeature({ allowedCountries: ['GB', 'T1', 'XX', 'GBR', ''] }),
-            ['GB'],
-        ],
     ] as const satisfies [string, Feature | undefined, readonly string[]][])(
         'returns countries for %s',
         (_description, feature, expected) => {
-            expect(getFeaturePayloadCountries(feature, 'allowedCountries')).toEqual(expected);
+            expect(getTradingResidenceWhitelist(feature)).toEqual(expected);
         },
     );
 
@@ -134,9 +129,40 @@ describe(getFeaturePayloadCountries.name, () => {
             );
 
         residenceFeatures.forEach(feature => {
-            expect(getFeaturePayloadCountries(feature, 'allowedCountries')).toEqual(
+            expect(getTradingResidenceWhitelist(feature)).toEqual(
                 feature.payload?.allowedCountries,
             );
         });
     });
+});
+
+describe(getFinpromRestrictedCountries.name, () => {
+    const finpromFeature = (payload?: Feature['payload']): Feature => ({
+        domain: FeatureDefinitions.finprom.presenceRestriction,
+        flag: true,
+        payload,
+    });
+
+    it.each([
+        ['undefined feature', undefined, []],
+        ['feature without payload', finpromFeature(), []],
+        ['countries not an array', finpromFeature({ countries: 'GB' }), []],
+        ['countries under the residence key', finpromFeature({ allowedCountries: ['GB'] }), []],
+        [
+            'non-string entries',
+            finpromFeature({ countries: ['GB', 1, null, {}, 'CZ'] }),
+            ['GB', 'CZ'],
+        ],
+        ['differently cased countries', finpromFeature({ countries: ['gb', 'Cz'] }), ['GB', 'CZ']],
+        [
+            'unknown and special codes',
+            finpromFeature({ countries: ['GB', 'ZZ', 'T1', 'XX', 'GBR', ''] }),
+            ['GB'],
+        ],
+    ] as const satisfies [string, Feature | undefined, readonly string[]][])(
+        'returns countries for %s',
+        (_description, feature, expected) => {
+            expect(getFinpromRestrictedCountries(feature)).toEqual(expected);
+        },
+    );
 });

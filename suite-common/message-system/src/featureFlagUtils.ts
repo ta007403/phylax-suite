@@ -28,11 +28,8 @@ const getYieldVaultContractAddresses = (payload: Feature['payload']) => {
         .map(address => address.toLowerCase());
 };
 
-export const getFeaturePayloadCountries = (
-    feature: Feature | undefined,
-    payloadKey: string,
-): CountryCode[] => {
-    const payloadCountries = feature?.payload?.[payloadKey];
+const getPayloadCountries = (payload: Feature['payload'], key: string): CountryCode[] => {
+    const payloadCountries = payload?.[key];
 
     if (!Array.isArray(payloadCountries)) {
         return [];
@@ -43,6 +40,12 @@ export const getFeaturePayloadCountries = (
         .map(code => code.toUpperCase())
         .filter(isKnownCountryCode);
 };
+
+export const getTradingResidenceWhitelist = (feature: Feature | undefined): CountryCode[] =>
+    getPayloadCountries(feature?.payload, 'allowedCountries');
+
+export const getFinpromRestrictedCountries = (feature: Feature | undefined): CountryCode[] =>
+    getPayloadCountries(feature?.payload, 'countries');
 
 type IsYieldFeatureApplicableForVaultParams = {
     feature: Feature;

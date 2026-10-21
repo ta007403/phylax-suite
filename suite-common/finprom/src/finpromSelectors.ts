@@ -2,7 +2,7 @@ import { type CountryCode } from '@suite-common/geolocation';
 import {
     Feature,
     type MessageSystemRootState,
-    getFeaturePayloadCountries,
+    getFinpromRestrictedCountries,
     selectFeatureConfig,
 } from '@suite-common/message-system';
 
@@ -20,5 +20,5 @@ export const selectIsFinpromRestrictedByCountry = (
         return false;
     }
 
-    return getFeaturePayloadCountries(feature, 'countries').includes(country);
+    return getFinpromRestrictedCountries(feature).includes(country);
 };
