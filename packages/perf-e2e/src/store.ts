@@ -1,6 +1,6 @@
 /**
- * Key scheme and object shapes of the e2e performance store, shared by every surface. Pure: each
- * surface's publish step does the I/O. Layout and rationale: docs/tests/perf-history.md.
+ * Key scheme and object shapes of the e2e performance store, shared by every platform. Pure: each
+ * platform's publish step does the I/O. Layout and rationale: docs/tests/perf-history.md.
  */
 
 export const STORE_PREFIX = 'e2e/perf/v1';
@@ -11,13 +11,19 @@ export const STORE_ORIGIN = 'https://dev.suite.sldev.cz';
 /** Years of history at a handful of measurements per run; bounds the read-modify-write. */
 const INDEX_LINE_LIMIT = 20000;
 
-export type PerfSurface = 'web' | 'desktop' | 'android' | 'ios';
+export type PerfPlatform = 'web' | 'desktop' | 'android' | 'ios';
 
 /**
  * What the stored artifact is, so a reader knows how to open it: `lhr` and `flow-result` render as
  * Lighthouse HTML, the two `*-report` kinds are our own comparison documents.
  */
 export type PerfArtifactKind = 'lhr' | 'flow-result' | 'native-report' | 'browser-report';
+
+/** Namespaced by the instrument: `browser:` in-page, `rn:` React Native, `lh:` Lighthouse. */
+export type PerfStoredMetricKey = `${'browser' | 'rn' | 'lh'}:${string}`;
+
+/** Null means not measured. */
+export type PerfStoredMetrics = Record<PerfStoredMetricKey, number | null>;
 
 export type PerfArtifact = {
     kind: PerfArtifactKind;
@@ -32,17 +38,16 @@ export type PerfMeasurement = {
     /** Tells two measurements of one scenario in one run apart: a device model, a locale. */
     variant?: string;
     samples: number;
-    /** Namespaced keys — `lh:total-blocking-time`, `rn:ttffMs`. Null means not measured. */
-    metrics: Record<string, number | null>;
+    metrics: PerfStoredMetrics;
     /** Name of the artifact this was reduced from. Several measurements may share one. */
     artifact?: string;
 };
 
 export type PerfRunContext = {
-    surface: PerfSurface;
+    platform: PerfPlatform;
     /** Branch under test — `github.head_ref` on a PR, `github.ref_name` otherwise. */
     branch: string;
-    sha: string;
+    commitId: string;
     runId: string;
     runAttempt: string;
     /** The e2e job is sharded; a run holds one set of artifacts per shard. */
@@ -64,16 +69,16 @@ export type PerfRun = {
 
 export type PerfIndexRow = {
     ts: string;
-    surface: PerfSurface;
+    platform: PerfPlatform;
     branch: string;
-    sha: string;
+    commitId: string;
     run: string;
     attempt: string;
     shard: string;
     scenario: string;
     variant?: string;
     samples: number;
-    metrics: Record<string, number | null>;
+    metrics: PerfStoredMetrics;
     /** See `PerfRunContext.profiled`. */
     profiled?: boolean;
     env?: Record<string, string | undefined>;
@@ -83,13 +88,13 @@ export type PerfIndexRow = {
 
 export type PerfBaselineDocument = {
     updatedAt: string;
-    surface: PerfSurface;
+    platform: PerfPlatform;
     branch: string;
-    sha: string;
+    commitId: string;
     run: string;
     runUrl?: string;
     /** Keyed `scenario` or `scenario [variant]`, holding the same metric map as an index row. */
-    measurements: Record<string, Record<string, number | null>>;
+    measurements: Record<string, PerfStoredMetrics>;
 };
 
 export type PerfUploadFile = {
@@ -115,7 +120,7 @@ const trimDashes = (value: string): string => {
 
 /**
  * Branch and scenario names carry slashes and anything else a human types; keys stay flat,
- * printable and stable. Collisions do not matter — sha, run id and shard keep runs distinct.
+ * printable and stable. Collisions do not matter — commit, run id and shard keep runs distinct.
  */
 export const slugify = (value: string): string =>
     trimDashes(value.replace(/[^\w.\-/]+/g, '-').replace(/\//g, '__')).slice(0, 80) || 'unknown';
@@ -125,14 +130,14 @@ export const measurementLabel = ({ scenario, variant }: PerfMeasurement): string
     variant ? `${scenario} [${variant}]` : scenario;
 
 export const runPrefix = ({
-    surface,
+    platform,
     branch,
-    sha,
+    commitId,
     runId,
     runAttempt,
     shard,
 }: PerfRunContext): string =>
-    `runs/${surface}/${slugify(branch)}/${sha}/${runId}-${runAttempt}/shard-${slugify(shard)}`;
+    `runs/${platform}/${slugify(branch)}/${commitId}/${runId}-${runAttempt}/shard-${slugify(shard)}`;
 
 export const artifactKey = (context: PerfRunContext, artifactName: string): string =>
     `${runPrefix(context)}/${slugify(artifactName)}.json`;
@@ -143,13 +148,13 @@ export const artifactKey = (context: PerfRunContext, artifactName: string): stri
  */
 export const indexKey = (context: PerfRunContext): string =>
     context.prNumber
-        ? `index/${context.surface}/pr/${context.prNumber}/${context.runId}-${context.runAttempt}-${slugify(context.shard)}.ndjson`
-        : `index/${context.surface}/${slugify(context.branch)}/index.ndjson`;
+        ? `index/${context.platform}/pr/${context.prNumber}/${context.runId}-${context.runAttempt}-${slugify(context.shard)}.ndjson`
+        : `index/${context.platform}/${slugify(context.branch)}/index.ndjson`;
 
 export const isRollingIndex = (context: PerfRunContext): boolean => !context.prNumber;
 
-export const baselineKey = (surface: PerfSurface, branch: string): string =>
-    `baseline/${surface}/${slugify(branch)}/latest.json`;
+export const baselineKey = (platform: PerfPlatform, branch: string): string =>
+    `baseline/${platform}/${slugify(branch)}/latest.json`;
 
 export const publicUrl = (key: string): string => `${STORE_ORIGIN}/${STORE_PREFIX}/${key}`;
 
@@ -162,9 +167,9 @@ export const toIndexRows = ({ context, artifacts, measurements }: PerfRun): Perf
 
         return {
             ts: context.generatedAt,
-            surface: context.surface,
+            platform: context.platform,
             branch: context.branch,
-            sha: context.sha,
+            commitId: context.commitId,
             run: context.runId,
             attempt: context.runAttempt,
             shard: context.shard,
@@ -199,7 +204,7 @@ export const parseNdjson = (text: string): PerfIndexRow[] =>
         });
 
 const rowIdentity = (row: PerfIndexRow) =>
-    `${row.surface}/${row.run}/${row.attempt}/${row.shard}/${row.scenario}/${row.variant ?? ''}`;
+    `${row.platform}/${row.run}/${row.attempt}/${row.shard}/${row.scenario}/${row.variant ?? ''}`;
 
 /** A re-run replaces its own lines, so it corrects a point on the trend instead of doubling it. */
 export const appendIndexRows = (existing: string, rows: readonly PerfIndexRow[]): string => {
@@ -209,40 +214,61 @@ export const appendIndexRows = (existing: string, rows: readonly PerfIndexRow[])
     return renderNdjson([...kept, ...rows].slice(-INDEX_LINE_LIMIT));
 };
 
+/** Weighted by sample count; a metric only one side measured keeps that side's value. */
+const mergeMeasurements = (a: PerfMeasurement, b: PerfMeasurement): PerfMeasurement => {
+    const metrics: Record<string, number | null> = { ...a.metrics };
+
+    for (const [key, value] of Object.entries(b.metrics)) {
+        const existing = metrics[key];
+
+        metrics[key] =
+            existing == null || value == null
+                ? (existing ?? value)
+                : (existing * a.samples + value * b.samples) / (a.samples + b.samples);
+    }
+
+    return { ...a, samples: a.samples + b.samples, metrics };
+};
+
 export const toBaselineDocument = (runs: readonly PerfRun[]): PerfBaselineDocument => {
-    // A scenario measured by two shards keeps the last one: both measured the same thing.
     const [first] = runs;
 
     if (!first) {
         throw new Error('a baseline needs at least one run');
     }
 
+    // A scenario measured by several shards is extra samples of the same thing, so it is averaged.
+    const byLabel = new Map<string, PerfMeasurement>();
+
+    for (const measurement of runs.flatMap(run => run.measurements)) {
+        const label = measurementLabel(measurement);
+        const existing = byLabel.get(label);
+
+        byLabel.set(label, existing ? mergeMeasurements(existing, measurement) : measurement);
+    }
+
     return {
         updatedAt: first.context.generatedAt,
-        surface: first.context.surface,
+        platform: first.context.platform,
         branch: first.context.branch,
-        sha: first.context.sha,
+        commitId: first.context.commitId,
         run: first.context.runId,
         ...(first.context.runUrl ? { runUrl: first.context.runUrl } : {}),
         measurements: Object.fromEntries(
-            runs.flatMap(({ measurements }) =>
-                measurements.map(measurement => [
-                    measurementLabel(measurement),
-                    measurement.metrics,
-                ]),
-            ),
+            [...byLabel].map(([label, measurement]) => [label, measurement.metrics]),
         ),
     };
 };
 
 /**
- * Every object one run publishes, laid out as in the bucket under `STORE_PREFIX`. Artifacts come
- * first so that, uploaded in order, an index line never points at a missing object.
+ * The files to upload for one CI run — artifacts, index lines and optionally the baseline — with
+ * paths relative to `STORE_PREFIX`. Artifacts come first so that, uploaded in order, an index line
+ * never points at a missing object.
  */
 export const buildUploadBundle = (
     runs: readonly PerfRun[],
     options: {
-        /** Current contents of each rolling index, per key: every surface has its own index. */
+        /** Current contents of each rolling index, per key: every platform has its own index. */
         existingIndex?: Readonly<Record<string, string>>;
         sealBaseline?: boolean;
     } = {},
@@ -274,21 +300,21 @@ export const buildUploadBundle = (
     }
 
     if (options.sealBaseline) {
-        // One baseline per surface: labels like `wallet-discovery [T3W1]` exist on web and desktop.
-        const bySurface = new Map<PerfSurface, PerfRun[]>();
+        // One baseline per platform: labels like `wallet-discovery [T3W1]` exist on web and desktop.
+        const byPlatform = new Map<PerfPlatform, PerfRun[]>();
 
         for (const run of runs) {
-            bySurface.set(run.context.surface, [
-                ...(bySurface.get(run.context.surface) ?? []),
+            byPlatform.set(run.context.platform, [
+                ...(byPlatform.get(run.context.platform) ?? []),
                 run,
             ]);
         }
 
-        for (const surfaceRuns of bySurface.values()) {
-            const document = toBaselineDocument(surfaceRuns);
+        for (const platformRuns of byPlatform.values()) {
+            const document = toBaselineDocument(platformRuns);
 
             files.push({
-                path: baselineKey(document.surface, document.branch),
+                path: baselineKey(document.platform, document.branch),
                 body: `${JSON.stringify(document, null, 2)}\n`,
             });
         }

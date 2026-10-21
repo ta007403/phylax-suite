@@ -15,9 +15,9 @@ import {
 } from './store';
 
 const context: PerfRunContext = {
-    surface: 'android',
+    platform: 'android',
     branch: 'feat/native-e2e-perf-metrics',
-    sha: 'ec599e58884046a48e76624c63a644663278b384',
+    commitId: 'ec599e58884046a48e76624c63a644663278b384',
     runId: '1842',
     runAttempt: '1',
     shard: '1',
@@ -39,7 +39,7 @@ const run: PerfRun = {
 };
 
 const webRun: PerfRun = {
-    context: { ...context, surface: 'web', shard: '3' },
+    context: { ...context, platform: 'web', shard: '3' },
     artifacts: [{ kind: 'flow-result', name: 'wallet-discovery', body: '{}' }],
     measurements: [
         {
@@ -72,11 +72,11 @@ describe('slugify', () => {
 });
 
 describe('keys', () => {
-    it('puts the surface high, so lifecycle rules can differ per surface', () => {
+    it('puts the platform high, so lifecycle rules can differ per platform', () => {
         expect(artifactKey(context, 'report')).toBe(
             'runs/android/feat__native-e2e-perf-metrics/ec599e58884046a48e76624c63a644663278b384/1842-1/shard-1/report.json',
         );
-        expect(artifactKey({ ...context, surface: 'web' }, 'report')).toContain('runs/web/');
+        expect(artifactKey({ ...context, platform: 'web' }, 'report')).toContain('runs/web/');
     });
 
     it('keeps the shards of one run apart', () => {
@@ -91,7 +91,7 @@ describe('keys', () => {
         );
     });
 
-    it('appends branch runs to one rolling index per surface', () => {
+    it('appends branch runs to one rolling index per platform', () => {
         expect(indexKey({ ...context, branch: 'develop' })).toBe(
             'index/android/develop/index.ndjson',
         );
@@ -116,7 +116,7 @@ describe('measurementLabel', () => {
 describe('toIndexRows', () => {
     it('carries the identity, the metrics and the artifact to drill into', () => {
         expect(toIndexRows(run)[0]).toMatchObject({
-            surface: 'android',
+            platform: 'android',
             scenario: 'home',
             shard: '1',
             samples: 3,
@@ -187,8 +187,8 @@ describe('appendIndexRows', () => {
         expect(parseNdjson(appendIndexRows(existing, otherShard))).toHaveLength(4);
     });
 
-    it('keeps the lines of another surface measured at the same time', () => {
-        const other = toIndexRows({ ...run, context: { ...context, surface: 'ios' } });
+    it('keeps the lines of another platform measured at the same time', () => {
+        const other = toIndexRows({ ...run, context: { ...context, platform: 'ios' } });
 
         expect(parseNdjson(appendIndexRows(existing, other))).toHaveLength(4);
     });
@@ -203,13 +203,27 @@ describe('toBaselineDocument', () => {
         expect(
             toBaselineDocument([run, { ...run, context: { ...context, shard: '2' } }]),
         ).toMatchObject({
-            surface: 'android',
+            platform: 'android',
             run: '1842',
             measurements: {
                 home: { 'rn:ttffMs': 412, 'rn:ttiMs': 980 },
                 accounts: { 'rn:ttffMs': null },
             },
         });
+    });
+
+    it('averages a scenario several shards measured, weighted by their samples', () => {
+        const home = (samples: number, metrics: PerfRun['measurements'][number]['metrics']) => ({
+            ...run,
+            measurements: [{ scenario: 'home', samples, metrics }],
+        });
+
+        expect(
+            toBaselineDocument([
+                home(3, { 'rn:ttffMs': 400, 'rn:ttiMs': null }),
+                home(1, { 'rn:ttffMs': 800, 'rn:ttiMs': 900, 'rn:fidMs': 12 }),
+            ]).measurements,
+        ).toEqual({ home: { 'rn:ttffMs': 500, 'rn:ttiMs': 900, 'rn:fidMs': 12 } });
     });
 
     it('keys a variant separately', () => {
@@ -267,12 +281,12 @@ describe('buildUploadBundle', () => {
         expect(parseNdjson(index?.body ?? '')).toHaveLength(4);
     });
 
-    it('seals one baseline per surface, not one for whichever run came first', () => {
+    it('seals one baseline per platform, not one for whichever run came first', () => {
         // A web run and a desktop run of the same branch label their measurements identically
-        // (`wallet-discovery [T3W1]`), so a single document would file one surface's numbers under
+        // (`wallet-discovery [T3W1]`), so a single document would file one platform's numbers under
         // the other's key and drop the rest.
         const webMeasured: PerfRun = {
-            context: { ...context, surface: 'web' },
+            context: { ...context, platform: 'web' },
             artifacts: [{ kind: 'flow-result', name: 'flow', body: '{}\n' }],
             measurements: [
                 {
@@ -301,8 +315,8 @@ describe('buildUploadBundle', () => {
         expect(android.measurements.home).toEqual({ 'rn:ttffMs': 412, 'rn:ttiMs': 980 });
     });
 
-    it("appends each rolling index to its own history, not to a sibling surface's", () => {
-        const webContext = { ...context, surface: 'web' as const };
+    it("appends each rolling index to its own history, not to a sibling platform's", () => {
+        const webContext = { ...context, platform: 'web' as const };
         const webEmpty: PerfRun = { context: webContext, artifacts: [], measurements: [] };
         const androidHistory = renderNdjson(
             toIndexRows({ ...run, context: { ...context, runId: '1841' } }),
@@ -316,7 +330,7 @@ describe('buildUploadBundle', () => {
         // Web has no history of its own yet, so it gets only this run's rows — android's history
         // belongs to android's file.
         expect(parseNdjson(webIndex?.body ?? '')).toHaveLength(2);
-        expect(parseNdjson(webIndex?.body ?? '').every(row => row.surface === 'web')).toBe(true);
+        expect(parseNdjson(webIndex?.body ?? '').every(row => row.platform === 'web')).toBe(true);
     });
 
     it('never appends for a pull request, whose file is its own', () => {

@@ -41,6 +41,11 @@ jobs:
           node-version-file: ".nvmrc"
           cache: yarn
 
+      - name: Install SafeDep PMG
+        uses: safedep/pmg@961499c36c98afbafec10a257ff27fb464073c86 # v0.30.0
+        continue-on-error: true
+        with:
+          version: v0.19.1
       - name: Install dependencies
         run: yarn workspaces focus ${{ inputs.workspace }}
 
@@ -55,9 +60,9 @@ jobs:
           PERF_ARTIFACTS_DIR: ${{ github.workspace }}/perf-artifacts
           PERF_BUNDLE_DIR: ${{ github.workspace }}/perf-upload
           PERF_PR_NUMBER: ${{ github.event.pull_request.number }}
-          PERF_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          PERF_COMMIT_ID: ${{ github.event.pull_request.head.sha || github.sha }}
           PERF_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          PERF_SEAL_BASELINE: ${{ github.event_name != 'pull_request' }}
+          PERF_SEAL_BASELINE: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/develop' }}
         run: ${{ inputs.publish-command }}
 
       - name: Configure AWS credentials

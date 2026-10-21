@@ -1,4 +1,4 @@
-import type { PerfBaselineDocument, PerfSurface } from './store';
+import type { PerfBaselineDocument, PerfPlatform } from './store';
 import { baselineKey, publicUrl } from './store';
 
 /**
@@ -54,15 +54,15 @@ export const fetchStoreText = async (
     }
 };
 
-export const baselineUrl = (surface: PerfSurface, branch: string): string =>
-    publicUrl(baselineKey(surface, branch));
+export const baselineUrl = (platform: PerfPlatform, branch: string): string =>
+    publicUrl(baselineKey(platform, branch));
 
 export const fetchBaselineDocument = async (
-    surface: PerfSurface,
+    platform: PerfPlatform,
     branch: string,
     fetchImpl: FetchLike = fetch,
 ): Promise<PerfBaselineOutcome> => {
-    const url = baselineUrl(surface, branch);
+    const url = baselineUrl(platform, branch);
     const fetched = await fetchStoreText(url, fetchImpl);
 
     if (fetched.status !== 'ok') {

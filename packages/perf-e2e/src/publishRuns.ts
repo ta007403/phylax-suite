@@ -7,10 +7,10 @@ import { STORE_PREFIX, buildUploadBundle, indexKey, isRollingIndex, publicUrl } 
 import { fetchStoreText } from './storeReader';
 
 /**
- * The half of publishing that every surface shares: who the run is, reading back the rolling index,
+ * The half of publishing that every platform shares: who the run is, reading back the rolling index,
  * and writing the bundle to disk for `aws s3 cp --recursive` to upload.
  *
- * A surface supplies only its own mapping — shard artifacts in, `PerfRun[]` out. Mobile maps a
+ * A platform supplies only its own mapping — shard artifacts in, `PerfRun[]` out. Mobile maps a
  * Detox report, the web and desktop e2e map their scenario comparisons, and a Lighthouse run maps
  * its flow results; none of them need to know the key scheme.
  *
@@ -18,10 +18,10 @@ import { fetchStoreText } from './storeReader';
  * status rather than an exception.
  */
 
-/** What a run is, before a surface adds itself to it. */
+/** What a run is, before a platform adds itself to it. */
 export type PerfRunIdentity = Pick<
     PerfRunContext,
-    'branch' | 'sha' | 'runId' | 'runAttempt' | 'prNumber' | 'runUrl'
+    'branch' | 'commitId' | 'runId' | 'runAttempt' | 'prNumber' | 'runUrl'
 >;
 
 /**
@@ -32,15 +32,15 @@ export const resolveRunIdentity = (
     env: Record<string, string | undefined>,
 ): PerfRunIdentity | null => {
     const branch = env.GITHUB_HEAD_REF || env.GITHUB_REF_NAME;
-    const sha = env.PERF_SHA || env.GITHUB_SHA;
+    const commitId = env.PERF_COMMIT_ID || env.GITHUB_SHA;
 
-    if (!branch || !sha) {
+    if (!branch || !commitId) {
         return null;
     }
 
     return {
         branch,
-        sha,
+        commitId,
         runId: env.GITHUB_RUN_ID ?? 'local',
         runAttempt: env.GITHUB_RUN_ATTEMPT ?? '1',
         ...(env.PERF_PR_NUMBER ? { prNumber: env.PERF_PR_NUMBER } : {}),
@@ -68,11 +68,14 @@ export const listShardDirectories = (
         return [];
     }
 
+    // A `g` or `y` flag makes `exec` resume from the previous match, skipping every other shard.
+    const shardPattern = new RegExp(pattern.source, pattern.flags.replace(/[gy]/g, ''));
+
     return fs
         .readdirSync(artifactsDir, { withFileTypes: true })
         .filter(entry => entry.isDirectory())
         .flatMap(entry => {
-            const shard = pattern.exec(entry.name)?.[1];
+            const shard = shardPattern.exec(entry.name)?.[1];
 
             return shard ? [{ shard, directory: path.join(artifactsDir, entry.name) }] : [];
         })
@@ -114,9 +117,9 @@ export const publishRuns = async ({
     // A branch appends to its rolling index, so what is already there is read back first — over
     // plain HTTPS, because the objects are public. Absent is the normal state of a first run.
     //
-    // One publish can cover several surfaces, and each keeps its own index, so every one of them is
+    // One publish can cover several platforms, and each keeps its own index, so every one of them is
     // read separately. Reading a single file and reusing its contents for the rest would write one
-    // surface's history into another surface's index.
+    // platform's history into another platform's index.
     const indexKeys = [...new Set(runs.map(run => indexKey(run.context)))];
     const rollingKeys = [
         ...new Set(
@@ -124,6 +127,7 @@ export const publishRuns = async ({
         ),
     ];
     const existingIndex: Record<string, string> = {};
+    const unreadableKeys = new Set<string>();
 
     for (const key of rollingKeys) {
         const url = publicUrl(key);
@@ -132,11 +136,17 @@ export const publishRuns = async ({
         if (existing.status === 'ok') {
             existingIndex[key] = existing.text;
         } else if (existing.status === 'unavailable') {
-            log(`[performance] Could not read ${url} (${existing.reason}); writing a fresh index.`);
+            // Writing it anyway would replace the branch's whole history with this one run.
+            unreadableKeys.add(key);
+            log(
+                `::warning::[performance] Could not read ${url} (${existing.reason}); its index is not updated by this run.`,
+            );
         }
     }
 
-    const files = buildUploadBundle(runs, { existingIndex, sealBaseline });
+    const files = buildUploadBundle(runs, { existingIndex, sealBaseline }).filter(
+        file => !unreadableKeys.has(file.path),
+    );
 
     writeBundle(bundleRoot, files);
 
@@ -144,7 +154,7 @@ export const publishRuns = async ({
     for (const file of files) {
         log(`  ${file.path}`);
     }
-    const indexUrls = indexKeys.map(publicUrl);
+    const indexUrls = indexKeys.filter(key => !unreadableKeys.has(key)).map(publicUrl);
 
     for (const url of indexUrls) {
         log(`[performance] Index: ${url}`);
@@ -154,7 +164,7 @@ export const publishRuns = async ({
 };
 
 /**
- * The CI entry point of every surface: reads the job's environment, lets the surface map its
+ * The CI entry point of every platform: reads the job's environment, lets the platform map its
  * downloaded shard artifacts to runs, and writes the bundle. Never throws, so it can never fail
  * the job.
  */
@@ -172,10 +182,10 @@ export const publishFromCi = async (
             return;
         }
 
-        const artifactsDir = path.resolve(process.env.PERF_ARTIFACTS_DIR ?? 'perf-artifacts');
+        const artifactsDir = path.resolve(process.env.PERF_ARTIFACTS_DIR || 'perf-artifacts');
         const outcome = await publishRuns({
             runs: collectRuns(artifactsDir, identity),
-            bundleRoot: path.resolve(process.env.PERF_BUNDLE_DIR ?? 'perf-upload'),
+            bundleRoot: path.resolve(process.env.PERF_BUNDLE_DIR || 'perf-upload'),
             sealBaseline: process.env.PERF_SEAL_BASELINE === 'true',
         });
 

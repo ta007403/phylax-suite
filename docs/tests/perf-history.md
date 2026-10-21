@@ -2,30 +2,30 @@
 
 A performance report tells you what one run measured; it cannot tell you whether that is worse than
 last week. The history lives as plain objects in the S3 bucket CI already writes to — **no server,
-no database, nothing to operate** — and it is shared by every surface we measure: the web and
+no database, nothing to operate** — and it is shared by every platform we measure: the web and
 desktop e2e runs and the mobile Detox runs.
 
 ## Layout
 
 ```
 s3://dev.suite.sldev.cz/e2e/perf/v1/
-├── runs/<surface>/<branch>/<sha>/<run>-<attempt>/shard-<n>/<artifact>.json
-├── index/<surface>/<branch>/index.ndjson        ← one line per measurement per run
-├── index/<surface>/pr/<number>/<run>-<attempt>-<shard>.ndjson
-└── baseline/<surface>/<branch>/latest.json      ← what later runs compare against
+├── runs/<platform>/<branch>/<commit-id>/<run>-<attempt>/shard-<n>/<artifact>.json
+├── index/<platform>/<branch>/index.ndjson        ← one line per measurement per run
+├── index/<platform>/pr/<number>/<run>-<attempt>-<shard>.ndjson
+└── baseline/<platform>/<branch>/latest.json      ← what later runs compare against
 ```
 
-`<surface>` is `web`, `desktop`, `android` or `ios`. It sits high in the key so retention can differ
-per surface, and so a merged view is a concatenation of index files.
+`<platform>` is `web`, `desktop`, `android` or `ios`. It sits high in the key so retention can differ
+per platform, and so a merged view is a concatenation of index files.
 
-Every object is world-readable over `https://dev.suite.sldev.cz/<key>`, so **reading the history
+Every object is world-readable over `https://dev.suite.sldev.cz/e2e/perf/v1/<key>`, so **reading the history
 needs no credentials** — fetch the index, and download an artifact only when you want the detail
 behind a point. Writing uses the `gh_actions_trezor_suite_dev_deploy` role CI already assumes.
 
 ## What is shared and what is not
 
 Unified is the envelope: identity, index row, key scheme, baseline document and upload bundle, all
-in `@trezor/perf-e2e`. Surface-specific is the artifact, stored as produced and labelled with a
+in `@trezor/perf-e2e`. Platform-specific is the artifact, stored as produced and labelled with a
 `kind`, because a Lighthouse report and a Detox report are not the same document and flattening them
 would throw away what makes each one worth opening.
 
@@ -35,7 +35,7 @@ would throw away what makes each one worth opening.
 | `native-report`      | Android/iOS Detox | same                                                      |
 | `lhr`, `flow-result` | Lighthouse runs   | Lighthouse's own `generateReport(lhr, 'html')`, offline   |
 
-Metric keys are namespaced by the instrument, never the surface: `browser:` for our in-page
+Metric keys are namespaced by the instrument, never the platform: `browser:` for our in-page
 instrumentation (which also runs inside Electron), `rn:` for the React Native numbers, `lh:` for
 Lighthouse audits. Nothing can accidentally compare a mobile time-to-interactive with a web total
 blocking time, while one trend query and one delta implementation serve all of them.
@@ -43,21 +43,22 @@ blocking time, while one trend query and one delta implementation serve all of t
 ## How a run publishes
 
 Shards never write to the store. Each one leaves an artifact — `perf-history-<target>-<group>` for
-the browser surfaces, `android-perf-report-<shard>` for mobile — and a single `Publish performance
-history` job per workflow downloads them, maps them through the adapter for that surface and uploads
+the browser platforms, `android-perf-report-<shard>` for mobile — and a single `Publish performance
+history` job per workflow downloads them, maps them through the adapter for that platform and uploads
 the bundle.
 
 Three properties keep this correct without a database:
 
 - **One writer per run**, so no two shards touch an object. Branch runs, which append to one rolling
   index, are additionally serialized by the job's concurrency group.
-- **A re-run replaces its own lines.** Index lines are keyed by surface, run, attempt, shard and
+- **A re-run replaces its own lines.** Index lines are keyed by platform, run, attempt, shard and
   measurement, so re-running corrects a point instead of doubling it.
 - **Artifacts upload before the lines that reference them**, in two passes, so a reader never meets
   an index line pointing at an object that is not there yet.
 
-Publishing never gates a run: a missing artifact, an unset environment, an unknown platform or an
-unreachable index all end in a printed status and exit 0.
+Publishing never gates a run: a missing artifact, an unset environment or an unknown platform all
+end in a printed status and exit 0. An index that cannot be read back is left as it is, with a
+warning on the job, rather than rewritten with only this run's lines.
 
 ## Reading it back
 
@@ -72,9 +73,9 @@ Each line carries the identity, the sample count, the metric map and the key of 
 ```jsonc
 {
     "ts": "…",
-    "surface": "web",
+    "platform": "web",
     "branch": "develop",
-    "sha": "…",
+    "commitId": "…",
     "run": "…",
     "shard": "3",
     "scenario": "wallet-discovery",
@@ -89,7 +90,7 @@ Fetch `runs/…` under the same prefix for the document behind a point.
 
 ## Baselines
 
-Only a run on the base branch seals `baseline/<surface>/<branch>/latest.json`
+Only a run on `develop` seals `baseline/<platform>/<branch>/latest.json`
 (`PERF_SEAL_BASELINE`), which `mergeStoredBaseline` lets win over the numbers committed in a
 `budgets.ts`. Until the first baseline is sealed, `fetchBaselineDocument` reports `absent` and the
 committed values stand — as they do whenever the object cannot be read.
@@ -100,4 +101,4 @@ committed values stand — as they do whenever the object cannot be read.
 | -------------------------------------- | --------------------------------------------------------------- |
 | `packages/perf-e2e/src/store.ts`       | key scheme, index rows, baseline document, upload bundle — pure |
 | `packages/perf-e2e/src/storeReader.ts` | reading the history back, credential-free, never throwing       |
-| `packages/perf-e2e/src/publishRuns.ts` | the publish half every surface shares                           |
+| `packages/perf-e2e/src/publishRuns.ts` | the publish half every platform shares                          |

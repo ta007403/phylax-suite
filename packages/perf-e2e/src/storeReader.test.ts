@@ -8,9 +8,9 @@ import {
 
 const document: PerfBaselineDocument = {
     updatedAt: '2026-09-18T00:12:00.000Z',
-    surface: 'android',
+    platform: 'android',
     branch: 'develop',
-    sha: 'abc1234',
+    commitId: 'abc1234',
     run: '1840',
     measurements: { home: { 'rn:ttffMs': 380, 'rn:ttiMs': 900 } },
 };
