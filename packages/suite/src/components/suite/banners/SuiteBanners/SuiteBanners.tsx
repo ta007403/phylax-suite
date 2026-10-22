@@ -12,6 +12,7 @@ import {
     selectDeviceStaticSessionId,
     selectIsDeviceBackupRequired,
     selectIsDeviceBackupUnfinished,
+    selectIsPhylaxDevice,
     selectSelectedDevice,
 } from '@suite-common/device';
 import { selectBannerMessage } from '@suite-common/message-system';
@@ -33,6 +34,7 @@ import { FirmwareAuthenticityCheckBanner } from './FirmwareAuthenticityCheckBann
 import { LocalNetworkAccessPermission } from './LocalNetworkAccessPermission';
 import { NoBackup } from './NoBackupBanner';
 import { NoConnectionBanner } from './NoConnectionBanner';
+import { PhylaxFirmwareBanner } from './PhylaxFirmwareBanner';
 import { SafetyChecksBanner } from './SafetyChecksBanner';
 
 const Container = styled.div<{ $fill?: boolean }>`
@@ -59,6 +61,7 @@ export const SuiteBanners = ({ isOnboarding, fill }: SuiteBannersProps) => {
     const firmwareHashError = useSelector(selectFirmwareHashCheckErrorIfEnabled);
     const isDeviceBackupUnfinished = useSelector(selectIsDeviceBackupUnfinished);
     const isDeviceBackupRequired = useSelector(selectIsDeviceBackupRequired);
+    const isPhylaxDevice = useSelector(selectIsPhylaxDevice);
     const transport = useSelector(selectSuiteTransport);
     const accounts = useSelector(selectVisibleDeviceAccounts);
     const { localNetworkAccessPermission } = useLocalNetworkAccessPermission();
@@ -94,6 +97,9 @@ export const SuiteBanners = ({ isOnboarding, fill }: SuiteBannersProps) => {
     } else if (isDeviceBackupRequired) {
         banner = <NoBackup />;
         priority = 70;
+    } else if (isPhylaxDevice && device?.connected) {
+        banner = <PhylaxFirmwareBanner />;
+        priority = 60;
     } else if (device?.connected && device?.features?.safety_checks === 'PromptAlways') {
         // PromptAlways could only be set via trezorctl. Warn user unconditionally.
         banner = <SafetyChecksBanner />;

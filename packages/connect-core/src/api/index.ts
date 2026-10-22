@@ -62,3 +62,10 @@ export { default as thpGetCredentials } from './thpGetCredentials';
 export { default as thpRemoveCredentials } from './thpRemoveCredentials';
 export { default as verifyMessage } from './verifyMessage';
 export { default as wipeDevice } from './wipeDevice';
+export {
+    PhylaxDeleteWallet as phylaxDeleteWallet,
+    PhylaxGetBlocks as phylaxGetBlocks,
+    PhylaxGetWallet as phylaxGetWallet,
+    PhylaxGetWallets as phylaxGetWallets,
+    PhylaxSetWalletName as phylaxSetWalletName,
+} from './phylax';

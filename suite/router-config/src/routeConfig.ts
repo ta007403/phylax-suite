@@ -188,6 +188,11 @@ export const routes = [
         app: 'password-manager',
     },
     {
+        name: 'phylax-index',
+        pattern: '/phylax',
+        app: 'phylax',
+    },
+    {
         name: 'settings-index',
         pattern: '/settings',
         app: 'settings',

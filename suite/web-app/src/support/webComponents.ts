@@ -218,6 +218,9 @@ export const webComponents: Record<PageName, LazyExoticComponent<ComponentType>>
         () => import(/* webpackChunkName: "password-manager" */ 'src/views/password-manager'),
     ),
 
+    // PHYLAX Blocks (fork)
+    'phylax-index': lazy(() => import(/* webpackChunkName: "phylax" */ 'src/views/phylax')),
+
     // settings
     'settings-index': lazy(() =>
         import(

@@ -9,7 +9,7 @@ import {
     selectIsNewContentIndicatorVisible,
 } from '@suite/flags';
 import { type Route, selectRouteName } from '@suite/router';
-import { selectHasBitcoinOnlyFirmware } from '@suite-common/device';
+import { selectHasBitcoinOnlyFirmware, selectIsPhylaxDevice } from '@suite-common/device';
 import { selectHasUnseenTransactionNotifications } from '@suite-common/toast-notifications';
 import { Column } from '@trezor/components';
 import { useServices } from '@trezor/dependency-injection';
@@ -20,6 +20,7 @@ import {
     HouseIcon,
     PiggyBankIcon,
     RepeatIcon,
+    StackIcon,
 } from '@trezor/icons';
 import { injectDispatch } from '@trezor/redux-utils';
 
@@ -69,6 +70,8 @@ export const Navigation = ({ children }: NavigationProps) => {
     const startRoute: Route['name'] = 'suite-index';
 
     const isBtcOnly = useSelector(selectHasBitcoinOnlyFirmware);
+    // PHYLAX Blocks (fork): only a PHYLAX main block gets the PHYLAX page
+    const isPhylax = useSelector(selectIsPhylaxDevice);
     const isAppsEmbeddingAvailable = useSelector(selectIsAppsEmbeddingAvailable);
 
     const hasUnseenNotifications = useSelector(selectHasUnseenTransactionNotifications);
@@ -204,6 +207,17 @@ export const Navigation = ({ children }: NavigationProps) => {
                           } as NavigationItemProps,
                       ]
                     : []),
+                ...(isPhylax
+                    ? [
+                          {
+                              nameId: 'TR_PHYLAX',
+                              icon: StackIcon,
+                              goToRoute: 'phylax-index',
+                              routes: ['phylax-index'],
+                              'data-testid': '@suite/menu/phylax',
+                          } as NavigationItemProps,
+                      ]
+                    : []),
                 ...(isAppsEmbeddingAvailable
                     ? [
                           {
@@ -238,6 +252,7 @@ export const Navigation = ({ children }: NavigationProps) => {
             [
                 startRoute,
                 isBtcOnly,
+                isPhylax,
                 isAppsEmbeddingAvailable,
                 handleSwapNavigation,
                 isSwapNewContentIndicatorVisible,

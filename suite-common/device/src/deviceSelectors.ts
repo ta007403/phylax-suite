@@ -48,6 +48,12 @@ export const selectDevicesCount = (state: DeviceRootState) => state.device?.devi
 
 export const selectSelectedDevice = (state: DeviceRootState) => state.device.selectedDevice;
 
+// PHYLAX Blocks (fork): the selected device is a PHYLAX main block (Trezor One with PHYLAX firmware).
+export const selectIsPhylaxDevice = createMemoizedSelector(
+    [selectSelectedDevice],
+    device => device?.type === 'acquired' && device.phylax === true,
+);
+
 export const selectIsAnyDeviceSelected = createMemoizedSelector(
     [selectSelectedDevice],
     device => !!device,

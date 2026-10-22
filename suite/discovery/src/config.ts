@@ -22,6 +22,7 @@ export const SHOULD_ROUTER_APP_START_DISCOVERY: Record<RouterApp, boolean> = {
     'switch-device': false,
     onboarding: false,
     'password-manager': false,
+    phylax: false,
     settings: false,
     recovery: false,
     backup: false,

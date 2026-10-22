@@ -175,6 +175,11 @@ export class Device extends TypedEmitter<DeviceEvents> implements IDevice {
         firmwareHash: null,
     };
 
+    // PHYLAX Blocks (fork): a Trezor One running PHYLAX main-block firmware. Asked once,
+    // undefined until then. Such a device is built from the PHYLAX source, so it can never match
+    // an official Trezor build: its authenticity checks are reported as skipped instead of failed.
+    private phylax?: boolean;
+
     private readonly uniquePath;
 
     private readonly createLogger: CreateLogger;
@@ -586,8 +591,16 @@ export class Device extends TypedEmitter<DeviceEvents> implements IDevice {
         }
 
         if (!options.skipFirmwareChecks) {
-            await checkFirmwareHashWithRetries({ device: this, logger: this.logger });
-            await this.checkFirmwareRevisionWithRetries();
+            await this.detectPhylax();
+            if (this.phylax) {
+                this.authenticityChecks = {
+                    firmwareHash: { success: false, error: 'phylax-firmware' },
+                    firmwareRevision: { success: false, error: 'phylax-firmware' },
+                };
+            } else {
+                await checkFirmwareHashWithRetries({ device: this, logger: this.logger });
+                await this.checkFirmwareRevisionWithRetries();
+            }
         }
 
         if (
@@ -705,6 +718,27 @@ export class Device extends TypedEmitter<DeviceEvents> implements IDevice {
         await this._updateCurrentRelease(message);
     }
 
+    // PHYLAX Blocks (fork): only Trezor One firmware can be a PHYLAX main block. A stock Trezor One
+    // answers the unknown message with Failure_UnexpectedMessage.
+    private async detectPhylax() {
+        if (this.phylax !== undefined) return;
+        if (
+            !this.features ||
+            this.features.bootloader_mode ||
+            this.features.internal_model !== DeviceModelInternal.T1B1
+        ) {
+            return;
+        }
+        try {
+            await this.getCurrentSession().typedCall('PhylaxGetBlocks', 'PhylaxBlocks', {});
+            this.phylax = true;
+            // PHYLAX firmware is not a Trezor release: never offer to replace it from here
+            this._firmwareStatus = 'valid';
+        } catch {
+            this.phylax = false;
+        }
+    }
+
     getAuthenticityChecks() {
         return this.authenticityChecks;
     }
@@ -815,7 +849,9 @@ export class Device extends TypedEmitter<DeviceEvents> implements IDevice {
         if (!version || !versionUtils.isEqual(version, newVersion)) {
             this._unavailableCapabilities = getUnavailableCapabilities(feat, getAllNetworks());
             this._firmwareReleaseConfigInfo = getFirmwareReleaseConfigInfo(feat, firmwareType);
-            this._firmwareStatus = getFirmwareStatus(feat, this._firmwareReleaseConfigInfo);
+            this._firmwareStatus = this.phylax
+                ? 'valid'
+                : getFirmwareStatus(feat, this._firmwareReleaseConfigInfo);
             // Bundled release JSONs are production assets, so only seed `currentRelease`
             // from them on production-like channels. On other channels the
             // channel-appropriate release is fetched from remote immediately after,
@@ -1106,6 +1142,7 @@ export class Device extends TypedEmitter<DeviceEvents> implements IDevice {
             unavailableCapabilities: this.unavailableCapabilities,
             availableTranslations: this.availableTranslations,
             authenticityChecks: this.authenticityChecks,
+            phylax: this.phylax === true,
             thp: this.getDeviceThp(),
         };
     }

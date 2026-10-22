@@ -81,6 +81,7 @@ export type FirmwareRevisionCheckError =
     | 'bootloader-hash-mismatch'
     | 'firmware-version-unknown'
     | 'cannot-perform-check-offline' // suite offline & release version not found locally => we cannot check with `data.trezor.io`
+    | 'phylax-firmware' // PHYLAX Blocks (fork): built from PHYLAX source, never an official build
     | 'other-error'; // incorrect URL, cannot parse JSON, etc.
 
 export type FirmwareRevisionCheckResult =
@@ -97,6 +98,7 @@ export type FirmwareHashCheckError =
     | 'check-unsupported'
     | 'unknown-release'
     | 'takes-too-long'
+    | 'phylax-firmware' // PHYLAX Blocks (fork): built from PHYLAX source, never an official build
     | 'other-error';
 
 export type FirmwareHashCheckResult =
@@ -162,6 +164,8 @@ export type KnownDevice = BaseDevice & {
         firmwareHash: FirmwareHashCheckResult | null;
         // Maybe add AuthenticityCheck result here?
     };
+    /** PHYLAX Blocks (fork): a Trezor One running PHYLAX main-block firmware. */
+    phylax?: boolean;
     transportSessionOwner?: undefined;
     hid?: undefined;
     usb_connected?: boolean; // true if the device is powered/charged from USB, regardless of transport selection.

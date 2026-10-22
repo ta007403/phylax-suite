@@ -7,6 +7,9 @@ import type {
 } from './types';
 import { encodeDataToQueryString, getRandomId, getUrl, reportEvent } from './utils';
 
+// PHYLAX Blocks (fork): analytics are switched off for the whole fork.
+const PHYLAX_FORK = true;
+
 export interface Analytics<T> {
     init: (enabled: boolean | undefined, options: InitOptions) => void;
     enable: () => void;
@@ -100,6 +103,9 @@ export class QueuedAnalytics<T extends AnalyticsEvent> implements Analytics<T> {
     };
 
     public report = (data: T, config?: ReportConfig) => {
+        // PHYLAX Blocks (fork): never send a fork's analytics to Trezor (even forced events).
+        if (PHYLAX_FORK) return;
+
         // Add a timestamp to each event to track its actual occurrence time, considering possible queuing delays.
         if (!data.timestamp) {
             data.timestamp = Date.now().toString();

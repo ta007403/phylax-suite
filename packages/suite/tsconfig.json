@@ -272,6 +272,7 @@
         { "path": "../type-utils" },
         { "path": "../urls" },
         { "path": "../utils" },
+        { "path": "../utxo-lib" },
         { "path": "../bundler-security" },
         { "path": "../eslint" }
     ]

@@ -3668,6 +3668,17 @@ export const messages = defineMessages({
         defaultMessage: 'Migrate Dropbox passwords',
         id: 'TR_PASSWORD_MANAGER',
     },
+    TR_PHYLAX: {
+        defaultMessage: 'PHYLAX Blocks',
+        description: 'PHYLAX Blocks (fork): name of the page with the block stack and its wallets',
+        id: 'TR_PHYLAX',
+    },
+    TR_PHYLAX_FIRMWARE_BANNER: {
+        defaultMessage:
+            'PHYLAX custom firmware. This device runs firmware built from the PHYLAX source, not an official Trezor release, so Trezor firmware authenticity checks are skipped for it.',
+        description: 'PHYLAX Blocks (fork): banner shown while a PHYLAX main block is connected',
+        id: 'TR_PHYLAX_FIRMWARE_BANNER',
+    },
     TR_SETTINGS: {
         defaultMessage: 'Settings',
         id: 'TR_SETTINGS',

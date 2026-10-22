@@ -13,6 +13,8 @@ export type RouterApp =
     | 'switch-device'
     | 'onboarding'
     | 'password-manager'
+    // PHYLAX Blocks (fork): the stack and its saved multisig wallets
+    | 'phylax'
     | 'settings'
     | 'recovery'
     | 'backup'

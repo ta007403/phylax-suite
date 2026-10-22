@@ -26,6 +26,7 @@ export const SHOULD_ROUTER_APP_SKIP_AUTHENTICITY_CHECKS: Record<RouterApp, boole
     'switch-device': false,
     onboarding: false,
     'password-manager': false,
+    phylax: false,
     recovery: false,
     backup: false,
     'create-multi-share-backup': false,

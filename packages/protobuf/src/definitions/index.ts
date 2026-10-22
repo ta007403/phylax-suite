@@ -231,6 +231,17 @@ import {
     MoneroWatchKey,
 } from './messages-monero';
 import { NostrEventSignature, NostrGetPubkey, NostrPubkey, NostrSignEvent } from './messages-nostr';
+import {
+    PhylaxBlocks,
+    PhylaxDeleteWallet,
+    PhylaxGetBlocks,
+    PhylaxGetWallet,
+    PhylaxGetWallets,
+    PhylaxSelectBlock,
+    PhylaxSetWalletName,
+    PhylaxWallet,
+    PhylaxWallets,
+} from './messages-phylax';
 import { RippleAddress, RippleGetAddress, RippleSignTx, RippleSignedTx } from './messages-ripple';
 import {
     SolanaAddress,
@@ -331,6 +342,7 @@ export * from './messages-ethereum-eip712';
 export * from './messages-evolu';
 export * from './messages-monero';
 export * from './messages-nostr';
+export * from './messages-phylax';
 export * from './messages-ripple';
 export * from './messages-solana';
 export * from './messages-stellar';
@@ -556,6 +568,15 @@ export const MessageType = Type.Object(
         NostrPubkey,
         NostrSignEvent,
         NostrEventSignature,
+        PhylaxGetBlocks,
+        PhylaxBlocks,
+        PhylaxGetWallets,
+        PhylaxWallets,
+        PhylaxGetWallet,
+        PhylaxWallet,
+        PhylaxSelectBlock,
+        PhylaxSetWalletName,
+        PhylaxDeleteWallet,
         RippleGetAddress,
         RippleAddress,
         RippleSignTx,
@@ -764,6 +785,12 @@ export type WireInMessage =
     | 'DebugMoneroDiagRequest'
     | 'NostrGetPubkey'
     | 'NostrSignEvent'
+    | 'PhylaxGetBlocks'
+    | 'PhylaxGetWallets'
+    | 'PhylaxGetWallet'
+    | 'PhylaxSelectBlock'
+    | 'PhylaxSetWalletName'
+    | 'PhylaxDeleteWallet'
     | 'RippleGetAddress'
     | 'RippleSignTx'
     | 'SolanaGetPublicKey'
@@ -891,6 +918,9 @@ export type WireOutMessage =
     | 'DebugMoneroDiagAck'
     | 'NostrPubkey'
     | 'NostrEventSignature'
+    | 'PhylaxBlocks'
+    | 'PhylaxWallets'
+    | 'PhylaxWallet'
     | 'RippleAddress'
     | 'RippleSignedTx'
     | 'SolanaPublicKey'

@@ -54,6 +54,14 @@ export const revisionCheckErrorScenarios = {
         shouldNotify: false,
         isConclusive: false,
     },
+    // PHYLAX Blocks (fork): a PHYLAX main block runs firmware built from the PHYLAX source, which
+    // can never match an official Trezor build. Suite shows its own PHYLAX banner instead.
+    'phylax-firmware': {
+        type: 'skipped',
+        shouldReport: false,
+        shouldNotify: false,
+        isConclusive: true,
+    },
     'other-error': {
         type: 'skipped',
         shouldReport: true,
@@ -89,6 +97,14 @@ export const hashCheckErrorScenarios = {
     },
     // could mean counterfeit firmware, but it's also caught by revision check, which handles edge-cases better
     'unknown-release': {
+        type: 'skipped',
+        shouldReport: false,
+        shouldNotify: false,
+        isConclusive: true,
+    },
+    // PHYLAX Blocks (fork): a PHYLAX main block runs firmware built from the PHYLAX source, which
+    // can never match an official Trezor build. Suite shows its own PHYLAX banner instead.
+    'phylax-firmware': {
         type: 'skipped',
         shouldReport: false,
         shouldNotify: false,

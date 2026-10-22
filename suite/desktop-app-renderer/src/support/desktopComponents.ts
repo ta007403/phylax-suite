@@ -21,6 +21,7 @@ import { EarnUnwrap } from 'src/views/earn/yield/unwrap';
 import { EarnWithdraw } from 'src/views/earn/yield/withdraw';
 import { EarnWrap } from 'src/views/earn/yield/wrap';
 import PasswordManagerView from 'src/views/password-manager';
+import PhylaxView from 'src/views/phylax';
 import { SettingsCoins } from 'src/views/settings/SettingsCoins/SettingsCoins';
 import { SettingsConnectedApps } from 'src/views/settings/SettingsConnectedApps/SettingsConnectedApps';
 import { SettingsDebug } from 'src/views/settings/SettingsDebug/SettingsDebug';
@@ -107,6 +108,7 @@ export const desktopComponents: Record<PageName, ComponentType> = {
     'wallet-trading-transactions': TradingTransactions,
 
     'password-manager-index': PasswordManagerView,
+    'phylax-index': PhylaxView,
 
     'settings-index': DesktopSettingsGeneral,
     'settings-coins': SettingsCoins,
