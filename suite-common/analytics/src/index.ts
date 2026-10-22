@@ -3,7 +3,11 @@ import { type Analytics } from '@trezor/analytics-uploader';
 import { type AnalyticsSharedEvents } from './analyticsEvents';
 
 export { type AnalyticsSharedEvents } from './analyticsEvents';
-export { deviceConnectionRequiredAttribute } from './earnAttributes';
+export {
+    type EarnDeviceStatus,
+    deviceStatusAttribute,
+    getEarnDeviceStatus,
+} from './earnAttributes';
 export type {
     AnalyticsPlatform,
     AppVersion,

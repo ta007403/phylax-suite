@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux';
 
 import { type RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 
-import { selectIsDeviceConnected } from '@suite-common/device';
 import { getNetworkDisplaySymbolName } from '@suite-common/wallet-config';
 import {
     type AccountsRootState,
@@ -30,6 +29,7 @@ import { EarnAmountCard } from '../../components/earn/EarnAmountCard';
 import { EarnOutputFields } from '../../components/earn/EarnOutputFields';
 import { StakingFormScreenFooter } from '../../components/staking/StakingFormScreenFooter';
 import { StakingNoBalanceContent } from '../../components/staking/StakingNoBalanceContent';
+import { useEarnDeviceStatus } from '../../hooks/earn/useEarnDeviceStatus';
 import { useNavigateBackAnalytics } from '../../hooks/earn/useNavigateBackAnalytics';
 import { useStakingForm } from '../../hooks/staking/useStakingForm';
 import { isBalanceBelowStakingMinimum } from '../../utils/staking/isBalanceBelowStakingMinimum';
@@ -52,7 +52,7 @@ export const StakingFormScreen = () => {
         selectAccountNetworkSymbol(state, accountKey),
     );
     const { analytics } = useServices(injectNativeAnalytics);
-    const isDeviceConnected = useSelector(selectIsDeviceConnected);
+    const deviceStatus = useEarnDeviceStatus();
     const [currency, setCurrency] = useState<'crypto' | 'fiat'>('crypto');
     const handleCurrencyChange = useCallback((activeView: ActiveView) => {
         setCurrency(activeView === 'primary' ? 'crypto' : 'fiat');
@@ -95,7 +95,7 @@ export const StakingFormScreen = () => {
             type: events.stakingStakeEvent.name,
             payload: {
                 action: 'continue',
-                deviceConnectionRequired: !isDeviceConnected,
+                deviceStatus,
                 step: 'stake-form-modal',
                 networkSymbol: account.symbol,
                 currency,

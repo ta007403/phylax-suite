@@ -23,6 +23,7 @@ import { SolanaStakingLimitBanner } from 'src/components/suite/modals/ReduxModal
 import { Fees } from 'src/components/wallet/Fees/Fees';
 import { useCardanoStaking } from 'src/hooks/earn/useCardanoStaking';
 import { useClaimForm } from 'src/hooks/earn/useClaimForm';
+import { useEarnDeviceStatus } from 'src/hooks/earn/useEarnDeviceStatus';
 import { useSelector } from 'src/hooks/suite';
 import { useMessageSystemStaking } from 'src/hooks/suite/useMessageSystemStaking';
 import { CRYPTO_INPUT } from 'src/types/earn/earnFormFields';
@@ -33,6 +34,7 @@ type EarnClaimModalProps = {
 };
 
 export const EarnClaimModal = ({ onCancel, account }: EarnClaimModalProps) => {
+    const deviceStatus = useEarnDeviceStatus();
     const { device, isLocked } = useDevice();
     const { analytics, dispatch } = useServices(injectDesktopAnalytics, injectDispatch);
     const { isClaimingDisabled, claimingMessageContent } = useMessageSystemStaking(account.symbol);
@@ -102,7 +104,7 @@ export const EarnClaimModal = ({ onCancel, account }: EarnClaimModalProps) => {
             type: events.stakingClaimEvent.name,
             payload: {
                 action: 'continue',
-                deviceConnectionRequired: !isDeviceConnected,
+                deviceStatus,
                 step: 'claim-form-modal',
                 networkSymbol: account.symbol,
             },

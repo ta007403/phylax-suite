@@ -1,6 +1,6 @@
 import type { EarnModalAction } from '@suite-common/suite-types';
 
-import { deviceConnectionRequiredAttribute } from '../earnAttributes';
+import { type EarnDeviceStatus, deviceStatusAttribute } from '../earnAttributes';
 import type { AttributeDef } from '../eventDefinition';
 
 /**
@@ -14,7 +14,7 @@ import type { AttributeDef } from '../eventDefinition';
  */
 export type WrappedNativeFlowAttributes = {
     action: AttributeDef<EarnModalAction>;
-    deviceConnectionRequired?: AttributeDef<boolean>;
+    deviceStatus?: AttributeDef<EarnDeviceStatus>;
     type: AttributeDef<
         'submit' | 'tx-simulation-modal' | 'sent' | 'success' | 'error' | 'leftPending'
     >;
@@ -24,7 +24,7 @@ export type WrappedNativeFlowAttributes = {
 };
 
 export const wrappedNativeFlowAttributes = {
-    deviceConnectionRequired: deviceConnectionRequiredAttribute,
+    deviceStatus: deviceStatusAttribute,
     action: {
         description:
             'What the user did with the surface the `type` names. `continue` on every lifecycle report; `cancel` when the tx-simulation modal was declined; `close` when the "transaction sent" toast was dismissed with its dismiss button.',

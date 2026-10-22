@@ -1,5 +1,6 @@
 import { mockResolvedYieldFlowData } from '@suite-common/wallet-core/mocks';
 import { mockNativeAnalytics } from '@suite-native/analytics/mocks';
+import { deviceAuthorizationInitialState } from '@suite-native/device-authorization';
 import { act, renderHookWithStoreProvider } from '@suite-native/test-utils-store';
 
 import { useWrappedNativeTokenReview } from './useWrappedNativeTokenReview';
@@ -63,7 +64,10 @@ describe.each(['standalone', 'in-flow'] as const)('%s review analytics', flowCon
                         }),
                     {
                         services,
-                        preloadedState: { device: { selectedDevice: { connected: true } } },
+                        preloadedState: {
+                            deviceAuthorization: deviceAuthorizationInitialState,
+                            device: { selectedDevice: { connected: true } },
+                        },
                     },
                 );
 

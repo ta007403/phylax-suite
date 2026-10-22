@@ -1,13 +1,12 @@
 import { useCallback } from 'react';
-import { useSelector } from 'react-redux';
 
 import { events } from '@suite-common/analytics';
-import { selectIsDeviceConnected } from '@suite-common/device';
 import { type NetworkSymbol } from '@suite-common/wallet-config';
 import { type WrappedNativeFlowType } from '@suite-common/wallet-core';
 import { injectNativeAnalytics } from '@suite-native/analytics';
 import { useServices } from '@trezor/dependency-injection';
 
+import { useEarnDeviceStatus } from './useEarnDeviceStatus';
 import { useWrappedNativeFlowReport } from './useWrappedNativeFlowReport';
 import { getWrappedNativeMaxInteractionElement } from '../../utils/earn/wrappedNativeAnalyticsUtils';
 
@@ -21,7 +20,7 @@ export const useWrappedNativeFlowAnalytics = ({
     networkSymbol,
 }: UseWrappedNativeFlowAnalyticsParams) => {
     const { analytics } = useServices(injectNativeAnalytics);
-    const isDeviceConnected = useSelector(selectIsDeviceConnected);
+    const deviceStatus = useEarnDeviceStatus();
     const report = useWrappedNativeFlowReport(flowType);
 
     const reportSubmit = useCallback(() => {
@@ -29,9 +28,9 @@ export const useWrappedNativeFlowAnalytics = ({
             type: 'submit',
             action: 'continue',
             networkSymbol,
-            deviceConnectionRequired: !isDeviceConnected,
+            deviceStatus,
         });
-    }, [report, networkSymbol, isDeviceConnected]);
+    }, [report, networkSymbol, deviceStatus]);
 
     const reportSimulation = useCallback(
         (action: 'continue' | 'cancel') => {

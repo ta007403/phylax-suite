@@ -7,12 +7,14 @@ import { useServices } from '@trezor/dependency-injection';
 import { InfoIcon } from '@trezor/icons';
 import { injectDispatch } from '@trezor/redux-utils';
 
+import { useEarnDeviceStatus } from 'src/hooks/earn/useEarnDeviceStatus';
 import { useWithdrawalFormContext } from 'src/hooks/earn/useWithdrawalForm';
 import { useSelector } from 'src/hooks/suite';
 import { useMessageSystemStaking } from 'src/hooks/suite/useMessageSystemStaking';
 import { CRYPTO_INPUT, FIAT_INPUT } from 'src/types/earn/earnFormFields';
 
 export const UnstakeButton = () => {
+    const deviceStatus = useEarnDeviceStatus();
     const { device, isLocked } = useDevice();
     const { account, network, isComposing, formState, handleSubmit, watch, signTx, currency } =
         useWithdrawalFormContext();
@@ -37,7 +39,7 @@ export const UnstakeButton = () => {
             type: events.stakingUnstakeEvent.name,
             payload: {
                 action: 'continue',
-                deviceConnectionRequired: !isDeviceConnected,
+                deviceStatus,
                 step: 'unstake-form-modal',
                 currency,
                 networkSymbol: account.symbol,

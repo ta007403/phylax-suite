@@ -2,6 +2,7 @@ import { type ResolvedYieldFlowData } from '@suite-common/wallet-core';
 import { mockResolvedYieldFlowData, mockYieldSessionState } from '@suite-common/wallet-core/mocks';
 import { type NativeAnalyticsDep } from '@suite-native/analytics';
 import { mockNativeAnalytics } from '@suite-native/analytics/mocks';
+import { deviceAuthorizationInitialState } from '@suite-native/device-authorization';
 import { YieldStackRoutes } from '@suite-native/navigation';
 import { act, renderHookWithStoreProvider } from '@suite-native/test-utils-store';
 
@@ -47,7 +48,10 @@ const renderUnwrapController = async () => {
 
     const view = await renderHookWithStoreProvider(useYieldWithdrawUnwrapController, {
         services,
-        preloadedState: { device: { selectedDevice: { connected: true } } },
+        preloadedState: {
+            deviceAuthorization: deviceAuthorizationInitialState,
+            device: { selectedDevice: { connected: true } },
+        },
     });
 
     return { ...view, analytics: services.analytics };

@@ -5,6 +5,7 @@ import { mockWalletAccount } from '@suite-common/wallet-types/mocks';
 import { type NativeAnalyticsDep } from '@suite-native/analytics';
 import { mockNativeAnalytics } from '@suite-native/analytics/mocks';
 import { type ActiveView } from '@suite-native/atoms';
+import { deviceAuthorizationInitialState } from '@suite-native/device-authorization';
 import { act, fireEvent, renderWithStoreProvider } from '@suite-native/test-utils-store';
 import { mock } from '@trezor/dependency-injection';
 
@@ -77,7 +78,10 @@ const renderStakingForm = async (isDeviceConnected = true) => {
     const services: NativeAnalyticsDep = { analytics: mockNativeAnalytics(jest.fn()) };
     const view = await renderWithStoreProvider(<StakingFormScreen />, {
         services,
-        preloadedState: { device: { selectedDevice: { connected: isDeviceConnected } } },
+        preloadedState: {
+            deviceAuthorization: deviceAuthorizationInitialState,
+            device: { selectedDevice: { connected: isDeviceConnected } },
+        },
     });
 
     return {
@@ -102,7 +106,7 @@ describe('StakingFormScreen analytics', () => {
                     type: 'staking/stake',
                     payload: expect.objectContaining({
                         action: 'continue',
-                        deviceConnectionRequired: !connected,
+                        deviceStatus: connected ? 'connected' : 'disconnected',
                     }),
                 }),
             );

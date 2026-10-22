@@ -4,7 +4,6 @@ import { useSelector } from 'react-redux';
 import { type RouteProp, useIsFocused, useNavigation, useRoute } from '@react-navigation/native';
 
 import { events } from '@suite-common/analytics';
-import { selectIsDeviceConnected } from '@suite-common/device';
 import { Context } from '@suite-common/message-system';
 import { asNetworkSymbol, getNetwork } from '@suite-common/wallet-config';
 import {
@@ -37,6 +36,7 @@ import { YieldDisabledAlert } from '../../components/yield/YieldDisabledAlert';
 import { YieldFeeSection } from '../../components/yield/YieldFeeSection';
 import { YieldPendingTransactionModal } from '../../components/yield/YieldPendingTransactionModal';
 import { YieldTxSimulationBottomSheet } from '../../components/yield/YieldTxSimulationBottomSheet';
+import { useEarnDeviceStatus } from '../../hooks/earn/useEarnDeviceStatus';
 import { useNavigateBackAnalytics } from '../../hooks/earn/useNavigateBackAnalytics';
 import { useMessageSystemYield } from '../../hooks/yield/useMessageSystemYield';
 import { useShowYieldTransactionFailureAlert } from '../../hooks/yield/useShowYieldTransactionFailureAlert';
@@ -181,7 +181,7 @@ export const YieldClaimScreen = () => {
         }
     }, [isSheetPresented, navigation, route.params, session?.step]);
 
-    const isDeviceConnected = useSelector(selectIsDeviceConnected);
+    const deviceStatus = useEarnDeviceStatus();
 
     const reportClaimEvent = useCallback(
         (payload: { action: 'continue' | 'cancel'; type: 'claim' | 'tx-simulation-modal' }) => {
@@ -192,12 +192,12 @@ export const YieldClaimScreen = () => {
                     networkSymbol: account?.symbol,
                     rewardCount: accountRewards?.rewards.length,
                     ...(payload.action === 'continue' && payload.type === 'claim'
-                        ? { deviceConnectionRequired: !isDeviceConnected }
+                        ? { deviceStatus }
                         : {}),
                 },
             });
         },
-        [account?.symbol, accountRewards?.rewards.length, analytics, isDeviceConnected],
+        [account?.symbol, accountRewards?.rewards.length, analytics, deviceStatus],
     );
 
     const handleContinue = useCallback(() => {

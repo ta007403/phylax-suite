@@ -15,6 +15,7 @@ import { useServices } from '@trezor/dependency-injection';
 
 import { FormattedCryptoAmount } from 'src/components/suite/FormattedCryptoAmount';
 import { useIsFeeRefetchDisabled } from 'src/components/wallet/Fees/CollapsibleFees/hooks/useIsFeeRefetchDisabled';
+import { useEarnDeviceStatus } from 'src/hooks/earn/useEarnDeviceStatus';
 import { useMessageSystemWrappedNative } from 'src/hooks/suite/useMessageSystemWrappedNative';
 
 import { useYieldDepositContext } from './useYieldDepositContext';
@@ -29,11 +30,11 @@ import { YieldFlowStepList } from '../common/YieldFlowStepList';
 import { YieldWrapStep } from '../common/YieldWrapStep';
 
 export const YieldDepositForm = () => {
+    const deviceStatus = useEarnDeviceStatus();
     const { analytics } = useServices(injectDesktopAnalytics);
     const { CryptoAmountFormatter } = useFormatters();
 
     const {
-        isDeviceConnected,
         account,
         vault,
         token,
@@ -196,7 +197,7 @@ export const YieldDepositForm = () => {
             payload: {
                 type: approvalAction === 'revoke' ? 'revoke' : 'approve',
                 action: 'continue',
-                deviceConnectionRequired: !isDeviceConnected,
+                deviceStatus,
                 networkSymbol: token.networkSymbol,
                 vaultId: vault.id,
             },
@@ -225,7 +226,7 @@ export const YieldDepositForm = () => {
             payload: {
                 type: 'revoke',
                 action: 'continue',
-                deviceConnectionRequired: !isDeviceConnected,
+                deviceStatus,
                 networkSymbol: token.networkSymbol,
                 vaultId: vault.id,
             },
@@ -255,7 +256,7 @@ export const YieldDepositForm = () => {
             payload: {
                 type: 'deposit',
                 action: 'continue',
-                deviceConnectionRequired: !isDeviceConnected,
+                deviceStatus,
                 networkSymbol: token.networkSymbol,
                 vaultId: vault.id,
                 wrappedNative: flow.isWrappedNativeVault,
@@ -272,7 +273,7 @@ export const YieldDepositForm = () => {
             payload: {
                 type: 'wrap',
                 action: 'continue',
-                deviceConnectionRequired: !isDeviceConnected,
+                deviceStatus,
                 networkSymbol: token.networkSymbol,
                 vaultId: vault.id,
             },

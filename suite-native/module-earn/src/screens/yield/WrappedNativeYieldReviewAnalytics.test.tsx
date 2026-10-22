@@ -2,6 +2,7 @@ import { type ComponentProps, type PropsWithChildren } from 'react';
 
 import { mockResolvedYieldFlowData } from '@suite-common/wallet-core/mocks';
 import { mockNativeAnalytics } from '@suite-native/analytics/mocks';
+import { deviceAuthorizationInitialState } from '@suite-native/device-authorization';
 import { act, renderWithStoreProvider } from '@suite-native/test-utils-store';
 
 import { YieldDepositWrapReviewScreen } from './YieldDepositWrapReviewScreen';
@@ -68,7 +69,13 @@ describe.each([
                 ) : (
                     <YieldWithdrawUnwrapReviewScreen />
                 ),
-                { services, preloadedState: { device: { selectedDevice: { connected: true } } } },
+                {
+                    services,
+                    preloadedState: {
+                        deviceAuthorization: deviceAuthorizationInitialState,
+                        device: { selectedDevice: { connected: true } },
+                    },
+                },
             );
 
             expect(mockOnError).toBeDefined();

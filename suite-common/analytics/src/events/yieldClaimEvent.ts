@@ -1,12 +1,12 @@
 import type { EarnModalAction } from '@suite-common/suite-types';
 
 import { EventType } from '../constants';
-import { deviceConnectionRequiredAttribute } from '../earnAttributes';
+import { type EarnDeviceStatus, deviceStatusAttribute } from '../earnAttributes';
 import type { AttributeDef, EventDef } from '../eventDefinition';
 
 type Attributes = {
     action: AttributeDef<EarnModalAction>;
-    deviceConnectionRequired?: AttributeDef<boolean>;
+    deviceStatus?: AttributeDef<EarnDeviceStatus>;
     type: AttributeDef<'claim' | 'tx-simulation-modal' | 'success' | 'error' | 'leftPending'>;
     networkSymbol?: AttributeDef<string>;
     durationMs?: AttributeDef<number>;
@@ -27,7 +27,7 @@ export const yieldClaimEvent: EventDef<Attributes, EventType.YieldClaim> = {
     ],
 
     attributes: {
-        deviceConnectionRequired: deviceConnectionRequiredAttribute,
+        deviceStatus: deviceStatusAttribute,
         action: {
             changelog: [{ version: '26.5.0', notes: 'added' }],
         },

@@ -4,6 +4,7 @@ import { fireEvent, render } from '@testing-library/react';
 
 import { mockDesktopAnalytics } from '@suite/analytics/mocks';
 import { setConnectionModal } from '@suite/device';
+import { MODAL_CONTEXT_NONE } from '@suite/modal';
 import { EarnFlow } from '@suite-common/suite-types/src/staking';
 import { asNetworkSymbol, getNetwork } from '@suite-common/wallet-config';
 import { mockWalletAccount } from '@suite-common/wallet-types/mocks';
@@ -32,7 +33,8 @@ jest.mock('@trezor/components', () => ({
     },
 }));
 jest.mock('src/hooks/suite', () => ({
-    useSelector: (selector: (state: object) => unknown) => selector({}),
+    useSelector: (selector: (state: object) => unknown) =>
+        selector({ modal: { context: MODAL_CONTEXT_NONE } }),
 }));
 jest.mock('@suite-common/wallet-core', () => ({
     ...jest.requireActual('@suite-common/wallet-core'),
@@ -59,9 +61,9 @@ describe('StakeButton device connection analytics', () => {
     beforeEach(() => jest.clearAllMocks());
 
     it.each([
-        { connected: true, available: true },
-        { connected: false, available: false },
-        { connected: true, available: false },
+        { connected: true, available: true, expectedStatus: 'connected' },
+        { connected: false, available: false, expectedStatus: 'disconnected' },
+        { connected: true, available: false, expectedStatus: 'unavailable' },
     ])('reports one submit attempt before the connection guard ($connected/$available)', device => {
         mockDevice = device;
         const services = {
@@ -77,7 +79,7 @@ describe('StakeButton device connection analytics', () => {
         expect(mockReport).not.toHaveBeenCalled();
         fireEvent.click(getByRole('button'));
 
-        const deviceConnectionRequired = !device.connected || !device.available;
+        const isConnectionBlocked = !device.connected || !device.available;
         expect(mockReport).toHaveBeenCalledTimes(1);
         expect(mockReport).toHaveBeenCalledWith({
             type: 'staking/stake',
@@ -86,10 +88,10 @@ describe('StakeButton device connection analytics', () => {
                 step: 'stake-form-modal',
                 currency: 'crypto',
                 networkSymbol: 'eth',
-                deviceConnectionRequired,
+                deviceStatus: device.expectedStatus,
             },
         });
-        if (deviceConnectionRequired) {
+        if (isConnectionBlocked) {
             expect(mockDispatch).toHaveBeenCalledWith(setConnectionModal(true));
             expect(mockSubmit).not.toHaveBeenCalled();
             expect(mockReport.mock.invocationCallOrder[0]).toBeLessThan(

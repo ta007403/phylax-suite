@@ -16,6 +16,7 @@ import { useServices } from '@trezor/dependency-injection';
 
 import { FormattedCryptoAmount } from 'src/components/suite/FormattedCryptoAmount';
 import { useIsFeeRefetchDisabled } from 'src/components/wallet/Fees/CollapsibleFees/hooks/useIsFeeRefetchDisabled';
+import { useEarnDeviceStatus } from 'src/hooks/earn/useEarnDeviceStatus';
 import { useMessageSystemWrappedNative } from 'src/hooks/suite/useMessageSystemWrappedNative';
 
 import { useYieldWithdrawContext } from './useYieldWithdrawContext';
@@ -27,10 +28,10 @@ import { YieldFlowStepList } from '../common/YieldFlowStepList';
 import { YieldUnwrapStep } from '../common/YieldUnwrapStep';
 
 export const YieldWithdrawForm = () => {
+    const deviceStatus = useEarnDeviceStatus();
     const { analytics } = useServices(injectDesktopAnalytics);
 
     const {
-        isDeviceConnected,
         account,
         vault,
         token,
@@ -108,7 +109,7 @@ export const YieldWithdrawForm = () => {
                 type: 'withdraw',
                 operation: flowType,
                 action: 'continue',
-                deviceConnectionRequired: !isDeviceConnected,
+                deviceStatus,
                 networkSymbol: token.networkSymbol,
                 vaultId: vault.id,
                 wrappedNative: flow.isWrappedNativeVault,
@@ -126,7 +127,7 @@ export const YieldWithdrawForm = () => {
                 type: 'unwrap',
                 operation: flowType,
                 action: 'continue',
-                deviceConnectionRequired: !isDeviceConnected,
+                deviceStatus,
                 networkSymbol: token.networkSymbol,
                 vaultId: vault.id,
             },

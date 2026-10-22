@@ -1,11 +1,11 @@
 import { useCallback } from 'react';
-import { useSelector } from 'react-redux';
 
 import { type EventInstance, events } from '@suite-common/analytics';
-import { selectIsDeviceConnected } from '@suite-common/device';
 import { type NetworkSymbol } from '@suite-common/wallet-config';
 import { injectNativeAnalytics } from '@suite-native/analytics';
 import { useServices } from '@trezor/dependency-injection';
+
+import { useEarnDeviceStatus } from '../earn/useEarnDeviceStatus';
 
 type YieldFlowAnalyticsContext = {
     networkSymbol: NetworkSymbol | undefined;
@@ -26,7 +26,7 @@ type YieldWithdrawPayload = WithoutFlowContext<
 
 export const useYieldFlowAnalytics = ({ networkSymbol, vaultId }: YieldFlowAnalyticsContext) => {
     const { analytics } = useServices(injectNativeAnalytics);
-    const isDeviceConnected = useSelector(selectIsDeviceConnected);
+    const deviceStatus = useEarnDeviceStatus();
 
     const reportInteraction = useCallback(
         (payload: YieldInteractionPayload) => {
@@ -48,12 +48,12 @@ export const useYieldFlowAnalytics = ({ networkSymbol, vaultId }: YieldFlowAnaly
                     ...payload,
                     ...(payload.action === 'continue' &&
                     ['deposit', 'approve', 'revoke', 'wrap'].includes(payload.type)
-                        ? { deviceConnectionRequired: !isDeviceConnected }
+                        ? { deviceStatus }
                         : {}),
                 },
             });
         },
-        [analytics, networkSymbol, vaultId, isDeviceConnected],
+        [analytics, networkSymbol, vaultId, deviceStatus],
     );
 
     const reportWithdraw = useCallback(
@@ -66,12 +66,12 @@ export const useYieldFlowAnalytics = ({ networkSymbol, vaultId }: YieldFlowAnaly
                     ...payload,
                     ...(payload.action === 'continue' &&
                     ['withdraw', 'unwrap'].includes(payload.type)
-                        ? { deviceConnectionRequired: !isDeviceConnected }
+                        ? { deviceStatus }
                         : {}),
                 },
             });
         },
-        [analytics, networkSymbol, vaultId, isDeviceConnected],
+        [analytics, networkSymbol, vaultId, deviceStatus],
     );
 
     return { reportDeposit, reportInteraction, reportWithdraw };

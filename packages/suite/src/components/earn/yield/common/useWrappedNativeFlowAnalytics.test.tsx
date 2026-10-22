@@ -3,6 +3,7 @@ import { type PropsWithChildren } from 'react';
 import { act, renderHook } from '@testing-library/react';
 
 import { mockDesktopAnalytics } from '@suite/analytics/mocks';
+import { MODAL_CONTEXT_NONE } from '@suite/modal';
 import { events } from '@suite-common/analytics';
 import { ServicesProvider } from '@trezor/dependency-injection';
 
@@ -12,6 +13,10 @@ const mockReport = jest.fn();
 let mockDevice = { connected: true, available: true };
 
 jest.mock('@suite/device', () => ({ useDevice: () => ({ device: mockDevice }) }));
+jest.mock('src/hooks/suite', () => ({
+    useSelector: (selector: (state: object) => unknown) =>
+        selector({ modal: { context: MODAL_CONTEXT_NONE } }),
+}));
 
 type Props = Parameters<typeof useWrappedNativeFlowAnalytics>[0];
 
@@ -40,26 +45,23 @@ describe('useWrappedNativeFlowAnalytics', () => {
     });
 
     it.each([
-        { connected: true, available: true },
-        { connected: false, available: false },
-        { connected: true, available: false },
-    ])(
-        'reports the connection requirement before the device guard ($connected/$available)',
-        device => {
-            mockDevice = device;
-            const { result } = renderFlowAnalytics({ ...pendingWrap, status: null, txid: null });
+        { connected: true, available: true, expectedStatus: 'connected' },
+        { connected: false, available: false, expectedStatus: 'disconnected' },
+        { connected: true, available: false, expectedStatus: 'unavailable' },
+    ])('reports the connection state before the device guard ($connected/$available)', device => {
+        mockDevice = device;
+        const { result } = renderFlowAnalytics({ ...pendingWrap, status: null, txid: null });
 
-            act(() => result.current.reportSubmit());
+        act(() => result.current.reportSubmit());
 
-            expect(mockReport).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    payload: expect.objectContaining({
-                        deviceConnectionRequired: !device.connected || !device.available,
-                    }),
+        expect(mockReport).toHaveBeenCalledWith(
+            expect.objectContaining({
+                payload: expect.objectContaining({
+                    deviceStatus: device.expectedStatus,
                 }),
-            );
-        },
-    );
+            }),
+        );
+    });
 
     it('reportSubmit fires the submit event', () => {
         const { result } = renderFlowAnalytics({

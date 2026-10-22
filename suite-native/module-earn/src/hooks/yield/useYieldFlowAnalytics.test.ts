@@ -1,6 +1,7 @@
 import { asNetworkSymbol } from '@suite-common/wallet-config';
 import { type NativeAnalyticsDep } from '@suite-native/analytics';
 import { mockNativeAnalytics } from '@suite-native/analytics/mocks';
+import { deviceAuthorizationInitialState } from '@suite-native/device-authorization';
 import { act, renderHookWithStoreProvider } from '@suite-native/test-utils-store';
 
 import { useYieldFlowAnalytics } from './useYieldFlowAnalytics';
@@ -22,7 +23,10 @@ const renderFlowAnalytics = async (
     const view = await renderHookWithStoreProvider(useYieldFlowAnalytics, {
         initialProps: context,
         services,
-        preloadedState: { device: { selectedDevice: { connected: isDeviceConnected } } },
+        preloadedState: {
+            deviceAuthorization: deviceAuthorizationInitialState,
+            device: { selectedDevice: { connected: isDeviceConnected } },
+        },
     });
 
     return { ...view, analytics: services.analytics };
@@ -30,7 +34,7 @@ const renderFlowAnalytics = async (
 
 describe('useYieldFlowAnalytics', () => {
     it.each([true, false])(
-        'reports the connection requirement at submit (connected=%s)',
+        'reports the connection state at submit (connected=%s)',
         async connected => {
             const { result, analytics } = await renderFlowAnalytics(undefined, connected);
 
@@ -42,7 +46,7 @@ describe('useYieldFlowAnalytics', () => {
             expect(analytics.report).toHaveBeenCalledTimes(2);
             for (const [event] of jest.mocked(analytics.report).mock.calls) {
                 expect(event).toMatchObject({
-                    payload: { deviceConnectionRequired: !connected },
+                    payload: { deviceStatus: connected ? 'connected' : 'disconnected' },
                 });
             }
         },
@@ -80,7 +84,7 @@ describe('useYieldFlowAnalytics', () => {
                 wrappedNative: true,
                 networkSymbol: ethSymbol,
                 vaultId: VAULT_ID,
-                deviceConnectionRequired: false,
+                deviceStatus: 'connected',
             },
         });
     });

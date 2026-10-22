@@ -23,6 +23,7 @@ import { WarningIcon } from '@trezor/icons';
 import { injectDispatch } from '@trezor/redux-utils';
 
 import { claimMerklRewardsThunk } from 'src/actions/wallet/stablecoin-yield';
+import { useEarnDeviceStatus } from 'src/hooks/earn/useEarnDeviceStatus';
 import { useSelector } from 'src/hooks/suite';
 import { useFirmwareUpgradeModal } from 'src/hooks/suite/useFirmwareUpgradeModal';
 import { useMessageSystemYield } from 'src/hooks/suite/useMessageSystemYield';
@@ -41,6 +42,7 @@ type YieldClaimProps = {
 };
 
 export const YieldClaim = ({ account }: YieldClaimProps) => {
+    const deviceStatus = useEarnDeviceStatus();
     const { analytics, dispatch } = useServices(injectDesktopAnalytics, injectDispatch);
     const { device } = useDevice();
     const { translationString } = useTranslation();
@@ -96,7 +98,7 @@ export const YieldClaim = ({ account }: YieldClaimProps) => {
             type: events.yieldClaimEvent.name,
             payload: {
                 action: 'continue',
-                deviceConnectionRequired: !isDeviceConnected,
+                deviceStatus,
                 type: 'claim',
                 networkSymbol: account.symbol,
                 rewardCount: rewards.length,

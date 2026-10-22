@@ -4,6 +4,7 @@ import { mockResolvedYieldFlowData, mockYieldSessionState } from '@suite-common/
 import { toTokenAddress } from '@suite-common/wallet-types';
 import { type NativeAnalyticsDep } from '@suite-native/analytics';
 import { mockNativeAnalytics } from '@suite-native/analytics/mocks';
+import { deviceAuthorizationReducer } from '@suite-native/device-authorization';
 import { type YieldFlowParams, YieldStackRoutes } from '@suite-native/navigation';
 import {
     act,
@@ -76,6 +77,7 @@ const renderWithdrawController = () => {
     const services: NativeAnalyticsDep = { analytics: mockNativeAnalytics(jest.fn()) };
     const store = createLightStore({
         reducer: {
+            deviceAuthorization: deviceAuthorizationReducer,
             device: createStaticReducer({ selectedDevice: { connected: true } }),
             locale: createStaticReducer({
                 appLocaleCode: 'en-US',

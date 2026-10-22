@@ -5,6 +5,7 @@ import { mockWalletAccount } from '@suite-common/wallet-types/mocks';
 import { type NativeAnalyticsDep } from '@suite-native/analytics';
 import { mockNativeAnalytics } from '@suite-native/analytics/mocks';
 import { type ActiveView } from '@suite-native/atoms';
+import { deviceAuthorizationInitialState } from '@suite-native/device-authorization';
 import { act, fireEvent, renderWithStoreProvider } from '@suite-native/test-utils-store';
 import { mock } from '@trezor/dependency-injection';
 
@@ -79,7 +80,10 @@ const renderUnstakeForm = async () => {
     const services: NativeAnalyticsDep = { analytics: mockNativeAnalytics(jest.fn()) };
     const view = await renderWithStoreProvider(<UnstakeFlowScreen />, {
         services,
-        preloadedState: { device: { selectedDevice: { connected: true } } },
+        preloadedState: {
+            deviceAuthorization: deviceAuthorizationInitialState,
+            device: { selectedDevice: { connected: true } },
+        },
     });
 
     return {

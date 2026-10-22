@@ -14,6 +14,7 @@ import { InfoIcon } from '@trezor/icons';
 import { injectDispatch } from '@trezor/redux-utils';
 
 import { earnFlowToEventTypeMap } from 'src/constants/suite/staking';
+import { useEarnDeviceStatus } from 'src/hooks/earn/useEarnDeviceStatus';
 import { useStakeFormContext } from 'src/hooks/earn/useStakeForm';
 import { useSelector } from 'src/hooks/suite';
 import { useMessageSystemStaking } from 'src/hooks/suite/useMessageSystemStaking';
@@ -24,6 +25,7 @@ type StakeButtonProps = {
 };
 
 export const StakeButton = ({ flow }: StakeButtonProps) => {
+    const deviceStatus = useEarnDeviceStatus();
     const { device, isLocked } = useDevice();
     const {
         account,
@@ -74,7 +76,7 @@ export const StakeButton = ({ flow }: StakeButtonProps) => {
             type: earnFlowToEventTypeMap[flow],
             payload: {
                 action: 'continue',
-                deviceConnectionRequired: !isDeviceConnected,
+                deviceStatus,
                 step: 'stake-form-modal',
                 currency,
                 networkSymbol: account.symbol,

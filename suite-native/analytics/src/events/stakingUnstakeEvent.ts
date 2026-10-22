@@ -1,7 +1,8 @@
 import {
     type AttributeDef,
+    type EarnDeviceStatus,
     type EventDef,
-    deviceConnectionRequiredAttribute,
+    deviceStatusAttribute,
 } from '@suite-common/analytics';
 import type { EarnModalAction } from '@suite-common/suite-types';
 
@@ -10,7 +11,7 @@ import { type StakingUnstakeStep } from '../definitions';
 
 type Attributes = {
     action: AttributeDef<EarnModalAction>;
-    deviceConnectionRequired?: AttributeDef<boolean>;
+    deviceStatus?: AttributeDef<EarnDeviceStatus>;
     step: AttributeDef<StakingUnstakeStep>;
     networkSymbol?: AttributeDef<string>;
     currency?: AttributeDef<'crypto' | 'fiat'>;
@@ -28,7 +29,7 @@ export const stakingUnstakeEvent: EventDef<Attributes, EventType.StakingUnstake>
         },
     ],
     attributes: {
-        deviceConnectionRequired: deviceConnectionRequiredAttribute,
+        deviceStatus: deviceStatusAttribute,
         action: {
             changelog: [{ version: '26.4.1', notes: 'added' }],
             description:

@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux';
 
 import { type RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 
-import { selectIsDeviceConnected } from '@suite-common/device';
 import { getNetworkDisplaySymbol } from '@suite-common/wallet-config';
 import {
     type AccountsRootState,
@@ -35,6 +34,7 @@ import { BigNumber } from '@trezor/utils';
 
 import { EarnAmountCard } from '../../components/earn/EarnAmountCard';
 import { useComposeEarnFees } from '../../hooks/earn/useComposeEarnFees';
+import { useEarnDeviceStatus } from '../../hooks/earn/useEarnDeviceStatus';
 import { useNavigateBackAnalytics } from '../../hooks/earn/useNavigateBackAnalytics';
 import { useSolanaStakingLimit } from '../../hooks/staking/useSolanaStakingLimit';
 import { buildEarnComposeFormState } from '../../utils/earn/utils';
@@ -95,7 +95,7 @@ export const StakingClaimReviewScreen = () => {
         useSolanaStakingLimit({ accountKey, type: 'claim', amount: claimableAmount });
 
     const { analytics } = useServices(injectNativeAnalytics);
-    const isDeviceConnected = useSelector(selectIsDeviceConnected);
+    const deviceStatus = useEarnDeviceStatus();
     const registerNavigateBackAnalytics = useNavigateBackAnalytics({
         type: events.stakingClaimEvent.name,
         payload: {
@@ -112,7 +112,7 @@ export const StakingClaimReviewScreen = () => {
             type: events.stakingClaimEvent.name,
             payload: {
                 action: 'continue',
-                deviceConnectionRequired: !isDeviceConnected,
+                deviceStatus,
                 step: 'claim-form-modal',
                 networkSymbol: symbol,
             },

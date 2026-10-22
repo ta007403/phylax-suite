@@ -4,6 +4,7 @@ import { mockResolvedYieldFlowData, mockYieldSessionState } from '@suite-common/
 import { mockWalletAccount } from '@suite-common/wallet-types/mocks';
 import { type NativeAnalyticsDep } from '@suite-native/analytics';
 import { mockNativeAnalytics } from '@suite-native/analytics/mocks';
+import { deviceAuthorizationInitialState } from '@suite-native/device-authorization';
 import { YieldStackRoutes } from '@suite-native/navigation';
 import { act, renderHookWithStoreProvider } from '@suite-native/test-utils-store';
 
@@ -51,7 +52,10 @@ const renderWrapController = async () => {
     const services: NativeAnalyticsDep = { analytics: mockNativeAnalytics(jest.fn()) };
     const view = await renderHookWithStoreProvider(useYieldDepositWrapController, {
         services,
-        preloadedState: { device: { selectedDevice: { connected: true } } },
+        preloadedState: {
+            deviceAuthorization: deviceAuthorizationInitialState,
+            device: { selectedDevice: { connected: true } },
+        },
     });
 
     return { ...view, analytics: services.analytics };
