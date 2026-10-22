@@ -44,19 +44,23 @@ const scanChain = async (
         }
         nextIndex = to + 1;
 
-        const result = await TrezorConnect.getAccountInfo({
-            bundle: addresses.map(address => ({
-                coin: PHYLAX_COIN_SYMBOLS[network],
-                descriptor: address,
-                details: 'basic' as const,
-            })),
-        });
-        if (!result.success) {
-            throw new Error(result.error.message);
-        }
+        // One request per address: connect's bundled getAccountInfo needs a device for its progress
+        // events, and these lookups need none.
+        const results = await Promise.all(
+            addresses.map(address =>
+                TrezorConnect.getAccountInfo({
+                    coin: PHYLAX_COIN_SYMBOLS[network],
+                    descriptor: address,
+                    details: 'basic',
+                }),
+            ),
+        );
 
-        result.payload.forEach((info, offset) => {
-            if (!info) return;
+        results.forEach((result, offset) => {
+            if (!result.success) {
+                throw new Error(result.error.message);
+            }
+            const info = result.payload;
             const isUsed = info.history.total > 0 || info.history.unconfirmed > 0;
             if (!isUsed) return;
             lastUsedIndex = from + offset;
@@ -86,7 +90,10 @@ export const usePhylaxBalance = (
                 setState({
                     status: 'loaded',
                     balance: chains.reduce((sum, chain) => sum + chain.balance, 0n),
-                    usedAddressCount: chains.reduce((sum, chain) => sum + chain.usedAddressCount, 0),
+                    usedAddressCount: chains.reduce(
+                        (sum, chain) => sum + chain.usedAddressCount,
+                        0,
+                    ),
                 });
             })
             .catch((error: Error) => {

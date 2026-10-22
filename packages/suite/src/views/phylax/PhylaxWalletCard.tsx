@@ -7,9 +7,9 @@ import TrezorConnect from '@trezor/connect';
 import { copyToClipboard } from '@trezor/dom-utils';
 import { QrCode } from '@trezor/product-components';
 
-import type { PhylaxTarget, PhylaxWalletEntry } from './usePhylaxStack';
-import { usePhylaxBalance } from './usePhylaxBalance';
 import { type PhylaxNetwork, getFingerprintHex, getPhylaxDescriptor } from './phylaxWallet';
+import { usePhylaxBalance } from './usePhylaxBalance';
+import type { PhylaxTarget, PhylaxWalletEntry } from './usePhylaxStack';
 
 const NAME_MAX_LENGTH = 15; // the main block's limit
 
@@ -106,8 +106,7 @@ export const PhylaxWalletCard = ({
                         <Badge intent="brand">Ready</Badge>
                     ) : (
                         <Badge intent="warning">
-                            Attach key block{' '}
-                            {missingFingerprints.map(getFingerprintHex).join(', ')}
+                            Attach key block {missingFingerprints.map(getFingerprintHex).join(', ')}
                         </Badge>
                     )}
                 </Row>
@@ -198,4 +197,3 @@ export const PhylaxWalletCard = ({
         </Card>
     );
 };
-

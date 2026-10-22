@@ -734,7 +734,8 @@ export class Device extends TypedEmitter<DeviceEvents> implements IDevice {
             this.phylax = true;
             // PHYLAX firmware is not a Trezor release: never offer to replace it from here
             this._firmwareStatus = 'valid';
-        } catch {
+        } catch (error) {
+            this.logger.debug('not a PHYLAX main block', error?.message);
             this.phylax = false;
         }
     }

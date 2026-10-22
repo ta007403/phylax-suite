@@ -41,6 +41,8 @@ const allowedCallsBeforeInitialize: Messages.MessageKey[] = [
     'GetFeatures',
     // After one of the two above there might be optionally some of these
     'GetFirmwareHash',
+    // PHYLAX Blocks (fork): asked next to the firmware checks, needs no session
+    'PhylaxGetBlocks',
     'ChangeLanguage',
     'DataChunkAck',
     // During firmware update, we can call these messages

@@ -14,6 +14,8 @@ import * as evoluProto from '@trezor/protobuf/src/definitions/messages-evolu_pb'
 import * as managementProto from '@trezor/protobuf/src/definitions/messages-management_pb';
 import * as moneroProto from '@trezor/protobuf/src/definitions/messages-monero_pb';
 import * as nostrProto from '@trezor/protobuf/src/definitions/messages-nostr_pb';
+// PHYLAX Blocks (fork)
+import * as phylaxProto from '@trezor/protobuf/src/definitions/messages-phylax_pb';
 import * as rippleProto from '@trezor/protobuf/src/definitions/messages-ripple_pb';
 import * as solanaProto from '@trezor/protobuf/src/definitions/messages-solana_pb';
 import * as stellarProto from '@trezor/protobuf/src/definitions/messages-stellar_pb';
@@ -41,6 +43,7 @@ export const loadProtobufModules = () => {
         managementProto,
         moneroProto,
         nostrProto,
+        phylaxProto,
         rippleProto,
         solanaProto,
         stellarProto,
