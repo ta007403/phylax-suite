@@ -4,9 +4,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useDevice } from '@suite/device';
-import TrezorConnect, { type PROTO } from '@trezor/connect';
+import TrezorConnect, { type DeviceUniquePath, type PROTO } from '@trezor/connect';
 
 const REFRESH_INTERVAL_MS = 3000;
+
+/** Which device a PHYLAX call goes to: the connected main block. */
+export type PhylaxTarget = { device: { path: DeviceUniquePath } };
 
 export type PhylaxWalletEntry = {
     summary: PROTO.PhylaxWalletSummary;
@@ -43,17 +46,17 @@ export const usePhylaxStack = () => {
 
     const refresh = useCallback(async () => {
         if (!devicePath) return;
-        const target = { device: { path: devicePath } };
+        const target: PhylaxTarget = { device: { path: devicePath } };
 
         const blocks = await TrezorConnect.phylaxGetBlocks(target);
         if (!blocks.success) {
-            setState(previous => ({ ...previous, error: blocks.payload.error, isLoaded: true }));
+            setState(previous => ({ ...previous, error: blocks.error.message, isLoaded: true }));
 
             return;
         }
         const wallets = await TrezorConnect.phylaxGetWallets(target);
         if (!wallets.success) {
-            setState(previous => ({ ...previous, error: wallets.payload.error, isLoaded: true }));
+            setState(previous => ({ ...previous, error: wallets.error.message, isLoaded: true }));
 
             return;
         }
@@ -104,7 +107,7 @@ export const usePhylaxStack = () => {
 
     // Runs a call that waits for the user on the main block, with refreshing paused meanwhile.
     const runOnDevice = useCallback(
-        async <T>(call: (target: { device: { path: string } }) => Promise<T>) => {
+        async <T>(call: (target: PhylaxTarget) => Promise<T>) => {
             if (!devicePath) return undefined;
             setIsPaused(true);
             try {

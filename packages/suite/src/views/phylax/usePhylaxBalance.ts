@@ -52,7 +52,7 @@ const scanChain = async (
             })),
         });
         if (!result.success) {
-            throw new Error(result.payload.error);
+            throw new Error(result.error.message);
         }
 
         result.payload.forEach((info, offset) => {

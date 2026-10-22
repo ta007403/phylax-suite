@@ -7,7 +7,7 @@ import TrezorConnect from '@trezor/connect';
 import { copyToClipboard } from '@trezor/dom-utils';
 import { QrCode } from '@trezor/product-components';
 
-import type { PhylaxWalletEntry } from './usePhylaxStack';
+import type { PhylaxTarget, PhylaxWalletEntry } from './usePhylaxStack';
 import { usePhylaxBalance } from './usePhylaxBalance';
 import { type PhylaxNetwork, getFingerprintHex, getPhylaxDescriptor } from './phylaxWallet';
 
@@ -20,9 +20,7 @@ const formatBtc = (satoshis: bigint) => {
     return `${whole}.${fraction}`;
 };
 
-type RunOnDevice = <T>(
-    call: (target: { device: { path: string } }) => Promise<T>,
-) => Promise<T | undefined>;
+type RunOnDevice = <T>(call: (target: PhylaxTarget) => Promise<T>) => Promise<T | undefined>;
 
 type PhylaxWalletCardProps = {
     entry: PhylaxWalletEntry;
@@ -61,9 +59,7 @@ export const PhylaxWalletCard = ({
 
     const runAction = async (
         waitingText: string,
-        call: (target: {
-            device: { path: string };
-        }) => ReturnType<typeof TrezorConnect.phylaxDeleteWallet>,
+        call: (target: PhylaxTarget) => ReturnType<typeof TrezorConnect.phylaxDeleteWallet>,
         doneText: string,
     ) => {
         setAction({ status: 'waiting', text: waitingText });
@@ -73,7 +69,7 @@ export const PhylaxWalletCard = ({
         } else if (result.success) {
             setAction({ status: 'done', text: doneText });
         } else {
-            setAction({ status: 'error', text: result.payload.error });
+            setAction({ status: 'error', text: result.error.message });
         }
     };
 
