@@ -3,7 +3,7 @@ import { Column } from '@trezor/components';
 import { useLayout } from 'src/hooks/suite';
 
 export const ConnectPopup = () => {
-    useLayout('Trezor Connect', null);
+    useLayout('PHYLAX Connect', null); // PHYLAX Blocks (fork)
 
     // No content, this is handled by modals
     return (

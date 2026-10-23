@@ -12804,7 +12804,7 @@ export const messages = defineMessages({
     },
     TR_TREZOR_CONNECT: {
         id: 'TR_TREZOR_CONNECT',
-        defaultMessage: 'Trezor Connect',
+        defaultMessage: 'PHYLAX Connect',
     },
     TR_CONNECT_MODAL_REMEMBER: {
         id: 'TR_CONNECT_MODAL_REMEMBER',
@@ -13076,7 +13076,7 @@ export const messages = defineMessages({
     },
     TR_CONNECT_ERROR_GENERIC_DESCRIPTION: {
         id: 'TR_CONNECT_ERROR_GENERIC_DESCRIPTION',
-        defaultMessage: 'There was an error during the Trezor Connect request.',
+        defaultMessage: 'There was an error during the PHYLAX Connect request.',
     },
     TR_CONNECT_ERROR_CANCELED: {
         id: 'TR_CONNECT_ERROR_CANCELED',
@@ -13098,7 +13098,7 @@ export const messages = defineMessages({
     },
     TR_CONNECT_ERROR_ENV_NOT_SUPPORTED: {
         id: 'TR_CONNECT_ERROR_ENV_NOT_SUPPORTED',
-        defaultMessage: "Your browser or environment doesn't support Trezor Connect.",
+        defaultMessage: "Your browser or environment doesn't support PHYLAX Connect.",
     },
     TR_CONNECT_ERROR_STORAGE_ACCESS_DENIED: {
         id: 'TR_CONNECT_ERROR_STORAGE_ACCESS_DENIED',

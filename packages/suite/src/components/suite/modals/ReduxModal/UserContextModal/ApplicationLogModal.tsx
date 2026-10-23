@@ -48,7 +48,8 @@ type ApplicationLogModalProps = { onCancel: () => void };
 
 export const ApplicationLogModal = ({ onCancel }: ApplicationLogModalProps) => {
     const { analytics } = useServices(injectDesktopAnalytics);
-    const [hideSensitiveInfo, setHideSensitiveInfo] = useState(false);
+    // PHYLAX Blocks (fork): xpubs, addresses and balances are left out unless switched on
+    const [hideSensitiveInfo, setHideSensitiveInfo] = useState(true);
     const applicationLogs = useApplicationLogs({ hideSensitiveInfo });
     const { ShadowTop, ShadowBottom, ShadowContainer, ScrollSentinels, scrollElementRef } =
         useScrollShadow();
