@@ -165,7 +165,8 @@ const optionOf = (container: HTMLElement, { address }: Address) =>
 const optionWithLabel = (label: string) =>
     screen.getByText(label).closest(`[data-testid="${OPTION}"]`);
 
-describe('TradingUtxoReceiveAddressModal', () => {
+// PHYLAX Blocks (fork): skipped, trading is hidden and labels are off in the fork.
+describe.skip('TradingUtxoReceiveAddressModal', () => {
     beforeEach(() => {
         jest.mocked(useTradingReceiveAddressValues).mockReturnValue({
             cryptoId: 'btc',

@@ -17,6 +17,7 @@ import { HELP_CENTER_BIP32_URL, HELP_CENTER_XPUB_URL, type Url } from '@trezor/u
 import { showXpubThunk } from 'src/actions/wallet/publicKeyActions';
 import { AccountTypeDescription } from 'src/components/suite/modals/ReduxModal/UserContextModal/AddAccountModal/AccountTypeSelect/AccountTypeDescription';
 import { WalletLayout } from 'src/components/wallet';
+import { PHYLAX_ARE_EXTRA_SETTINGS_SHOWN } from 'src/constants/suite/phylax';
 import { useSelector } from 'src/hooks/suite';
 import { ContentFlex, useIsContentBelowBreakpoint } from 'src/support/suite/ContentFlex';
 
@@ -177,7 +178,10 @@ const Details = () => {
                             <AccountNonce account={account} />
                         </DetailsRow>
                     )}
-                    <Bip329Labels account={account} isLoading={locked} />
+                    {/* PHYLAX Blocks (fork): no labels to import or export */}
+                    {PHYLAX_ARE_EXTRA_SETTINGS_SHOWN && (
+                        <Bip329Labels account={account} isLoading={locked} />
+                    )}
                 </Column>
             </Card>
 

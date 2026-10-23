@@ -31,6 +31,10 @@ import { type Without } from '@trezor/type-utils';
 import { processLegacyMetadataIntoSuiteSyncThunk } from './processLegacyMetadataIntoSuiteSyncThunk';
 import { selectIsLabelActionEnabled } from './selectIsLabelActionEnabled';
 
+// PHYLAX Blocks (fork): nothing can be labeled in PHYLAX Suite. Labels are shown as plain,
+// non-editable text (the default name, address or amount), with no edit or delete buttons.
+const PHYLAX_IS_LABELING_ENABLED: boolean = false;
+
 export type LabelingProps = {
     payload: Without<MetadataAddPayload, 'value'>; // dropping value, as a process of decoupling from legacy labeling
     deviceStaticSessionId: StaticSessionId;
@@ -191,7 +195,7 @@ export const Labeling = ({
                 <EditableText
                     onSubmit={onSubmit ?? handleSubmit}
                     onEdit={handleEdit}
-                    isDisabled={isDisabled || !isLabelActionEnabled}
+                    isDisabled={!PHYLAX_IS_LABELING_ENABLED || isDisabled || !isLabelActionEnabled}
                     isLoading={legacyMetadataState.initiating || isDiscoveryRunning}
                     data-testid={`@metadata/${payload.type}/${payload.defaultValue}/hover-container`}
                     {...rest}

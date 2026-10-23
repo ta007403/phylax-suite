@@ -46,6 +46,7 @@ import {
 import { ConfirmOnDevicePill, QrCode, TokenIcon } from '@trezor/product-components';
 import { injectDispatch } from '@trezor/redux-utils';
 
+import { PHYLAX_ARE_EXTRA_SETTINGS_SHOWN } from 'src/constants/suite/phylax';
 import { useGuideOpenNode } from 'src/hooks/guide';
 import { useSelector } from 'src/hooks/suite';
 import { type ThunkAction } from 'src/types/suite';
@@ -100,7 +101,9 @@ export const ConfirmValueModal = ({
 
     const canConfirmOnDevice = !!(device?.connected && device?.available);
     // Do not show Add address label button if there is device interaction needed and device is not connected.
-    const shouldShowAddressLabelAction = suiteSyncInteraction === null || !!device?.connected;
+    // PHYLAX Blocks (fork): no labeling
+    const shouldShowAddressLabelAction =
+        PHYLAX_ARE_EXTRA_SETTINGS_SHOWN && (suiteSyncInteraction === null || !!device?.connected);
 
     const copy = async () => {
         const result = await copyToClipboard(value);

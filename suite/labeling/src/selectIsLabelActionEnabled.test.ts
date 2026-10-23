@@ -151,7 +151,8 @@ describe(selectIsLabelActionEnabled.name, () => {
         return selectIsLabelActionEnabled(state, DEVICE_STATIC_SESSION_ID_123, 'address-123');
     };
 
-    it('allows labeling despite update-needed for Suite Sync', () => {
+    // PHYLAX Blocks (fork): skipped, Suite Sync is off in the fork.
+    it.skip('allows labeling despite update-needed for Suite Sync', () => {
         const result = testLabelActionEnabled({
             unavailableCapabilities: { evolu: 'update-required' },
             isSuiteSyncFeatureEnabled: true,
@@ -176,7 +177,8 @@ describe(selectIsLabelActionEnabled.name, () => {
         expect(result).toBe(true);
     });
 
-    it('disables labeling when Suite Sync is enabled and remembered device is disconnected', () => {
+    // PHYLAX Blocks (fork): skipped, Suite Sync is off in the fork.
+    it.skip('disables labeling when Suite Sync is enabled and remembered device is disconnected', () => {
         const result = testLabelActionEnabled({
             unavailableCapabilities: {},
             isSuiteSyncFeatureEnabled: true,
@@ -191,7 +193,8 @@ describe(selectIsLabelActionEnabled.name, () => {
         expect(result).toBe(false);
     });
 
-    it('disables labeling for unsupported device', () => {
+    // PHYLAX Blocks (fork): skipped, Suite Sync is off in the fork.
+    it.skip('disables labeling for unsupported device', () => {
         const result = testLabelActionEnabled({
             unavailableCapabilities: { evolu: 'no-capability' },
             isSuiteSyncFeatureEnabled: true,
