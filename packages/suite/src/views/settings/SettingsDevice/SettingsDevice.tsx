@@ -232,7 +232,10 @@ export const SettingsDevice = () => {
                         <>
                             <PinProtection isDeviceLocked={isDeviceLocked} />
                             {pinProtection && <ChangePin isDeviceLocked={isDeviceLocked} />}
-                            {safetyChecks && <SafetyChecks isDeviceLocked={isDeviceLocked} />}
+                            {/* PHYLAX Blocks (fork): safety checks stay on (Strict), no switch to turn them off */}
+                            {PHYLAX_ARE_EXTRA_SETTINGS_SHOWN && safetyChecks && (
+                                <SafetyChecks isDeviceLocked={isDeviceLocked} />
+                            )}
                         </>
                     )}
                     {supportsDeviceAuthentication && (
