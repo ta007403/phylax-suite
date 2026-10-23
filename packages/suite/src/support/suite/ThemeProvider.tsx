@@ -5,6 +5,7 @@ import { ThemeProvider as SCThemeProvider } from 'styled-components';
 import { getOsTheme } from 'src/utils/suite/env';
 import { getThemeColors } from 'src/utils/suite/theme';
 
+import { PhylaxExternalLinkGuard } from './PhylaxExternalLinkGuard';
 import GlobalStyle from './styles/GlobalStyle';
 
 type ThemeProviderProps = {
@@ -19,6 +20,8 @@ export const ThemeProvider = ({ children, themeVariant }: ThemeProviderProps) =>
     return (
         <SCThemeProvider theme={{ variant, ...theme }}>
             <GlobalStyle theme={{ variant, ...theme }} />
+            {/* PHYLAX Blocks (fork) */}
+            <PhylaxExternalLinkGuard />
             {children}
         </SCThemeProvider>
     );

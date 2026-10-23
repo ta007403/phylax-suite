@@ -6,14 +6,13 @@ import { selectShouldDisplayDeviceCompromised } from '@suite/authenticity-checks
 import { TrafficLightOffset } from '@suite/macos';
 import { suiteSettingsActions } from '@suite/settings';
 import { selectIsAnyDeviceSelected, selectSelectedDevice } from '@suite-common/device';
-import { Box, Icon, ResizableBox } from '@trezor/components';
+import { Box, ResizableBox } from '@trezor/components';
 import { useServices } from '@trezor/dependency-injection';
 import { isDesktop } from '@trezor/env-utils';
-import { TrezorLogoIcon } from '@trezor/icons';
-import { TrezorLogo } from '@trezor/product-components';
 import { injectDispatch } from '@trezor/redux-utils';
 import { zIndices } from '@trezor/theme';
 
+import { PhylaxLogo } from 'src/components/suite/PhylaxLogo';
 import { AccountsMenu } from 'src/components/wallet/WalletLayout/AccountsMenu/AccountsMenu';
 import { MIN_CONTENT_WIDTH } from 'src/constants/suite/layout';
 import { useSelector } from 'src/hooks/suite';
@@ -72,11 +71,13 @@ const WalletSwitcher = ({ isCollapsed }: WalletSwitcherProps) => {
 
     return isCollapsed ? (
         <Box margin={{ left: 'auto', right: 'auto', top: isDesktop() ? 24 : 12, bottom: 12 }}>
-            <Icon as={TrezorLogoIcon} size={24} pointerEvents="none" />
+            {/* PHYLAX Blocks (fork) */}
+            <PhylaxLogo isSymbolOnly size={24} />
         </Box>
     ) : (
         <Box margin={{ left: 20, right: 12, top: isDesktop() ? 24 : 12, bottom: 12 }}>
-            <TrezorLogo width="107px" type="horizontal" />
+            {/* PHYLAX Blocks (fork) */}
+            <PhylaxLogo />
         </Box>
     );
 };

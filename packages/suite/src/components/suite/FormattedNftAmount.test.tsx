@@ -47,7 +47,8 @@ const getInitialState = (): AppState => ({
 });
 
 describe('FormattedNftAmount', () => {
-    it('opens a token in the explorer of its own network, not of the selected account', () => {
+    // PHYLAX Blocks (fork): skipped, links to explorers are plain text in the fork.
+    it.skip('opens a token in the explorer of its own network, not of the selected account', () => {
         const { services } = createTestCompositionRoot<void, AppState>({
             preloadedState: getInitialState(),
         });

@@ -1,4 +1,4 @@
-import { Menu, type MenuItemConstructorOptions, app, shell } from 'electron';
+import { Menu, type MenuItemConstructorOptions, app } from 'electron';
 
 import { restartApp } from './app-utils';
 import { isDevToolsEnabled } from './dev-tools-policy';
@@ -92,11 +92,7 @@ export const buildMainMenu = ({ mainWindowProxy, logger }: BuildMainMenuParams) 
                     mainWindowProxy.getInstance()?.webContents.send('guide/open-shortcuts');
                 },
             },
-            { type: 'separator' },
-            {
-                label: 'Trezor website',
-                click: () => shell.openExternal('https://trezor.io/'),
-            },
+            // PHYLAX Blocks (fork): no "Trezor website" item, PHYLAX Suite never opens a website.
         ],
     };
 

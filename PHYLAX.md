@@ -27,6 +27,13 @@ Everything added for PHYLAX is marked `PHYLAX Blocks (fork)` in the code.
   labeling, NFTs, experimental features, connected apps and the analytics consent screen are all
   hidden or off. Switches are in `packages/suite/src/constants/suite/phylax.ts` and marked
   `PHYLAX Blocks (fork)` where they live elsewhere.
+- **Never leaves the app**: no "Learn more" buttons and no links to websites (inline links become
+  plain text, the rest are hidden). Opening a website is refused in the app and again in the
+  desktop app's main process, and the Help menu has no "Trezor website". Switch:
+  `PHYLAX_ARE_EXTERNAL_LINKS_ALLOWED` in `@suite/external-links` and in
+  `suite/desktop-app-main/src/modules/external-links.ts`.
+- **PHYLAX logo** in the sidebar instead of Trezor's; no MEV protection, network reserve or device
+  wallpaper settings.
 - **Never replaced by official Trezor Suite**: auto-updater off, no update feed, own app id, data
   folder, installer name, publisher and release notes.
 

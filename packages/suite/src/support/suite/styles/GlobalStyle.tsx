@@ -1,5 +1,6 @@
 import { type DefaultTheme, createGlobalStyle } from 'styled-components';
 
+import { PHYLAX_ARE_EXTERNAL_LINKS_ALLOWED } from '@suite/external-links';
 import { fontFamilies, typography } from '@trezor/theme';
 
 import animations from './animations';
@@ -37,6 +38,19 @@ const GlobalStyle = createGlobalStyle<{ theme: DefaultTheme }>`
     a {
         text-decoration: none;
         cursor: pointer;
+    }
+
+    /* PHYLAX Blocks (fork): no links or buttons that open a website */
+    ${
+        !PHYLAX_ARE_EXTERNAL_LINKS_ALLOWED &&
+        `
+        a[href^='http:'],
+        a[href^='https:'],
+        a[href^='mailto:'],
+        a[href^='tel:'] {
+            display: none !important;
+        }
+    `
     }
 
     * {

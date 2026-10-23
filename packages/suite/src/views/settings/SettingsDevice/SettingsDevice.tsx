@@ -30,9 +30,12 @@ import { SettingsSection } from '@trezor/product-components';
 import { injectDispatch } from '@trezor/redux-utils';
 import { breakpoints } from '@trezor/theme';
 
-import { PHYLAX_ARE_PROMOTIONS_ENABLED } from 'src/constants/suite/phylax';
 import { DeviceBanner } from 'src/components/settings/DeviceBanner';
 import { SettingsLayout } from 'src/components/settings/SettingsLayout';
+import {
+    PHYLAX_ARE_EXTRA_SETTINGS_SHOWN,
+    PHYLAX_ARE_PROMOTIONS_ENABLED,
+} from 'src/constants/suite/phylax';
 import { useSelector } from 'src/hooks/suite';
 import { selectHasActiveTransport } from 'src/selectors/suite/suiteSelectors';
 import { useIsContentBelowBreakpoint } from 'src/support/suite/ContentFlex';
@@ -245,7 +248,10 @@ export const SettingsDevice = () => {
                     icon={PaletteIcon}
                 >
                     <DeviceLabel isDeviceLocked={isDeviceLocked} />
-                    <Homescreen isDeviceLocked={isDeviceLocked} />
+                    {/* PHYLAX Blocks (fork): no device wallpaper */}
+                    {PHYLAX_ARE_EXTRA_SETTINGS_SHOWN && (
+                        <Homescreen isDeviceLocked={isDeviceLocked} />
+                    )}
                     <DisplayRotation isDeviceLocked={isDeviceLocked} />
                     <Brightness isDeviceLocked={isDeviceLocked} />
                     <HapticFeedback isDeviceLocked={isDeviceLocked} />

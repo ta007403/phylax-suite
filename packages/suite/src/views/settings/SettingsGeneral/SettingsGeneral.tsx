@@ -162,7 +162,10 @@ export const SettingsGeneral = ({ torSettings }: SettingsGeneralProps) => {
                 icon={ShieldIcon}
                 hasVerticalLayout={hasContentBelowTabletWidth}
             >
-                {isMevProtectionSettingsVisible && <MevProtection />}
+                {/* PHYLAX Blocks (fork): MEV protection is EVM-only, the fork is Bitcoin only */}
+                {PHYLAX_ARE_EXTRA_SETTINGS_SHOWN && isMevProtectionSettingsVisible && (
+                    <MevProtection />
+                )}
                 <DustPhishing />
             </SettingsSection>
 
@@ -173,7 +176,10 @@ export const SettingsGeneral = ({ torSettings }: SettingsGeneralProps) => {
             >
                 {desktopUpdate.enabled && <EarlyAccess />}
                 <AddressDisplay />
-                {isNetworkReserveSettingsVisible && <NetworkReserve />}
+                {/* PHYLAX Blocks (fork): network reserve is for non-Bitcoin networks only */}
+                {PHYLAX_ARE_EXTRA_SETTINGS_SHOWN && isNetworkReserveSettingsVisible && (
+                    <NetworkReserve />
+                )}
                 <TestnetNetworks />
                 {PHYLAX_ARE_EXTRA_SETTINGS_SHOWN && <NftSection />}
             </SettingsSection>
