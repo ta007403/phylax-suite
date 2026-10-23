@@ -603,7 +603,9 @@ describe('Storage actions', () => {
         expect(selectDevices(store.getState())[0]?.label).toBe('New Label');
     });
 
-    it('should store graph data with the device and remove it on ACCOUNT.REMOVE (triggered by disabling the coin)', async () => {
+    // PHYLAX Blocks (fork): skipped, the fork is Bitcoin only (no Litecoin).
+
+    it.skip('should store graph data with the device and remove it on ACCOUNT.REMOVE (triggered by disabling the coin)', async () => {
         const accLtc = mockWalletAccount({
             deviceState: dev1.state!.staticSessionId!,
             symbol: asNetworkSymbol('ltc'),

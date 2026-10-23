@@ -38,7 +38,9 @@ describe('analytics initThunk', () => {
         jest.clearAllMocks();
     });
 
-    it('analytics initThunk with unconfirmed', () => {
+    // PHYLAX Blocks (fork): skipped, analytics are always confirmed (off) in the fork.
+
+    it.skip('analytics initThunk with unconfirmed', () => {
         const state = getInitialState({
             analytics: {
                 enabled: undefined,
