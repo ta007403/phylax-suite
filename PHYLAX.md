@@ -22,6 +22,13 @@ Everything added for PHYLAX is marked `PHYLAX Blocks (fork)` in the code.
   banner instead of "Device compromised", and no firmware update is offered (it would replace
   PHYLAX with stock firmware). Every other Trezor is checked exactly as before.
 - **No reporting to Trezor**: Sentry and analytics are switched off in this fork.
+- **Bitcoin only, no Trezor services**: other networks, Buy/Sell/Swap/Earn, Trezor's message system
+  (announcements, banners, experiments), promotions, the guide/support button, Suite Sync, cloud
+  labeling, NFTs, experimental features, connected apps and the analytics consent screen are all
+  hidden or off. Switches are in `packages/suite/src/constants/suite/phylax.ts` and marked
+  `PHYLAX Blocks (fork)` where they live elsewhere.
+- **Never replaced by official Trezor Suite**: auto-updater off, no update feed, own app id, data
+  folder, installer name, publisher and release notes.
 
 ## Balances
 

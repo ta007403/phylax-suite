@@ -15,6 +15,7 @@ import { useServices } from '@trezor/dependency-injection';
 import { zIndices } from '@trezor/theme';
 
 import { HEADER_HEIGHT } from 'src/constants/suite/layout';
+import { PHYLAX_IS_TRADING_ENABLED } from 'src/constants/suite/phylax';
 import { useSelector } from 'src/hooks/suite';
 
 import { GlobalSendReceive } from './GlobalSendReceive/GlobalSendReceive';
@@ -54,7 +55,8 @@ const PageHeaderIndex = () => {
     return (
         <Row gap={12}>
             <HeaderDropdown />
-            <TradeActions />
+            {/* PHYLAX Blocks (fork): no Buy / Sell */}
+            {PHYLAX_IS_TRADING_ENABLED && <TradeActions />}
             <GlobalSendReceive />
         </Row>
     );

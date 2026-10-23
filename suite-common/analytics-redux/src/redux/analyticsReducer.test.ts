@@ -6,7 +6,8 @@ type RootState = {
 };
 
 describe('analyticsSelectors', () => {
-    describe('selectHasUserAllowedTracking', () => {
+    // PHYLAX Blocks (fork): skipped, analytics are always off in the fork.
+    describe.skip('selectHasUserAllowedTracking', () => {
         it('should return undefined when analytics is not confirmed', () => {
             const state: RootState = {
                 analytics: {
@@ -48,7 +49,8 @@ describe('analyticsSelectors', () => {
         });
     });
 
-    describe('selectIsAnalyticsEnabled', () => {
+    // PHYLAX Blocks (fork): skipped, analytics are always off in the fork.
+    describe.skip('selectIsAnalyticsEnabled', () => {
         it('should return false when analytics is not confirmed', () => {
             const state: RootState = {
                 analytics: {

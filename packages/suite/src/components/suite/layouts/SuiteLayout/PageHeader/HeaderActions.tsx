@@ -9,6 +9,7 @@ import { ArrowDownIcon, ArrowUpIcon } from '@trezor/icons';
 import { AppNavigationTooltip } from 'src/components/suite/AppNavigation/AppNavigationTooltip';
 import { HeaderActionButton } from 'src/components/suite/layouts/SuiteLayout/PageHeader/HeaderActionButton';
 import { TradeActions } from 'src/components/suite/layouts/SuiteLayout/PageHeader/TradeActions';
+import { PHYLAX_IS_TRADING_ENABLED } from 'src/constants/suite/phylax';
 import { useSelector } from 'src/hooks/suite';
 import { type WalletParams } from 'src/types/wallet';
 
@@ -22,7 +23,8 @@ export const HeaderActions = () => {
     const { device } = useDevice();
 
     const accountType = selectedAccount.account?.accountType || routerParams?.accountType || '';
-    const isTradingAvailable = !['coinjoin'].includes(accountType);
+    // PHYLAX Blocks (fork): no Buy / Sell
+    const isTradingAvailable = PHYLAX_IS_TRADING_ENABLED && !['coinjoin'].includes(accountType);
     const isAccountLoading = selectedAccount.status === 'loading';
     const isDeviceConnected = device?.connected && device?.available;
 

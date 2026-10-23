@@ -8,6 +8,7 @@ import { Dropdown, type DropdownMenuItemProps, type IconComponent } from '@trezo
 import { PencilLineIcon, WalletConnectIcon } from '@trezor/icons';
 
 import { AppNavigationTooltip } from 'src/components/suite/AppNavigation/AppNavigationTooltip';
+import { PHYLAX_ARE_EXTRA_SETTINGS_SHOWN } from 'src/constants/suite/phylax';
 import { useSelector } from 'src/hooks/suite';
 
 import { useGoToWithAnalytics } from './useGoToWithAnalytics';
@@ -57,7 +58,10 @@ export const HeaderDropdown = ({ isDisabled, showSignAndVerify }: HeaderDropdown
             title: <Translation id="TR_WALLETCONNECT" />,
             icon: WalletConnectIcon,
             // caipId marks networks with a WalletConnect adapter (see suite-common/walletconnect)
-            isHidden: account ? !getNetwork(account.symbol).caipId : true,
+            // PHYLAX Blocks (fork): no third-party apps (WalletConnect)
+            isHidden:
+                !PHYLAX_ARE_EXTRA_SETTINGS_SHOWN ||
+                (account ? !getNetwork(account.symbol).caipId : true),
         },
     ];
 

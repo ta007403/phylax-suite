@@ -9,3 +9,9 @@ export const PHYLAX_IS_EARN_ENABLED: boolean = false;
 
 /** Trezor's promotional cards (referral, desktop app, trading and DeFi banners). */
 export const PHYLAX_ARE_PROMOTIONS_ENABLED: boolean = false;
+
+/**
+ * Settings PHYLAX Suite does not show: biometric unlock, labeling, NFTs, experimental features,
+ * the MCP server and connected (third-party) apps.
+ */
+export const PHYLAX_ARE_EXTRA_SETTINGS_SHOWN: boolean = false;

@@ -15,6 +15,10 @@ module.exports = {
         // This is the on-disk identity of existing installations, so it keeps the
         // original package name and must not follow package renames.
         name: `@phylax/suite-desktop${isCodesignBuild ? '' : '-dev'}`,
+        // PHYLAX Blocks (fork): shown by Windows as the file description, company and publisher
+        description: 'PHYLAX Suite desktop application',
+        author: { name: 'PHYLAX', url: 'https://phylaxwallet.com/' },
+        homepage: 'https://phylaxwallet.com/',
     },
     productName: 'PHYLAX Suite',
     copyright: 'Copyright © ${author}',
@@ -150,7 +154,7 @@ module.exports = {
         signExts: ['.exe', '.dll'],
         sign: {
             type: 'signtool',
-            publisherName: ['SatoshiLabs, s.r.o.', 'Trezor Company s.r.o.'],
+            publisherName: ['PHYLAX'],
             // TODO #14482: when Electron-main is migrated to ESM, and we declare whole desktop-app package as ESM, rename .mjs files to .js
             sign: '../desktop-app-main/scripts/sign-windows.mjs',
         },

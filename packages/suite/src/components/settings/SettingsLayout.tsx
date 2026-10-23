@@ -14,6 +14,7 @@ import {
     PageHeader,
     SubpageNavigation,
 } from 'src/components/suite/layouts/SuiteLayout';
+import { PHYLAX_ARE_EXTRA_SETTINGS_SHOWN } from 'src/constants/suite/phylax';
 import { useDiscovery, useLayout, useSelector } from 'src/hooks/suite';
 import { AccountHeaderProvider } from 'src/support/suite/AccountHeaderProvider';
 import { SettingsLoading } from 'src/views/settings/SettingsLoader';
@@ -59,6 +60,8 @@ const SettingsHeader = () => {
                 id: 'settings-connected-apps',
                 title: <Translation id="TR_CONNECTED_APPS" />,
                 position: 'primary',
+                // PHYLAX Blocks (fork): no third-party apps
+                isHidden: !PHYLAX_ARE_EXTRA_SETTINGS_SHOWN,
                 'data-testid': '@settings/menu/connected-apps',
                 callback: () =>
                     dispatch(

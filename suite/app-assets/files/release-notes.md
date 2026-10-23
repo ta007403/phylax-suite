@@ -1,26 +1,23 @@
+### 🧱 PHYLAX Suite
+
+PHYLAX Suite is the desktop app for **PHYLAX Blocks**: snap-together Bitcoin multisig built from
+Trezor One boards. It is based on Trezor Suite and is not affiliated with Trezor or SatoshiLabs.
+
 ### 🚀 New features
 
-- Passphrases can now be up to 128 characters long
-- Arc EVM network now supported in Suite
-- Trade form can be used with sats as the BTC unit
-- Trade history can be exported in CSV format, including trade ID, date, type, amounts, networks, provider, status, and transaction IDs
-- You can now swap Bitcoin to EVM chains (Ethereum, Avalanche, BNB Smart Chain) through LI.FI in Suite’s trading flow
-- You can now sign Tron resource (un)delegation transactions (Bandwidth and Energy) on your Trezor through WalletConnect, in dApps such as TronScan
+- **PHYLAX Blocks page**: the stack of blocks (main block and key blocks) with their seed
+  fingerprints and state (ready, locked, no seed)
+- **Saved multisig wallets**: each wallet's balance (mainnet or testnet), its full descriptor with
+  checksum, copy and QR code for Sparrow
+- **Rename and delete wallets** from the app, confirmed on the main block's buttons
+- PHYLAX main blocks are recognised automatically, with a "PHYLAX custom firmware" notice instead
+  of Trezor's firmware authenticity warnings
 
-### 🎨 Improvements
+### 🎨 Changes from Trezor Suite
 
-- Trade form has a refreshed layout and improved performance
-- Improved support for Soroban-based (SEP-41) tokens: you can receive them, see their transactions, attach a memo, and track custom tokens
-- Improved custom Electrum server setup in Trezor Suite
-- Receive flow now starts with an asset search, rather than an account list
-- Yield deposits have a dynamic minimum fee reserve instead of a fixed one
-
-### 🔧 Bug fixes
-
-- Suite Sync label export behavior fixed
-- Startup issues fixed
-- Stellar USDC added to Inactive tokens list by default, and can be activated during trading
-- Fixed Solana reconnect issue when using many accounts
-- Fiat rate tickers fixed for when rates are filtered out
-- Solana staking instructions unified between device and app
-- Minor bugs have been resolved, along with general usability enhancements for a more reliable and seamless experience
+- Bitcoin only: other networks are not offered
+- No buying, selling, swapping or earning
+- No Trezor promotions, announcements, guide, analytics or error reporting
+- No cloud sync, labeling, NFTs, experimental features or connected apps
+- No automatic updates and no stock firmware updates for PHYLAX blocks: update PHYLAX firmware
+  with "Install custom firmware" in Settings → Device

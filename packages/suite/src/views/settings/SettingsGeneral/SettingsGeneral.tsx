@@ -29,7 +29,10 @@ import { SettingsSection } from '@trezor/product-components';
 import { breakpoints } from '@trezor/theme';
 
 import { SettingsLayout } from 'src/components/settings/SettingsLayout';
-import { PHYLAX_ARE_PROMOTIONS_ENABLED } from 'src/constants/suite/phylax';
+import {
+    PHYLAX_ARE_EXTRA_SETTINGS_SHOWN,
+    PHYLAX_ARE_PROMOTIONS_ENABLED,
+} from 'src/constants/suite/phylax';
 import { useSelector } from 'src/hooks/suite';
 import { useIsContentBelowBreakpoint } from 'src/support/suite/ContentFlex';
 
@@ -104,7 +107,9 @@ export const SettingsGeneral = ({ torSettings }: SettingsGeneralProps) => {
                     icon={LockIcon}
                 >
                     <AutoEject />
-                    {isDesktop() && !isLinux() && <BioAuthSettings />}
+                    {PHYLAX_ARE_EXTRA_SETTINGS_SHOWN && isDesktop() && !isLinux() && (
+                        <BioAuthSettings />
+                    )}
                     {torSettings}
                     <TorOnionLinks />
                 </SettingsSection>
@@ -120,20 +125,23 @@ export const SettingsGeneral = ({ torSettings }: SettingsGeneralProps) => {
                 {hasBitcoinNetworks && <BitcoinAmountUnit />}
             </SettingsSection>
 
-            <SettingsSection
-                hasVerticalLayout={hasContentBelowTabletWidth}
-                title={<Translation id="TR_LABELING" />}
-                icon={TagIcon}
-            >
-                <LabelingSettings />
-                {isLegacyLabelingVisible &&
-                    (isProviderConnected ? (
-                        <DisconnectLabelingProvider />
-                    ) : (
-                        <ConnectLabelingProvider />
-                    ))}
-                <LegacyLabelingMigration />
-            </SettingsSection>
+            {/* PHYLAX Blocks (fork): no labeling, NFT or experimental settings */}
+            {PHYLAX_ARE_EXTRA_SETTINGS_SHOWN && (
+                <SettingsSection
+                    hasVerticalLayout={hasContentBelowTabletWidth}
+                    title={<Translation id="TR_LABELING" />}
+                    icon={TagIcon}
+                >
+                    <LabelingSettings />
+                    {isLegacyLabelingVisible &&
+                        (isProviderConnected ? (
+                            <DisconnectLabelingProvider />
+                        ) : (
+                            <ConnectLabelingProvider />
+                        ))}
+                    <LegacyLabelingMigration />
+                </SettingsSection>
+            )}
 
             <SettingsSection
                 hasVerticalLayout={hasContentBelowTabletWidth}
@@ -167,7 +175,7 @@ export const SettingsGeneral = ({ torSettings }: SettingsGeneralProps) => {
                 <AddressDisplay />
                 {isNetworkReserveSettingsVisible && <NetworkReserve />}
                 <TestnetNetworks />
-                <NftSection />
+                {PHYLAX_ARE_EXTRA_SETTINGS_SHOWN && <NftSection />}
             </SettingsSection>
 
             {isDesktop() && (
@@ -181,15 +189,17 @@ export const SettingsGeneral = ({ torSettings }: SettingsGeneralProps) => {
                 </SettingsSection>
             )}
 
-            <SettingsSection
-                hasVerticalLayout={hasContentBelowTabletWidth}
-                title={<Translation id="TR_EXPERIMENTAL_FEATURES" />}
-                icon={AtomIcon}
-            >
-                <Experimental />
-            </SettingsSection>
+            {PHYLAX_ARE_EXTRA_SETTINGS_SHOWN && (
+                <SettingsSection
+                    hasVerticalLayout={hasContentBelowTabletWidth}
+                    title={<Translation id="TR_EXPERIMENTAL_FEATURES" />}
+                    icon={AtomIcon}
+                >
+                    <Experimental />
+                </SettingsSection>
+            )}
 
-            {mcpServerEnabled && isDesktop() && (
+            {PHYLAX_ARE_EXTRA_SETTINGS_SHOWN && mcpServerEnabled && isDesktop() && (
                 <SettingsSection
                     hasVerticalLayout={hasContentBelowTabletWidth}
                     title={<Translation id="TR_EXPERIMENTAL_MCP_SERVER" />}

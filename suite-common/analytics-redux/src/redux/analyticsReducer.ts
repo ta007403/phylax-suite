@@ -68,11 +68,16 @@ export const selectAnalyticsInstanceId = (state: AnalyticsRootState) => state.an
 
 export const selectAnalyticsSessionId = (state: AnalyticsRootState) => state.analytics.sessionId;
 
+// PHYLAX Blocks (fork): analytics are always off and never asked about: the consent screen is
+// skipped (counts as answered) and tracking is never allowed, whatever is stored.
+const PHYLAX_IS_ANALYTICS_ENABLED: boolean = false;
+
 export const selectIsAnalyticsConfirmed = (state: AnalyticsRootState) =>
-    !!state.analytics.confirmed;
+    !PHYLAX_IS_ANALYTICS_ENABLED || !!state.analytics.confirmed;
 
 // Use this directly only if you need to handle unconfirmed state differently from the disabled state.
 export const selectHasUserAllowedTracking = (state: AnalyticsRootState): boolean | undefined => {
+    if (!PHYLAX_IS_ANALYTICS_ENABLED) return false;
     const isAnalyticsConfirmed = selectIsAnalyticsConfirmed(state);
 
     // If the user has not yet confirmed analytics, return undefined.

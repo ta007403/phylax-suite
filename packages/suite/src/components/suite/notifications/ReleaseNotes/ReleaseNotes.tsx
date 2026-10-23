@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { getReleaseUrl } from '@suite/github';
 import { Translation } from '@suite/intl';
 import { Badge, Card, Paragraph, Row, TextButton } from '@trezor/components';
 
 import { MarkdownWithComponents } from 'src/components/suite';
+
+// PHYLAX Blocks (fork): these notes describe PHYLAX Suite, not a Trezor Suite release
+const PHYLAX_RELEASE_NOTES_URL = 'https://github.com/ta007403/phylax-suite/blob/phylax/PHYLAX.md';
 
 type State = { status: 'loading' } | { status: 'loaded'; changelog: string } | { status: 'error' };
 
@@ -75,7 +77,7 @@ export const ReleaseNotes = () => {
     return (
         <Card
             header={<ReleaseHeader version={suiteCurrentVersion} />}
-            footer={<GithubFooter url={getReleaseUrl(suiteCurrentVersion)} />}
+            footer={<GithubFooter url={PHYLAX_RELEASE_NOTES_URL} />}
         >
             <MarkdownWithComponents>{state.changelog}</MarkdownWithComponents>
         </Card>
