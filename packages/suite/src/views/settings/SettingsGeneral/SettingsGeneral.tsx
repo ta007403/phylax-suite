@@ -29,6 +29,7 @@ import { SettingsSection } from '@trezor/product-components';
 import { breakpoints } from '@trezor/theme';
 
 import { SettingsLayout } from 'src/components/settings/SettingsLayout';
+import { PHYLAX_ARE_PROMOTIONS_ENABLED } from 'src/constants/suite/phylax';
 import { useSelector } from 'src/hooks/suite';
 import { useIsContentBelowBreakpoint } from 'src/support/suite/ContentFlex';
 
@@ -94,6 +95,7 @@ export const SettingsGeneral = ({ torSettings }: SettingsGeneralProps) => {
             <div>
                 {isWeb() &&
                     !hasContentBelowMobileWidth &&
+                    PHYLAX_ARE_PROMOTIONS_ENABLED &&
                     shouldShowSettingsDesktopAppPromoBanner && <DesktopSuiteBanner />}
 
                 <SettingsSection
@@ -139,7 +141,8 @@ export const SettingsGeneral = ({ torSettings }: SettingsGeneralProps) => {
                 icon={AppWindowIcon}
             >
                 <Theme />
-                <Analytics />
+                {/* PHYLAX Blocks (fork): analytics are off in the fork, nothing to choose */}
+                {PHYLAX_ARE_PROMOTIONS_ENABLED && <Analytics />}
                 <ShowApplicationLog />
                 <ClearStorage />
                 <AutomaticUpdate />

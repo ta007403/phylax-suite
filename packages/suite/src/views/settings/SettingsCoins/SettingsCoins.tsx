@@ -30,6 +30,7 @@ import { breakpoints } from '@trezor/theme';
 import { SettingsLayout } from 'src/components/settings/SettingsLayout';
 import { NetworkList } from 'src/components/suite/NetworkList/NetworkList';
 import { NetworkSettingsSearchInput } from 'src/components/suite/NetworkList/NetworkSettingsSearchInput';
+import { PHYLAX_ARE_PROMOTIONS_ENABLED } from 'src/constants/suite/phylax';
 import { useNetworkSupport } from 'src/hooks/settings/useNetworkSupport';
 import { useSelector } from 'src/hooks/suite';
 import { useIsContentBelowBreakpoint } from 'src/support/suite/ContentFlex';
@@ -194,7 +195,11 @@ export const SettingsCoins = () => {
         <SettingsLayout>
             <ContextMessage context={Context.getSettings('networks')} />
 
-            <Column gap={16}>{showFirmwareTypeBanner && <FirmwareTypeSuggestion />}</Column>
+            <Column gap={16}>
+                {PHYLAX_ARE_PROMOTIONS_ENABLED && showFirmwareTypeBanner && (
+                    <FirmwareTypeSuggestion />
+                )}
+            </Column>
 
             <SettingsSection
                 hasVerticalLayout={hasContentBelowTabletWidth}
