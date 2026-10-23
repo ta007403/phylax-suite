@@ -15,6 +15,7 @@ import {
 } from '@trezor/components';
 import { zIndices } from '@trezor/theme';
 
+import { PHYLAX_IS_GUIDE_ENABLED } from 'src/constants/suite/phylax';
 import { useGuide } from 'src/hooks/guide';
 
 const MASCOT_SOURCE_COLOR = '#1E5736';
@@ -125,6 +126,5 @@ const GuideButtonInner = memo(function GuideButton() {
 });
 
 // PHYLAX Blocks (fork): no Trezor guide, help articles or support chat
-const PHYLAX_IS_GUIDE_ENABLED: boolean = false;
 
 export const GuideButton = () => (PHYLAX_IS_GUIDE_ENABLED ? <GuideButtonInner /> : null);

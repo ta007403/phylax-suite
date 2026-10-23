@@ -15,3 +15,6 @@ export const PHYLAX_ARE_PROMOTIONS_ENABLED: boolean = false;
  * the MCP server and connected (third-party) apps.
  */
 export const PHYLAX_ARE_EXTRA_SETTINGS_SHOWN: boolean = false;
+
+/** Trezor's guide: help articles, "Learn" buttons and the support chat. */
+export const PHYLAX_IS_GUIDE_ENABLED: boolean = false;
