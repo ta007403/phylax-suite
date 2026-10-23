@@ -76,7 +76,7 @@ export const BridgeRequested = () => {
                     </>
                 }
             >
-                <Metadata title="Bridge | Trezor Suite" />
+                <Metadata title="Bridge | PHYLAX Suite" />
                 <Paragraph>
                     <Translation id="TR_BRIDGE_GO_TO_WALLET_DESCRIPTION" />
                 </Paragraph>
@@ -109,7 +109,7 @@ export const BridgeRequested = () => {
                 </>
             }
         >
-            <Metadata title="Bridge | Trezor Suite" />
+            <Metadata title="Bridge | PHYLAX Suite" />
             <Column gap={4}>
                 <H3>
                     <Translation id="TR_TREZOR_CONNECT" />

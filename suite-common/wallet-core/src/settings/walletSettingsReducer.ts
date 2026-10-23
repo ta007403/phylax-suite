@@ -1,7 +1,12 @@
 import { A } from '@mobily/ts-belt';
 
 import { type DeviceRootState, selectHasBitcoinOnlyFirmware } from '@suite-common/device';
-import { type NetworkSymbol, asNetworkSymbol, getNetwork } from '@suite-common/wallet-config';
+import {
+    type NetworkSymbol,
+    asNetworkSymbol,
+    getNetwork,
+    isPhylaxNetwork,
+} from '@suite-common/wallet-config';
 import {
     AddressDisplayOptions,
     type SuspiciousTransactionsFilter,
@@ -144,8 +149,14 @@ export const prepareWalletSettingsReducer = createReducerWithExtraDeps(
 );
 
 export const selectWalletSettings = (state: WalletSettingsRootState) => state.wallet.settings;
-export const selectEnabledNetworks = (state: WalletSettingsRootState) =>
-    returnStableArrayIfEmpty(state.wallet.settings.enabledNetworks);
+// PHYLAX Blocks (fork): networks enabled before (e.g. a profile from stock Suite) other than
+// Bitcoin are ignored.
+const selectStoredEnabledNetworks = (state: WalletSettingsRootState) =>
+    state.wallet.settings.enabledNetworks;
+export const selectEnabledNetworks = createMemoizedSelector(
+    [selectStoredEnabledNetworks],
+    enabledNetworks => returnStableArrayIfEmpty(enabledNetworks.filter(isPhylaxNetwork)),
+);
 export const selectBaseCurrency = (state: WalletSettingsRootState) =>
     state.wallet.settings.localCurrency;
 export const selectSuspiciousTransactionsFilter = (

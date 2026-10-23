@@ -6,6 +6,9 @@ import { isFeatureFlagEnabled } from '@suite-common/suite-utils';
 import { Banner, Column, H3, Modal, Paragraph } from '@trezor/components';
 import { DropboxLogoFilledIcon, GoogleDriveLogoFilledIcon, TagIcon } from '@trezor/icons';
 
+// PHYLAX Blocks (fork): labels stay on this computer (desktop: local file).
+const PHYLAX_IS_CLOUD_LABELING_ENABLED: boolean = false;
+
 type MetadataProviderSelectionModalProps = {
     onCancel: () => void;
     onSelect: (providerType: MetadataProviderType) => void;
@@ -34,29 +37,34 @@ export const MetadataProviderSelectionModal = ({
         icon={TagIcon}
         bottomContent={
             <>
-                <Modal.Button
-                    intent="neutral"
-                    priority="secondary"
-                    onClick={() => onSelect('dropbox')}
-                    isLoading={loadingProvider === 'dropbox'}
-                    isDisabled={isDisabled || !!loadingProvider}
-                    data-testid={`${testId}/dropbox-button`}
-                    iconLeft={DropboxLogoFilledIcon}
-                >
-                    <Translation id="TR_DROPBOX" />
-                </Modal.Button>
+                {/* PHYLAX Blocks (fork): labels stay on this computer, no Dropbox or Google Drive */}
+                {PHYLAX_IS_CLOUD_LABELING_ENABLED && (
+                    <>
+                        <Modal.Button
+                            intent="neutral"
+                            priority="secondary"
+                            onClick={() => onSelect('dropbox')}
+                            isLoading={loadingProvider === 'dropbox'}
+                            isDisabled={isDisabled || !!loadingProvider}
+                            data-testid={`${testId}/dropbox-button`}
+                            iconLeft={DropboxLogoFilledIcon}
+                        >
+                            <Translation id="TR_DROPBOX" />
+                        </Modal.Button>
 
-                <Modal.Button
-                    intent="neutral"
-                    priority="secondary"
-                    onClick={() => onSelect('google')}
-                    isLoading={loadingProvider === 'google'}
-                    isDisabled={isDisabled || !!loadingProvider}
-                    data-testid={`${testId}/google-button`}
-                    iconLeft={GoogleDriveLogoFilledIcon}
-                >
-                    <Translation id="TR_GOOGLE_DRIVE" />
-                </Modal.Button>
+                        <Modal.Button
+                            intent="neutral"
+                            priority="secondary"
+                            onClick={() => onSelect('google')}
+                            isLoading={loadingProvider === 'google'}
+                            isDisabled={isDisabled || !!loadingProvider}
+                            data-testid={`${testId}/google-button`}
+                            iconLeft={GoogleDriveLogoFilledIcon}
+                        >
+                            <Translation id="TR_GOOGLE_DRIVE" />
+                        </Modal.Button>
+                    </>
+                )}
 
                 {/* desktop only */}
                 {isFeatureFlagEnabled('FILE_SYSTEM_SYNC') && (

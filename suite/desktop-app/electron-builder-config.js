@@ -6,15 +6,17 @@ const isCodesignBuild = process.env.IS_CODESIGN_BUILD === 'true';
 // to be able to use patterns like ${author} and ${arch}
 module.exports = {
     // distinguish between dev and prod builds
-    appId: `io.trezor.TrezorSuite${isCodesignBuild ? '' : '.dev'}`,
+    // PHYLAX Blocks (fork): its own app id, name and data folder, so it installs next to
+    // (and never over) the official Trezor Suite.
+    appId: `io.phylax.PhylaxSuite${isCodesignBuild ? '' : '.dev'}`,
     extraMetadata: {
         version: suiteVersion,
         // Distinguishes dev and prod builds so a different userDataDir is used.
         // This is the on-disk identity of existing installations, so it keeps the
         // original package name and must not follow package renames.
-        name: `@trezor/suite-desktop${isCodesignBuild ? '' : '-dev'}`,
+        name: `@phylax/suite-desktop${isCodesignBuild ? '' : '-dev'}`,
     },
-    productName: 'Trezor Suite',
+    productName: 'PHYLAX Suite',
     copyright: 'Copyright © ${author}',
     asar: {
         unpack: ['**/*.node'],
@@ -55,13 +57,11 @@ module.exports = {
         },
     ],
     protocols: {
-        name: 'Trezor Suite',
+        name: 'PHYLAX Suite',
         schemes,
     },
-    publish: {
-        provider: 'generic',
-        url: 'https://data.trezor.io/suite/releases/desktop/latest',
-    },
+    // PHYLAX Blocks (fork): no update feed (Trezor's would replace this fork)
+    publish: null,
     dmg: {
         sign: false,
         contents: [
@@ -111,7 +111,7 @@ module.exports = {
             },
         ],
         icon: 'build/static/images/desktop/512x512.icns',
-        artifactName: 'Trezor-Suite-${version}-mac-${arch}.${ext}',
+        artifactName: 'PHYLAX-Suite-${version}-mac-${arch}.${ext}',
         darkModeSupport: true,
         extendInfo: {
             CFBundleIconName: 'Icon',
@@ -145,7 +145,7 @@ module.exports = {
             },
         ],
         icon: 'build/static/images/desktop/512x512.png',
-        artifactName: 'Trezor-Suite-${version}-win-${arch}.${ext}',
+        artifactName: 'PHYLAX-Suite-${version}-win-${arch}.${ext}',
         target: ['nsis'],
         signExts: ['.exe', '.dll'],
         sign: {
@@ -175,7 +175,7 @@ module.exports = {
             },
         ],
         icon: 'build/static/images/desktop/512x512.png',
-        artifactName: 'Trezor-Suite-${version}-linux-${arch}.${ext}',
+        artifactName: 'PHYLAX-Suite-${version}-linux-${arch}.${ext}',
         executableName: 'trezor-suite',
         category: 'Utility',
         target: ['AppImage'],

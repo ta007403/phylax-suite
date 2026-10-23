@@ -15,8 +15,11 @@ import { isFwUpgradeNeededForSuiteSync, isSuiteSyncSupportedByDevice } from './s
 export type WithSuiteSyncAndDeviceState = WithSuiteSyncState & DeviceRootState;
 
 /** Suite Sync is enabled by default; the message system can remotely disable it via `settings.suiteSync`. */
+// PHYLAX Blocks (fork): Suite Sync (Trezor's cloud sync of labels and settings) is off.
+const PHYLAX_IS_SUITE_SYNC_ENABLED: boolean = false;
+
 export const selectIsSuiteSyncFeatureAvailable = (state: MessageSystemRootState) =>
-    selectIsFeatureEnabled(state, Feature.suiteSync, true);
+    PHYLAX_IS_SUITE_SYNC_ENABLED && selectIsFeatureEnabled(state, Feature.suiteSync, true);
 
 export const selectIsSuiteSyncEnabled = (
     state: WithSuiteSyncAndDeviceState & MessageSystemRootState,

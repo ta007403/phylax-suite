@@ -22,6 +22,15 @@ export const NORMAL_ACCOUNT_TYPE = 'normal' satisfies AccountType;
 export const networksCollection = typedObjectValues(networks) as unknown as Network[];
 
 /**
+ * PHYLAX Blocks (fork): a Bitcoin-only app. Other networks stay in the config (so the code and
+ * types are unchanged) but are never offered, enabled or discovered. The same list is in
+ * @suite-common/networks (createGetNetworkConfigs).
+ */
+export const PHYLAX_NETWORK_SYMBOLS: readonly string[] = ['btc', 'test', 'regtest'];
+
+export const isPhylaxNetwork = (symbol: string) => PHYLAX_NETWORK_SYMBOLS.includes(symbol);
+
+/**
  * array of network symbols
  */
 const networkSymbolCollection = networksCollection.map(n => n.symbol);
@@ -66,6 +75,7 @@ export const getMainnets = ({
 }: GetMainnetsProps = {}): Network[] =>
     allNetworks.filter(
         n =>
+            isPhylaxNetwork(n.symbol) &&
             !n.testnet &&
             (!n.isDebugOnlyNetwork || debug) &&
             (!n.isExperimentalOnlyNetwork || useExperimentalNetworks),
@@ -86,6 +96,7 @@ export const getTestnets = ({
 }: GetTestnetsProps): Network[] =>
     allNetworks.filter(
         n =>
+            isPhylaxNetwork(n.symbol) &&
             n.testnet &&
             useTestnetNetworks &&
             (!n.isDebugOnlyNetwork || debug) &&

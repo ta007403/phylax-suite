@@ -55,7 +55,7 @@ export const BridgeUnavailable = () => {
                 </>
             }
         >
-            <Metadata title="Bridge | Trezor Suite" />
+            <Metadata title="Bridge | PHYLAX Suite" />
             <Column gap={4}>
                 <H3>
                     <Translation id="TR_BRIDGE" />

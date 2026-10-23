@@ -12,6 +12,7 @@ import { ArrowDownIcon, CurrencyCircleDollarIcon } from '@trezor/icons';
 import { NetworkIconSet } from '@trezor/product-components';
 import { injectDispatch } from '@trezor/redux-utils';
 
+import { PHYLAX_IS_TRADING_ENABLED } from 'src/constants/suite/phylax';
 import { useSelector } from 'src/hooks/suite';
 
 const RoundedBorder = styled.div`
@@ -88,15 +89,17 @@ export const EmptyWallet = () => {
                 </RoundedBorder>
             )}
             <Row gap={12} margin={{ top: 16 }}>
-                <Button
-                    intent="brand"
-                    iconLeft={CurrencyCircleDollarIcon}
-                    size="medium"
-                    onClick={handleBuy}
-                    data-testid="@dashboard/empty-wallet/buy"
-                >
-                    <Translation id="TR_BUY" />
-                </Button>
+                {PHYLAX_IS_TRADING_ENABLED && (
+                    <Button
+                        intent="brand"
+                        iconLeft={CurrencyCircleDollarIcon}
+                        size="medium"
+                        onClick={handleBuy}
+                        data-testid="@dashboard/empty-wallet/buy"
+                    >
+                        <Translation id="TR_BUY" />
+                    </Button>
+                )}
                 <Button
                     intent="brand"
                     iconLeft={ArrowDownIcon}

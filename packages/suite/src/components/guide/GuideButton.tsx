@@ -68,7 +68,7 @@ const MascotButton = styled.button`
     }
 `;
 
-export const GuideButton = memo(function GuideButton() {
+const GuideButtonInner = memo(function GuideButton() {
     const { openGuide, isGuideOpen } = useGuide();
     const { translationString } = useTranslation();
     const theme = useTheme();
@@ -123,3 +123,8 @@ export const GuideButton = memo(function GuideButton() {
         </FreeFocusInside>
     );
 });
+
+// PHYLAX Blocks (fork): no Trezor guide, help articles or support chat
+const PHYLAX_IS_GUIDE_ENABLED: boolean = false;
+
+export const GuideButton = () => (PHYLAX_IS_GUIDE_ENABLED ? <GuideButtonInner /> : null);

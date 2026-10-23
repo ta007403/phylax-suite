@@ -63,5 +63,5 @@ jobs:
         with:
           name: phylax-suite-desktop-win
           path: |
-            Trezor-Suite*.exe
+            PHYLAX-Suite*.exe
           retention-days: 14

@@ -8,6 +8,10 @@ export type GetNetworkConfigs = () => readonly NetworkMetadata[];
 
 export type GetNetworkConfigsDep = { getNetworkConfigs: GetNetworkConfigs };
 
+// PHYLAX Blocks (fork): a Bitcoin-only app. Only these networks exist in the fork's state; the
+// same list is in @suite-common/wallet-config (PHYLAX_NETWORK_SYMBOLS).
+const PHYLAX_NETWORK_SYMBOLS: readonly string[] = ['btc', 'test', 'regtest'];
+
 const compareBooleans = (a: boolean, b: boolean) => Number(a) - Number(b);
 
 // Byte-wise, not locale-aware, as fractional-indexing keys require.
@@ -33,6 +37,7 @@ export const createGetNetworkConfigs =
     () =>
         deps.networkModuleRepository
             .getSupportedNetworks()
+            .filter(symbol => PHYLAX_NETWORK_SYMBOLS.includes(symbol))
             .map(symbol => ({ ...deps.getNetworkConfig(symbol), symbol }))
             // Hermes does not support toSorted; map creates a new array that is safe to sort.
             .sort(compareDisplayOrder);

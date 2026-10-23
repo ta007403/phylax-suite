@@ -734,6 +734,7 @@ export class Device extends TypedEmitter<DeviceEvents> implements IDevice {
             this.phylax = true;
             // PHYLAX firmware is not a Trezor release: never offer to replace it from here
             this._firmwareStatus = 'valid';
+            this.updateNameAndColor();
         } catch (error) {
             this.logger.debug('not a PHYLAX main block', error?.message);
             this.phylax = false;
@@ -942,7 +943,8 @@ export class Device extends TypedEmitter<DeviceEvents> implements IDevice {
             colors: {},
         };
 
-        this.name = deviceInfo.name;
+        // PHYLAX Blocks (fork): a PHYLAX main block is named after its role, not its board
+        this.name = this.phylax ? 'PHYLAX main block' : deviceInfo.name;
 
         if (unitColor) {
             const deviceUnitColor = unitColor.toString();

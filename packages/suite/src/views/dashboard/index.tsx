@@ -2,6 +2,7 @@ import { ContextMessage } from '@suite/message-system';
 import { Context, ExperimentId, ExperimentWrapper } from '@suite-common/message-system';
 import { Column } from '@trezor/components';
 
+import { PHYLAX_ARE_PROMOTIONS_ENABLED } from 'src/constants/suite/phylax';
 import { OutOfQuotaBanner } from 'src/components/suite/banners/SuiteBanners/OutOfQuotaBanner';
 import { PageHeader } from 'src/components/suite/layouts/SuiteLayout';
 import { useLayout } from 'src/hooks/suite';
@@ -36,13 +37,18 @@ const DashboardAsItWas = () => (
             <PortfolioCard />
             <OnboardingFeedbackBanner />
         </Column>
-        <DashboardPromoBanner />
+        {PHYLAX_ARE_PROMOTIONS_ENABLED && <DashboardPromoBanner />}
         <AssetsView />
     </Column>
 );
 
 export const Dashboard = () => {
-    useLayout('Home', <PageHeader />, <DashboardFooter />);
+    // PHYLAX Blocks (fork): the footer only holds promotions (referral, desktop and mobile apps)
+    useLayout(
+        'Home',
+        <PageHeader />,
+        PHYLAX_ARE_PROMOTIONS_ENABLED ? <DashboardFooter /> : undefined,
+    );
     useNotificationForDisconnectedDevice();
 
     return (

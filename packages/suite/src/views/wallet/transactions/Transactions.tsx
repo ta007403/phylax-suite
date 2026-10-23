@@ -8,6 +8,7 @@ import {
 import { getOlderHistoryFrom, isDirectRpcHistoryUnscanned } from '@suite-common/wallet-utils';
 import { Column } from '@trezor/components';
 
+import { PHYLAX_IS_TRADING_ENABLED } from 'src/constants/suite/phylax';
 import { CoinjoinAccountDiscoveryProgress, WalletLayout } from 'src/components/wallet';
 import { SolanaLimitedHistoryBanner } from 'src/components/wallet/WalletLayout/AccountBanners/SolanaLimitedHistoryBanner';
 import { useSelector } from 'src/hooks/suite';
@@ -93,12 +94,12 @@ export const Transactions = () => {
                             <AccountOverviewBalance selectedAccount={selectedAccount} />
                             <TransactionSummary account={account} />
                         </Column>
-                        <TradeBox account={account} />
+                        {PHYLAX_IS_TRADING_ENABLED && <TradeBox account={account} />}
                     </>
                 ) : (
                     <Column gap={20}>
                         <AccountOverviewBalance selectedAccount={selectedAccount} />
-                        <TradeBox account={account} />
+                        {PHYLAX_IS_TRADING_ENABLED && <TradeBox account={account} />}
                     </Column>
                 )}
                 <SolanaLimitedHistoryBanner account={account} />
@@ -114,7 +115,7 @@ export const Transactions = () => {
                     <AccountOverviewBalance selectedAccount={selectedAccount} />
                     <AccountEmpty account={selectedAccount.account} />
                 </Column>
-                <TradeBox account={account} />
+                {PHYLAX_IS_TRADING_ENABLED && <TradeBox account={account} />}
             </Layout>
         );
     }
@@ -125,7 +126,7 @@ export const Transactions = () => {
                 <AccountOverviewBalance selectedAccount={selectedAccount} />
                 <NoTransactions account={account} />
             </Column>
-            <TradeBox account={account} />
+            {PHYLAX_IS_TRADING_ENABLED && <TradeBox account={account} />}
         </Layout>
     );
 };

@@ -24,6 +24,7 @@ import {
 } from '@trezor/icons';
 import { injectDispatch } from '@trezor/redux-utils';
 
+import { PHYLAX_IS_EARN_ENABLED, PHYLAX_IS_TRADING_ENABLED } from 'src/constants/suite/phylax';
 import { useResponsiveContext } from 'src/support/suite/ResponsiveContext';
 
 import { NavigationItem, type NavigationItemProps } from './NavigationItem';
@@ -183,7 +184,8 @@ export const Navigation = ({ children }: NavigationProps) => {
                     routes: [startRoute],
                     shortcut: ['MOD', 'ALT', 'KEY_0'],
                 },
-                ...(!isBtcOnly
+                // PHYLAX Blocks (fork): no Swap or Earn
+                ...(!isBtcOnly && PHYLAX_IS_TRADING_ENABLED && PHYLAX_IS_EARN_ENABLED
                     ? [
                           {
                               nameId: 'TR_TRADING_SWAP',

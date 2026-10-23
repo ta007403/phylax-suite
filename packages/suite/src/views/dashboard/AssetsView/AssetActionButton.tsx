@@ -9,6 +9,7 @@ import { useServices } from '@trezor/dependency-injection';
 import { injectDispatch } from '@trezor/redux-utils';
 import { exhaustive } from '@trezor/type-utils';
 
+import { PHYLAX_IS_EARN_ENABLED, PHYLAX_IS_TRADING_ENABLED } from 'src/constants/suite/phylax';
 import { useAccountSearch, useSelector } from 'src/hooks/suite';
 
 type AssetActionButtonRoute = Extract<Route['name'], 'wallet-staking' | 'wallet-trading-buy'>;
@@ -72,6 +73,12 @@ export const AssetActionButton = ({
         // for example when the button is used in clickable Card
         e.stopPropagation();
     };
+
+    // PHYLAX Blocks (fork): no buying or staking in this fork
+    const isHidden =
+        (routeName === 'wallet-trading-buy' && !PHYLAX_IS_TRADING_ENABLED) ||
+        (routeName === 'wallet-staking' && !PHYLAX_IS_EARN_ENABLED);
+    if (isHidden) return null;
 
     return (
         <Button onClick={onClick} intent="neutral" priority="secondary" data-testid={dataTest}>

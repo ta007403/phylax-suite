@@ -7,7 +7,8 @@
 export const FLAGS = {
     FILE_SYSTEM_SYNC: false, // File system sync (used for labeling)
     ONION_LOCATION_META: true, // Show TOR onion-location meta tag in page head
-    DESKTOP_AUTO_UPDATER: true, // Runs auto updater code on desktop
+    // PHYLAX Blocks (fork): off, so the app never replaces itself with official Trezor Suite
+    DESKTOP_AUTO_UPDATER: false, // Runs auto updater code on desktop
 } as const;
 
 // Web specific flags

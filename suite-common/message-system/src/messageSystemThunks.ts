@@ -23,6 +23,9 @@ import {
 import { type MessageSystemRootState } from './messageSystemTypes';
 import { jws as configJwsLocal } from '../files/config.v1';
 
+// PHYLAX Blocks (fork): the message system is off in this fork.
+const PHYLAX_IS_MESSAGE_SYSTEM_ENABLED: boolean = false;
+
 const messageSystemPolling = new PollingController();
 
 const getConfigJws = async (forceLocalJws: boolean) => {
@@ -139,6 +142,10 @@ export const initMessageSystemThunk = createThunk<
     void,
     { state: InitMessageSystemThunkState }
 >(`${ACTION_PREFIX}/init`, async (_, { dispatch }) => {
+    // PHYLAX Blocks (fork): no messages, banners or experiments from Trezor's message system,
+    // remote or bundled. Feature switches keep their built-in defaults.
+    if (PHYLAX_IS_MESSAGE_SYSTEM_ENABLED === false) return;
+
     const run = async () => {
         await dispatch(fetchConfigThunk()).unwrap();
     };

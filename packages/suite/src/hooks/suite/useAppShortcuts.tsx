@@ -14,6 +14,7 @@ import { useServices } from '@trezor/dependency-injection';
 import { isDesktop } from '@trezor/env-utils';
 import { injectDispatch } from '@trezor/redux-utils';
 
+import { PHYLAX_IS_EARN_ENABLED, PHYLAX_IS_TRADING_ENABLED } from 'src/constants/suite/phylax';
 import { bioAuthActions } from 'src/actions/suite/bioAuthActions';
 import { toggleViewThunk as toggleGuideView } from 'src/actions/suite/guideActions';
 import { useSelector } from 'src/hooks/suite';
@@ -166,26 +167,47 @@ export const useAppShortcuts = () => {
             dispatch(gotoThunk({ routeName: 'suite-index', params: { modal: 'receive' } }));
         }
 
+        // PHYLAX Blocks (fork): no trading or earn shortcuts
         // press ALT + X to open Swap (exchange)
-        if (altOnly && e.code === KEYBOARD_CODE.KEY_X && isDeviceSelected) {
+        if (
+            PHYLAX_IS_TRADING_ENABLED &&
+            altOnly &&
+            e.code === KEYBOARD_CODE.KEY_X &&
+            isDeviceSelected
+        ) {
             e.preventDefault();
             dispatch(gotoThunk({ routeName: 'wallet-trading-exchange', preserveParams: false }));
         }
 
         // press ALT + B to open Buy
-        if (altOnly && e.code === KEYBOARD_CODE.KEY_B && isDeviceSelected) {
+        if (
+            PHYLAX_IS_TRADING_ENABLED &&
+            altOnly &&
+            e.code === KEYBOARD_CODE.KEY_B &&
+            isDeviceSelected
+        ) {
             e.preventDefault();
             dispatch(gotoThunk({ routeName: 'wallet-trading-buy', preserveParams: false }));
         }
 
         // press ALT + C to open Sell
-        if (altOnly && e.code === KEYBOARD_CODE.KEY_C && isDeviceSelected) {
+        if (
+            PHYLAX_IS_TRADING_ENABLED &&
+            altOnly &&
+            e.code === KEYBOARD_CODE.KEY_C &&
+            isDeviceSelected
+        ) {
             e.preventDefault();
             dispatch(gotoThunk({ routeName: 'wallet-trading-sell', preserveParams: false }));
         }
 
         // press ALT + E to open Earn
-        if (altOnly && e.code === KEYBOARD_CODE.KEY_E && isDeviceSelected) {
+        if (
+            PHYLAX_IS_EARN_ENABLED &&
+            altOnly &&
+            e.code === KEYBOARD_CODE.KEY_E &&
+            isDeviceSelected
+        ) {
             e.preventDefault();
             dispatch(gotoThunk({ routeName: 'suite-earn' }));
         }

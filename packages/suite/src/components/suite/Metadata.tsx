@@ -11,7 +11,7 @@ type MetadataProps = {
 };
 
 export const Metadata = ({
-    title = 'Trezor Suite',
+    title = 'PHYLAX Suite', // PHYLAX Blocks (fork)
     description,
     url = SUITE_URL,
 }: MetadataProps) => {

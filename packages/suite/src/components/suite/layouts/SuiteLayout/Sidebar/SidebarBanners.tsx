@@ -17,6 +17,7 @@ import {
 import { Box } from '@trezor/components';
 import { zIndices } from '@trezor/theme';
 
+import { PHYLAX_ARE_PROMOTIONS_ENABLED } from 'src/constants/suite/phylax';
 import { useSelector } from 'src/hooks/suite';
 
 import {
@@ -34,6 +35,9 @@ export const SidebarBanners = () => {
     const shouldShowNoDeviceEshopBanner = useSelector(selectShouldShowNoDeviceEshopSidebarBanner);
 
     const getActiveSidebarBanner = () => {
+        // PHYLAX Blocks (fork): no Suite update, Suite Sync, shop or feedback banners
+        if (!PHYLAX_ARE_PROMOTIONS_ENABLED) return null;
+
         if (shouldShowUpdateBanner && isUpdateBannerVisible) {
             return <UpdateNotificationBanner onDismiss={() => setIsUpdateBannerVisible(false)} />;
         }

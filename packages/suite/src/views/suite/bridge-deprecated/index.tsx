@@ -43,7 +43,7 @@ export const BridgeDeprecated = () => {
             onCancel={onClose}
             isBackdropCancelable
         >
-            <Metadata title="Bridge | Trezor Suite" />
+            <Metadata title="Bridge | PHYLAX Suite" />
             <Column gap={4}>
                 <H3>
                     <Translation id="TR_STANDALONE_BRIDGE_DEPRECATED" />

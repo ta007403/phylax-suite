@@ -11,6 +11,7 @@ import { useServices } from '@trezor/dependency-injection';
 import { ArrowDownIcon, ArrowsLeftRightIcon, CurrencyCircleDollarIcon } from '@trezor/icons';
 import { injectDispatch } from '@trezor/redux-utils';
 
+import { PHYLAX_IS_TRADING_ENABLED } from 'src/constants/suite/phylax';
 import { AccountExceptionLayout } from 'src/components/wallet';
 import { type Account } from 'src/types/wallet';
 
@@ -74,21 +75,25 @@ export const AccountEmpty = ({ account }: AccountEmptyProps) => {
             icon={ArrowsLeftRightIcon}
             iconVariant="neutral"
             actions={[
-                {
-                    'data-testid': '@accounts/empty-account/buy',
-                    key: '1',
-                    onClick: handleNavigateToBuyPage,
-                    iconLeft: CurrencyCircleDollarIcon,
-                    size: 'medium',
-                    children: isTokensNetwork ? (
-                        <Translation id="TR_BUY" />
-                    ) : (
-                        <Translation
-                            id="TR_BUY_NETWORK"
-                            values={{ networkDisplaySymbol: displaySymbol }}
-                        />
-                    ),
-                },
+                ...(PHYLAX_IS_TRADING_ENABLED
+                    ? [
+                          {
+                              'data-testid': '@accounts/empty-account/buy',
+                              key: '1',
+                              onClick: handleNavigateToBuyPage,
+                              iconLeft: CurrencyCircleDollarIcon,
+                              size: 'medium',
+                              children: isTokensNetwork ? (
+                                  <Translation id="TR_BUY" />
+                              ) : (
+                                  <Translation
+                                      id="TR_BUY_NETWORK"
+                                      values={{ networkDisplaySymbol: displaySymbol }}
+                                  />
+                              ),
+                          },
+                      ]
+                    : []),
                 {
                     'data-testid': '@accounts/empty-account/receive',
                     key: '2',

@@ -8,6 +8,7 @@ import { setConnectionModal, useDevice } from '@suite/device';
 import { Translation } from '@suite/intl';
 import { ContextMessage } from '@suite/message-system';
 import { isRecoveryInProgress } from '@suite/recovery';
+import { selectIsPhylaxDevice } from '@suite-common/device';
 import { selectIsDeviceAuthenticityCheckSupported } from '@suite-common/device-authenticity';
 import { Context } from '@suite-common/message-system';
 import { getIsDeviceRemembered } from '@suite-common/suite-utils';
@@ -29,6 +30,7 @@ import { SettingsSection } from '@trezor/product-components';
 import { injectDispatch } from '@trezor/redux-utils';
 import { breakpoints } from '@trezor/theme';
 
+import { PHYLAX_ARE_PROMOTIONS_ENABLED } from 'src/constants/suite/phylax';
 import { DeviceBanner } from 'src/components/settings/DeviceBanner';
 import { SettingsLayout } from 'src/components/settings/SettingsLayout';
 import { useSelector } from 'src/hooks/suite';
@@ -58,6 +60,7 @@ import {
     selectShouldShowNoDeviceEshopSettingsBanner,
 } from './NoDeviceEshopSettingsBanner';
 import { Passphrase } from './Passphrase';
+import { PhylaxFirmwareVersion } from './PhylaxFirmwareVersion';
 import { PinProtection } from './PinProtection';
 import { SafetyChecks } from './SafetyChecks';
 import { ThpAutoconnect } from './ThpAutoconnect';
@@ -89,6 +92,8 @@ export const SettingsDevice = () => {
     const bitcoinOnlyDevice = isBitcoinOnlyDevice(device);
     const shouldShowNoDeviceEshopBanner = useSelector(selectShouldShowNoDeviceEshopSettingsBanner);
     const supportsDeviceAuthentication = useSelector(selectIsDeviceAuthenticityCheckSupported);
+    // PHYLAX Blocks (fork): no stock firmware update or firmware type change for PHYLAX blocks
+    const isPhylaxDevice = useSelector(selectIsPhylaxDevice);
 
     if (noTransportAvailable || deviceSettingsUnavailable(device)) {
         return (
@@ -118,7 +123,7 @@ export const SettingsDevice = () => {
                         </Banner.Button>
                     }
                 />
-                {shouldShowNoDeviceEshopBanner && (
+                {PHYLAX_ARE_PROMOTIONS_ENABLED && shouldShowNoDeviceEshopBanner && (
                     <SettingsSection
                         title={<Translation id="TR_TREZOR_WALLET" />}
                         hasContainer={false}
@@ -201,9 +206,15 @@ export const SettingsDevice = () => {
                 title={<Translation id="TR_FIRMWARE" />}
                 icon={PuzzlePieceIcon}
             >
-                <FirmwareVersion isDeviceLocked={isDeviceLocked} />
-                {(!bootloaderMode || bitcoinOnlyDevice) && (
-                    <FirmwareTypeChange isDeviceLocked={isDeviceLocked} />
+                {isPhylaxDevice ? (
+                    <PhylaxFirmwareVersion />
+                ) : (
+                    <>
+                        <FirmwareVersion isDeviceLocked={isDeviceLocked} />
+                        {(!bootloaderMode || bitcoinOnlyDevice) && (
+                            <FirmwareTypeChange isDeviceLocked={isDeviceLocked} />
+                        )}
+                    </>
                 )}
                 <ChangeLanguage isDeviceLocked={isDeviceLocked} />
             </SettingsSection>

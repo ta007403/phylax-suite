@@ -43,6 +43,8 @@ export const EXPERIMENTAL_FEATURES: Record<ExperimentalFeature, ExperimentalFeat
         description: { id: 'TR_EXPERIMENTAL_PASSWORD_MANAGER_DESCRIPTION' },
         knowledgeBaseUrl: EXPERIMENTAL_PASSWORD_MANAGER_KB_URL,
         routeName: 'password-manager-index',
+        // PHYLAX Blocks (fork): no Dropbox password manager
+        isDisabled: () => true,
     },
     'tor-external': {
         title: { id: 'TR_EXPERIMENTAL_TOR_EXTERNAL' },
@@ -78,7 +80,8 @@ export const EXPERIMENTAL_FEATURES: Record<ExperimentalFeature, ExperimentalFeat
                 count: experimentalNetworks.length,
             },
         },
-        isDisabled: () => experimentalNetworks.length === 0,
+        // PHYLAX Blocks (fork): Bitcoin only, no experimental networks
+        isDisabled: () => true,
     },
     'mcp-server': {
         title: { id: 'TR_EXPERIMENTAL_MCP_SERVER' },
