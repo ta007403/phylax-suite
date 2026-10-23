@@ -16,6 +16,8 @@ import { createLoadNetworkModules } from './createLoadNetworkModules';
 import { createNetworkIcon } from './createNetworkIcon';
 import { createNetworkModulesCompositionRoot } from './createNetworkModulesCompositionRoot';
 
+const PHYLAX_NETWORK_SYMBOLS: readonly string[] = ['btc', 'test', 'regtest'];
+
 export type NetworksCompositionRootDeps = NetworkSuiteCommonModuleApi & { dispatch: Dispatch };
 
 export const createNetworksCompositionRoot = (
@@ -24,10 +26,14 @@ export const createNetworksCompositionRoot = (
     const networkModules = createNetworkModulesCompositionRoot(deps);
     const networkModuleRepository = createNetworkModuleRepository({ networkModules });
     const getNetworkConfig = createGetNetworkConfig({ networkModuleRepository });
-    const getNetworkConfigs = createGetNetworkConfigs({
+    const getAllNetworkConfigs = createGetNetworkConfigs({
         getNetworkConfig,
         networkModuleRepository,
     });
+    // PHYLAX Blocks (fork): a Bitcoin-only app; only these networks reach the app's state. The
+    // same list is in @suite-common/wallet-config (PHYLAX_NETWORK_SYMBOLS).
+    const getNetworkConfigs = () =>
+        getAllNetworkConfigs().filter(config => PHYLAX_NETWORK_SYMBOLS.includes(config.symbol));
 
     return {
         getIconPaths: createGetIconPaths({ networkModuleRepository }),

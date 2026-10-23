@@ -79,7 +79,8 @@ const getSolKnown = (accounts: Account[]) =>
         coin => coin.symbol === 'sol',
     )?.known;
 
-describe(selectDiscoveryAccountsParam.name, () => {
+// PHYLAX Blocks (fork): skipped, the fork offers Bitcoin networks only.
+describe.skip(selectDiscoveryAccountsParam.name, () => {
     it('rediscovers from a failed account at the end of the chain', () => {
         expect(
             getSolKnown([mockSolAccount({ empty: true }, { failed: true, error: 'Failed.' })]),
@@ -129,7 +130,8 @@ describe(selectDiscoveryAccountsParam.name, () => {
     });
 });
 
-describe(selectShouldRediscover.name, () => {
+// PHYLAX Blocks (fork): skipped, the fork offers Bitcoin networks only.
+describe.skip(selectShouldRediscover.name, () => {
     it('returns false while discovery is in progress', () => {
         const device = mockDeviceWithPathAndState();
 

@@ -8,7 +8,8 @@ jest.mock('@trezor/utils', () => ({
     getWeakRandomId: () => 'random',
 }));
 
-describe('analytics', () => {
+// PHYLAX Blocks (fork): skipped, the fork switches this feature off on purpose.
+describe.skip('analytics', () => {
     afterEach(() => {
         jest.clearAllMocks();
     });

@@ -34,7 +34,8 @@ const createMockState = (
     messageSystem: messageSystemInitialState,
 });
 
-describe(selectSuiteSyncInteraction.name, () => {
+// PHYLAX Blocks (fork): skipped, the fork switches this feature off on purpose.
+describe.skip(selectSuiteSyncInteraction.name, () => {
     it('no interaction needed if device is not found', () => {
         const state = createMockState();
         state.device.devices = [];

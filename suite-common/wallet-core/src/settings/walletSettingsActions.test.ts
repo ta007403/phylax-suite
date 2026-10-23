@@ -79,7 +79,8 @@ describe('walletSettings Actions', () => {
             expect(updateConnectSettings).not.toHaveBeenCalled();
         });
 
-        it('does not call Connect when the coin is already enabled', async () => {
+        // PHYLAX Blocks (fork): skipped, the fork offers Bitcoin networks only.
+        it.skip('does not call Connect when the coin is already enabled', async () => {
             const store = initStore({ enabledNetworks: [btcSymbol, adaSymbol] });
             const { updateConnectSettings } = wireEnabledNetworksMock();
 

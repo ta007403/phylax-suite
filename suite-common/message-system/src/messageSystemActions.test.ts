@@ -40,7 +40,8 @@ jest.mock('../files/config.v1.ts', () => {
 });
 
 describe('Message system actions', () => {
-    describe('init - with valid JWS', () => {
+    // PHYLAX Blocks (fork): skipped, the fork switches this feature off on purpose.
+    describe.skip('init - with valid JWS', () => {
         beforeEach(() => {
             const mockFetchPromise = Promise.resolve({
                 ok: true,
@@ -136,7 +137,8 @@ describe('Message system actions', () => {
         });
     });
 
-    describe('init - with invalid JWS', () => {
+    // PHYLAX Blocks (fork): skipped, the fork switches this feature off on purpose.
+    describe.skip('init - with invalid JWS', () => {
         beforeEach(() => {
             jest.spyOn(console, 'error').mockImplementation(() => {});
         });

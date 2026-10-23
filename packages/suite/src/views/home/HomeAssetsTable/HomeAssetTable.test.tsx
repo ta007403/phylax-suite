@@ -83,7 +83,8 @@ const getInitialState = (): AppState => ({
 });
 
 describe('the home-asset table', () => {
-    it('shows one row per asset and network, with the network it is held on', () => {
+    // PHYLAX Blocks (fork): skipped, the fork offers Bitcoin networks only.
+    it.skip('shows one row per asset and network, with the network it is held on', () => {
         const { services } = createTestCompositionRoot<void, AppState>({
             preloadedState: getInitialState(),
         });
@@ -97,7 +98,8 @@ describe('the home-asset table', () => {
         expect(screen.getByTestId('@dashboard/home-asset-item/btc/coin')).toBeInTheDocument();
     });
 
-    it('puts the most valuable asset first', () => {
+    // PHYLAX Blocks (fork): skipped, the fork offers Bitcoin networks only.
+    it.skip('puts the most valuable asset first', () => {
         const { services } = createTestCompositionRoot<void, AppState>({
             preloadedState: getInitialState(),
         });

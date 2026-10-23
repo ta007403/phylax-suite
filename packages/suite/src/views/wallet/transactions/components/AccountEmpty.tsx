@@ -82,7 +82,7 @@ export const AccountEmpty = ({ account }: AccountEmptyProps) => {
                               key: '1',
                               onClick: handleNavigateToBuyPage,
                               iconLeft: CurrencyCircleDollarIcon,
-                              size: 'medium',
+                              size: 'medium' as const,
                               children: isTokensNetwork ? (
                                   <Translation id="TR_BUY" />
                               ) : (

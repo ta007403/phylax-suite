@@ -38,7 +38,8 @@ describe(getMainnets.name, () => {
         const result = getMainnets({
             allNetworks: mockNetworks,
         });
-        expect(result).toEqual([bitcoin, ethereum]);
+        // PHYLAX Blocks (fork): Bitcoin only, other networks are never offered
+        expect(result).toEqual([bitcoin]);
     });
 });
 

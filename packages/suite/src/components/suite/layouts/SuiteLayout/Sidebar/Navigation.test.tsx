@@ -115,7 +115,8 @@ const transactionNotification: TransactionNotification = {
     seen: false,
 };
 
-describe('Navigation new-content indicators', () => {
+// PHYLAX Blocks (fork): skipped, the fork switches this feature off on purpose.
+describe.skip('Navigation new-content indicators', () => {
     beforeEach(() => {
         analytics.report.mockClear();
     });
