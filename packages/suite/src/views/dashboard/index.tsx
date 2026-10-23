@@ -2,9 +2,9 @@ import { ContextMessage } from '@suite/message-system';
 import { Context, ExperimentId, ExperimentWrapper } from '@suite-common/message-system';
 import { Column } from '@trezor/components';
 
-import { PHYLAX_ARE_PROMOTIONS_ENABLED } from 'src/constants/suite/phylax';
 import { OutOfQuotaBanner } from 'src/components/suite/banners/SuiteBanners/OutOfQuotaBanner';
 import { PageHeader } from 'src/components/suite/layouts/SuiteLayout';
+import { PHYLAX_ARE_PROMOTIONS_ENABLED } from 'src/constants/suite/phylax';
 import { useLayout } from 'src/hooks/suite';
 
 import { AssetsView } from './AssetsView/AssetsView';
@@ -35,7 +35,8 @@ const DashboardAsItWas = () => (
         <Column gap={24}>
             <DashboardNotices />
             <PortfolioCard />
-            <OnboardingFeedbackBanner />
+            {/* PHYLAX Blocks (fork): Trezor's feedback survey and e-shop voucher */}
+            {PHYLAX_ARE_PROMOTIONS_ENABLED && <OnboardingFeedbackBanner />}
         </Column>
         {PHYLAX_ARE_PROMOTIONS_ENABLED && <DashboardPromoBanner />}
         <AssetsView />
