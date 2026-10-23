@@ -32,6 +32,7 @@ import { injectDispatch } from '@trezor/redux-utils';
 import { NetworkSettingsSearchInput } from 'src/components/suite/NetworkList/NetworkSettingsSearchInput';
 import { AddAccountBannerAboutNetworks } from 'src/components/suite/modals/ReduxModal/UserContextModal/AddAccountModal/AddAccountBannerAboutNetworks';
 import { useAvailableNetworkSymbols } from 'src/components/wallet/WalletLayout/AccountsMenu/useAvailableNetworkSymbols';
+import { PHYLAX_IS_COINJOIN_ENABLED } from 'src/constants/suite/phylax';
 import { useNetworkSupport } from 'src/hooks/settings/useNetworkSupport';
 import { useAccountSearch } from 'src/hooks/suite';
 import { type TrezorDevice } from 'src/types/suite';
@@ -128,7 +129,9 @@ export const AddAccountModal = ({
             ? getNetwork('btc')
             : undefined;
 
-    const isCoinjoinVisible = (isCoinjoinPublic || isDebug) && !isCoinjoinDisabled;
+    // PHYLAX Blocks (fork): no coinjoin (SLIP-25) account type
+    const isCoinjoinVisible =
+        PHYLAX_IS_COINJOIN_ENABLED && (isCoinjoinPublic || isDebug) && !isCoinjoinDisabled;
 
     const getAccountTypesForNetwork = useCallback(
         (network?: Network) => {

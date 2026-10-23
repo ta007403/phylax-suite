@@ -18,3 +18,6 @@ export const PHYLAX_ARE_EXTRA_SETTINGS_SHOWN: boolean = false;
 
 /** Trezor's guide: help articles, "Learn" buttons and the support chat. */
 export const PHYLAX_IS_GUIDE_ENABLED: boolean = false;
+
+/** Coinjoin accounts (SLIP-25). */
+export const PHYLAX_IS_COINJOIN_ENABLED: boolean = false;
