@@ -2260,7 +2260,7 @@ export const messages = defineMessages({
         id: 'TR_CONFIRMED_TX',
     },
     TR_CONNECT_UNLOCK_YOUR_DEVICE: {
-        defaultMessage: 'Connect & unlock your device',
+        defaultMessage: 'Connect & unlock your hardware wallet',
         description: 'Prompt to user to connect and unlock device in modal.',
         id: 'TR_CONNECT_UNLOCK_YOUR_DEVICE',
     },
@@ -2281,12 +2281,12 @@ export const messages = defineMessages({
         id: 'TR_VIA_BLUETOOTH',
     },
     TR_CONNECT_YOUR_DEVICE: {
-        defaultMessage: 'Connect & unlock your device',
+        defaultMessage: 'Connect & unlock your hardware wallet',
         description: 'Prompt to user to connect his device.',
         id: 'TR_CONNECT_YOUR_DEVICE',
     },
     TR_CONNECT_DEVICE_DESCRIPTION: {
-        defaultMessage: 'Connect your device to manage your assets.',
+        defaultMessage: 'Connect your hardware wallet to manage your assets.',
         description: 'Description under the connection prompt',
         id: 'TR_CONNECT_DEVICE_DESCRIPTION',
     },
@@ -3692,7 +3692,7 @@ export const messages = defineMessages({
         id: 'TR_SETTINGS_DEVICE_BANNER_TITLE_DISCONNECTED',
     },
     TR_SETTINGS_DEVICE_BANNER_DESCRIPTION_DISCONNECTED: {
-        defaultMessage: 'Connect & unlock your device to change settings.',
+        defaultMessage: 'Connect & unlock your hardware wallet to change settings.',
         id: 'TR_SETTINGS_DEVICE_BANNER_DESCRIPTION_DISCONNECTED',
     },
     TR_SETTINGS_DEVICE_BANNER_TITLE_UNAVAILABLE: {
@@ -3708,7 +3708,7 @@ export const messages = defineMessages({
         id: 'TR_SETTINGS_DEVICE_BANNER_TITLE_BOOTLOADER',
     },
     TR_SETTINGS_DEVICE_BANNER_TITLE_REMEMBERED: {
-        defaultMessage: 'Connect & unlock your device to change settings.',
+        defaultMessage: 'Connect & unlock your hardware wallet to change settings.',
         id: 'TR_SETTINGS_DEVICE_BANNER_TITLE_REMEMBERED',
     },
     TR_SETTINGS_COINS_REGULAR_FIRMWARE_SUGGESTION: {
