@@ -68,7 +68,7 @@ export const ApplicationLogModal = ({ onCancel }: ApplicationLogModalProps) => {
             'href',
             `data:text/plain;charset=utf-8,${encodeURIComponent(applicationLogs)}`,
         );
-        element.setAttribute('download', 'trezor-suite-log.txt');
+        element.setAttribute('download', 'phylax-suite-log.txt'); // PHYLAX Blocks (fork)
 
         element.style.display = 'none';
         document.body.appendChild(element);

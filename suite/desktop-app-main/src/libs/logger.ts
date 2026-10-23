@@ -113,7 +113,8 @@ export class Logger implements ILogger {
             colors: true,
             writeToConsole: !hasSwitch('log-no-print'),
             writeToDisk: hasSwitch('log-write'),
-            outputFile: getSwitchValue('log-file') || 'trezor-suite-log-%tt.txt',
+            // PHYLAX Blocks (fork): PHYLAX file name
+            outputFile: getSwitchValue('log-file') || 'phylax-suite-log-%tt.txt',
             outputPath:
                 getSwitchValue('log-path') || (userDataDir ? `${userDataDir}/logs` : process.cwd()),
             logFormat: '%dt - %lvl(%top): %rep%msg',
