@@ -20,22 +20,21 @@ const initStore = (preloadedState = suiteSettingsInitialState) =>
         preloadedState: { suiteSettings: preloadedState },
     });
 
+// PHYLAX Blocks (fork): PHYLAX Suite is English only and always dark.
 describe('settingsSlice', () => {
-    it('returns the initial state through selectors', () => {
+    it('returns English, dark and no autodetection through selectors', () => {
         const store = initStore();
 
-        expect(selectLanguage(store.getState())).toBe(suiteSettingsInitialState.language);
-        expect(selectTheme(store.getState())).toBe(suiteSettingsInitialState.theme.variant);
-        expect(selectAutodetectLanguage(store.getState())).toBe(
-            suiteSettingsInitialState.autodetect.language,
-        );
+        expect(selectLanguage(store.getState())).toBe('en-US');
+        expect(selectTheme(store.getState())).toBe('dark');
+        expect(selectAutodetectLanguage(store.getState())).toBe(false);
     });
 
-    it('updates language', () => {
+    it('stays English after a language change', () => {
         const store = initStore();
 
         store.dispatch(suiteSettingsActions.setLanguage('cs-CZ'));
 
-        expect(selectLanguage(store.getState())).toBe('cs-CZ');
+        expect(selectLanguage(store.getState())).toBe('en-US');
     });
 });

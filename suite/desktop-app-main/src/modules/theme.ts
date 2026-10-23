@@ -25,11 +25,10 @@ export const SERVICE_NAME = 'theme';
 export const init: ModuleInit = ({ mainWindowProxy, logger }) => {
     const store = Store.getStore();
 
-    const theme = store.getThemeSettings();
-    if (theme !== 'system') {
-        logger.info(SERVICE_NAME, `Setting app window UI theme to ${theme}.`);
-        nativeTheme.themeSource = theme;
-    }
+    // PHYLAX Blocks (fork): always dark (window frame, menus, scrollbars).
+    const theme = 'dark';
+    logger.info(SERVICE_NAME, `Setting app window UI theme to ${theme}.`);
+    nativeTheme.themeSource = theme;
 
     ipcMain.on('theme/change', (_, newTheme) =>
         setThemeManually({ theme: newTheme, store, logger }),

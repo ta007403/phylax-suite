@@ -573,9 +573,58 @@ export type ThemeColorVariant = 'standard' | 'dark';
 export type Color = keyof typeof standard;
 export type Colors = Record<Color, CSSColor>;
 
+// PHYLAX Blocks (fork): PHYLAX colours in the dark theme (the only theme
+// PHYLAX Suite shows). Trezor's grey, green and white shades are swapped for
+// PHYLAX's: background #0d0d1a, navy #101426, orange #f5890a, white #fff9f2.
+const PHYLAX_DARK_SHADES: Record<string, string> = {
+    [palette.darkCoolGreyMinus25]: '#08080F',
+    [palette.darkCoolGrey0]: '#0D0D1A',
+    [palette.darkCoolGrey25]: '#101426',
+    [palette.darkCoolGrey50]: '#151A30',
+    [palette.darkCoolGrey75]: '#1B2139',
+    [palette.darkCoolGrey100]: '#212843',
+    [palette.darkCoolGrey150]: '#2A3252',
+    [palette.darkCoolGrey400]: '#77726E',
+    [palette.darkCoolGrey500]: '#938E89',
+    [palette.darkCoolGrey600]: '#AFA9A3',
+    [palette.darkCoolGrey700]: '#CBC4BD',
+    [palette.darkCoolGrey800]: '#E6DFD8',
+    [palette.darkGreen25]: '#1D1712',
+    [palette.darkGreen50]: '#251C15',
+    [palette.darkGreen75]: '#2C2117',
+    [palette.darkGreen100]: '#33251A',
+    [palette.darkGreen150]: '#3D2C1B',
+    [palette.darkGreen400]: '#A65D07',
+    [palette.darkGreen500]: '#D07408',
+    [palette.darkGreen600]: '#F5890A',
+    [palette.darkGreen700]: '#F7A13F',
+    [palette.darkGreen800]: '#FAC07E',
+    'rgba(28,30,32,0.86)': 'rgba(13,13,26,0.86)',
+};
+
+const phylaxShade = (value: string) => {
+    if (PHYLAX_DARK_SHADES[value] !== undefined) return PHYLAX_DARK_SHADES[value];
+    // darkGreenAlphaNNN -> orange, globalWhiteAlphaNNN -> PHYLAX white (same alpha)
+    if (/^#[0-9A-F]{8}$/i.test(value) && Object.values(palette).includes(value)) {
+        const isGreenAlpha = Object.entries(palette).some(
+            ([name, v]) => v === value && name.startsWith('darkGreenAlpha'),
+        );
+        if (isGreenAlpha) return `#F5890A${value.slice(7)}`;
+        if (value.toUpperCase().startsWith('#FFFFFF')) return `#FFF9F2${value.slice(7)}`;
+    }
+    if (value.toUpperCase() === '#FFFFFF') return '#FFF9F2';
+    if (value === palette.darkGreenAlpha600) return '#F5890A';
+
+    return value;
+};
+
+const phylaxDark = Object.fromEntries(
+    Object.entries(dark).map(([token, value]) => [token, phylaxShade(value)]),
+);
+
 export const colorVariants: Record<ThemeColorVariant, Colors> = {
     standard: standard as Colors,
-    dark: dark as Colors,
+    dark: phylaxDark as Colors,
 } as const;
 
 export const COLOR_TOKENS = Object.keys(standard);

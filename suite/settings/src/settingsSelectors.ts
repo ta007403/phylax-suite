@@ -3,15 +3,18 @@ import { defaultEarnYieldWorkerBaseUrl } from '@suite-common/earn-stablecoin-api
 
 import { type SuiteSettingsRootState } from './settingsSlice';
 
+// PHYLAX Blocks (fork): PHYLAX Suite is English only and always dark (PHYLAX
+// colours, packages/theme/src/colors.ts), whatever was saved or the OS uses.
+const PHYLAX_LANGUAGE = 'en-US' as const;
+const PHYLAX_THEME = 'dark' as const;
+
 export const selectSuiteSettings = (state: SuiteSettingsRootState) => state.suiteSettings;
-export const selectLanguage = (state: SuiteSettingsRootState) => state.suiteSettings.language;
+export const selectLanguage = (_state: SuiteSettingsRootState) => PHYLAX_LANGUAGE;
 export const selectThemeSettings = (state: SuiteSettingsRootState) => state.suiteSettings.theme;
-export const selectTheme = (state: SuiteSettingsRootState) => state.suiteSettings.theme.variant;
+export const selectTheme = (_state: SuiteSettingsRootState) => PHYLAX_THEME;
 export const selectDebugSettings = (state: SuiteSettingsRootState) => state.suiteSettings.debug;
-export const selectAutodetectLanguage = (state: SuiteSettingsRootState) =>
-    state.suiteSettings.autodetect.language;
-export const selectAutodetectTheme = (state: SuiteSettingsRootState) =>
-    state.suiteSettings.autodetect.theme;
+export const selectAutodetectLanguage = (_state: SuiteSettingsRootState) => false;
+export const selectAutodetectTheme = (_state: SuiteSettingsRootState) => false;
 export const selectTorOnionLinks = (state: SuiteSettingsRootState) =>
     state.suiteSettings.torOnionLinks;
 export const selectIsCoinjoinReceiveWarningHidden = (state: SuiteSettingsRootState) =>

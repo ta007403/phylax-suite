@@ -1,4 +1,4 @@
-import { BrowserWindow, app, nativeTheme } from 'electron';
+import { BrowserWindow, app } from 'electron';
 import debounce from 'lodash/debounce';
 import path from 'path';
 
@@ -26,9 +26,8 @@ export const createMainWindow = ({
     store,
     logger,
 }: CreateMainWindowParams) => {
-    const darkTheme =
-        store.getThemeSettings() === 'dark' ||
-        (store.getThemeSettings() === 'system' && nativeTheme.shouldUseDarkColors);
+    // PHYLAX Blocks (fork): PHYLAX Suite is always dark (PHYLAX colours).
+    const darkTheme = true;
 
     const mainWindow = new BrowserWindow({
         title: APP_NAME,

@@ -120,7 +120,8 @@ export const SettingsGeneral = ({ torSettings }: SettingsGeneralProps) => {
                 title={<Translation id="TR_LOCALIZATION" />}
                 icon={FlagIcon}
             >
-                <Language />
+                {/* PHYLAX Blocks (fork): English only */}
+                {PHYLAX_ARE_EXTRA_SETTINGS_SHOWN && <Language />}
                 <BaseCurrency />
                 {hasBitcoinNetworks && <BitcoinAmountUnit />}
             </SettingsSection>
@@ -148,7 +149,8 @@ export const SettingsGeneral = ({ torSettings }: SettingsGeneralProps) => {
                 title={<Translation id="TR_APPLICATION" />}
                 icon={AppWindowIcon}
             >
-                <Theme />
+                {/* PHYLAX Blocks (fork): always dark in PHYLAX colours */}
+                {PHYLAX_ARE_EXTRA_SETTINGS_SHOWN && <Theme />}
                 {/* PHYLAX Blocks (fork): analytics are off in the fork, nothing to choose */}
                 {PHYLAX_ARE_PROMOTIONS_ENABLED && <Analytics />}
                 <ShowApplicationLog />
