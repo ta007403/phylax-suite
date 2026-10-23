@@ -268,16 +268,20 @@ export const SettingsDevice = () => {
                 <ForgetDevice />
             </SettingsSection>
 
-            <SettingsSection
-                hasVerticalLayout={hasContentBelowTabletWidth}
-                title={<Translation id="TR_SETTINGS_ADVANCED" />}
-                icon={ShieldWarningIcon}
-            >
-                <DeviceAuthenticityOptOut
-                    isDeviceAuthenticityCheckSupported={supportsDeviceAuthentication}
-                />
-                <FirmwareAuthenticityChecks />
-            </SettingsSection>
+            {/* PHYLAX Blocks (fork): only the checks the connected device supports. A PHYLAX block
+                has no Trezor secure element and runs PHYLAX firmware, so neither check applies. */}
+            {(supportsDeviceAuthentication || !isPhylaxDevice) && (
+                <SettingsSection
+                    hasVerticalLayout={hasContentBelowTabletWidth}
+                    title={<Translation id="TR_SETTINGS_ADVANCED" />}
+                    icon={ShieldWarningIcon}
+                >
+                    {supportsDeviceAuthentication && (
+                        <DeviceAuthenticityOptOut isDeviceAuthenticityCheckSupported />
+                    )}
+                    {!isPhylaxDevice && <FirmwareAuthenticityChecks />}
+                </SettingsSection>
+            )}
 
             <SettingsSection
                 hasVerticalLayout={hasContentBelowTabletWidth}
@@ -286,7 +290,8 @@ export const SettingsDevice = () => {
             >
                 <WipeDevice isDeviceLocked={isDeviceLocked} />
                 {isNormalMode && <WipeCode isDeviceLocked={isDeviceLocked} />}
-                <CustomFirmware />
+                {/* PHYLAX Blocks (fork): firmware is installed with trezorctl, not from Suite */}
+                {PHYLAX_ARE_EXTRA_SETTINGS_SHOWN && <CustomFirmware />}
             </SettingsSection>
         </SettingsLayout>
     );

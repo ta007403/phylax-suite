@@ -57,7 +57,8 @@ export const EmptyWallet = () => {
 
     return (
         <Column gap={4} data-testid="@dashboard/wallet-ready" alignItems="center">
-            <Illustration name="assetsGet" width={224} />
+            {/* PHYLAX Blocks (fork): the Bitcoin illustration */}
+            <Illustration name="networks" width={224} />
             <H3 margin={{ top: 16 }}>
                 <Translation id="TR_YOUR_WALLET_IS_READY_WHAT" />
             </H3>

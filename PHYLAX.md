@@ -32,8 +32,13 @@ Everything added for PHYLAX is marked `PHYLAX Blocks (fork)` in the code.
   desktop app's main process, and the Help menu has no "Trezor website". Switch:
   `PHYLAX_ARE_EXTERNAL_LINKS_ALLOWED` in `@suite/external-links` and in
   `suite/desktop-app-main/src/modules/external-links.ts`.
-- **PHYLAX logo** in the sidebar instead of Trezor's; no MEV protection, network reserve or device
-  wallpaper settings.
+- **PHYLAX logo** in the sidebar instead of Trezor's; no MEV protection, network reserve, device
+  wallpaper or "Install custom firmware" settings (PHYLAX firmware is installed with trezorctl).
+  Device and firmware authenticity checks are shown only for devices they apply to (real
+  Trezors).
+- **Wording**: "PHYLAX Suite" instead of "Trezor Suite", and "your device" instead of "your
+  Trezor" in the English texts (`suite/intl/src/messages.ts`); real Trezor model and product
+  names stay. Other languages still say Trezor.
 - **Never replaced by official Trezor Suite**: auto-updater off, no update feed, own app id, data
   folder, installer name, publisher and release notes.
 

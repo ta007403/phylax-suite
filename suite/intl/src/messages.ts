@@ -122,7 +122,7 @@ export const messages = defineMessages({
         id: 'TR_ACCOUNT_IMPORTED_ANNOUNCEMENT',
     },
     TR_ANY_TREZOR: {
-        defaultMessage: 'any Trezor',
+        defaultMessage: 'any device',
         description: 'Used as a variable for device name',
         id: 'TR_ANY_TREZOR',
     },
@@ -185,19 +185,19 @@ export const messages = defineMessages({
         id: 'TR_ACCOUNT_PASSPHRASE_DISABLED',
     },
     TR_ACQUIRE_DEVICE: {
-        defaultMessage: 'Use Trezor here',
+        defaultMessage: 'Use device here',
         description:
             'call-to-action to use device in current window when it is used in other window',
         id: 'TR_ACQUIRE_DEVICE',
     },
     TR_RECONNECT_DEVICE_DESCRIPTION: {
         defaultMessage:
-            "If closing tabs and refreshing this page didn't help, try reconnecting your Trezor.",
+            "If closing tabs and refreshing this page didn't help, try reconnecting your device.",
         id: 'TR_RECONNECT_DEVICE_DESCRIPTION',
     },
     TR_RECONNECT_DEVICE_DESCRIPTION_DESKTOP: {
         defaultMessage:
-            "If closing tabs and reopening Trezor Suite doesn't help, try reconnecting your Trezor.",
+            "If closing tabs and reopening PHYLAX Suite doesn't help, try reconnecting your device.",
         id: 'TR_RECONNECT_DEVICE_DESCRIPTION_DESKTOP',
     },
     TR_ACQUIRE_DEVICE_TITLE: {
@@ -416,12 +416,12 @@ export const messages = defineMessages({
         id: 'TR_TRADING_DETAIL_CHECK_STATUS',
     },
     TR_TRADING_SWAP_MODAL_SECURITY_HEADER: {
-        defaultMessage: 'Security first with your Trezor',
+        defaultMessage: 'Security first with your device',
         id: 'TR_TRADING_SWAP_MODAL_SECURITY_HEADER',
         dynamic: true,
     },
     TR_TRADING_SWAP_DEX_MODAL_SECURITY_HEADER: {
-        defaultMessage: 'Security first with your Trezor',
+        defaultMessage: 'Security first with your device',
         id: 'TR_TRADING_SWAP_DEX_MODAL_SECURITY_HEADER',
         dynamic: true,
     },
@@ -788,7 +788,7 @@ export const messages = defineMessages({
         id: 'TR_EXCHANGE_SWAP_SLIPPAGE_ERROR',
     },
     TR_EXCHANGE_CONFIRM_ON_TREZOR_SEND: {
-        defaultMessage: 'Confirm on Trezor & send',
+        defaultMessage: 'Confirm on device & send',
         id: 'TR_EXCHANGE_CONFIRM_ON_TREZOR_SEND',
     },
     TR_EXCHANGE_RECEIVING_ADDRESS_REQUIRED: {
@@ -895,7 +895,7 @@ export const messages = defineMessages({
         id: 'TR_REQUIRED_FIELD',
     },
     TR_SELL_MODAL_SECURITY_HEADER: {
-        defaultMessage: 'Security first with your Trezor',
+        defaultMessage: 'Security first with your device',
         id: 'TR_SELL_MODAL_SECURITY_HEADER',
         dynamic: true,
     },
@@ -904,7 +904,7 @@ export const messages = defineMessages({
         id: 'TR_SELL_BANK_ACCOUNT_STEP',
     },
     TR_SELL_CONFIRM_ON_TREZOR_SEND: {
-        defaultMessage: 'Confirm on Trezor & send',
+        defaultMessage: 'Confirm on device & send',
         id: 'TR_SELL_CONFIRM_ON_TREZOR_SEND',
     },
     TR_SELL_BANK_ACCOUNT_TOOLTIP: {
@@ -979,7 +979,7 @@ export const messages = defineMessages({
             "This service is provided and governed by the provider’s Terms & Conditions. Trezor isn't involved.",
     },
     TR_BUY_MODAL_SECURITY_HEADER: {
-        defaultMessage: 'Security first with your Trezor',
+        defaultMessage: 'Security first with your device',
         id: 'TR_BUY_MODAL_SECURITY_HEADER',
         dynamic: true,
     },
@@ -1454,7 +1454,7 @@ export const messages = defineMessages({
     TR_TRADING_SELL_CONFIRM_DESCRIPTION: {
         id: 'TR_TRADING_SELL_CONFIRM_DESCRIPTION',
         defaultMessage:
-            'Complete all the steps on the {providerName} website, then come back here to confirm the transaction on your Trezor.',
+            'Complete all the steps on the {providerName} website, then come back here to confirm the transaction on your device.',
     },
     TR_TRADING_SELL_SEND_TITLE: {
         id: 'TR_TRADING_SELL_SEND_TITLE',
@@ -1462,7 +1462,7 @@ export const messages = defineMessages({
     },
     TR_TRADING_SELL_SEND_DESCRIPTION: {
         id: 'TR_TRADING_SELL_SEND_DESCRIPTION',
-        defaultMessage: 'Check the amount and address on your Trezor before confirming.',
+        defaultMessage: 'Check the amount and address on your device before confirming.',
     },
     TR_TRADING_KYC_REQUIRED_WARNING: {
         id: 'TR_TRADING_KYC_REQUIRED_WARNING',
@@ -1624,7 +1624,7 @@ export const messages = defineMessages({
     },
     TR_TRADING_RECEIVE_EXTERNAL_ADDRESS_WARNING_TEXT: {
         defaultMessage:
-            "External address balances won't appear in Trezor Suite. We can't recover funds sent to the wrong address.",
+            "External address balances won't appear in PHYLAX Suite. We can't recover funds sent to the wrong address.",
         id: 'TR_TRADING_RECEIVE_EXTERNAL_ADDRESS_WARNING_TEXT',
     },
     TR_TRADING_RECEIVE_EXTERNAL_ADDRESS_LABEL: {
@@ -1701,7 +1701,7 @@ export const messages = defineMessages({
         id: 'TR_ADVANCED_RECOVERY',
     },
     TR_ADVANCED_RECOVERY_OPTION: {
-        defaultMessage: 'Spell out each word of your wallet backup using your Trezor.',
+        defaultMessage: 'Spell out each word of your wallet backup using your device.',
         description: 'Button for selecting advanced recovery option',
         id: 'TR_ADVANCED_RECOVERY_OPTION',
     },
@@ -1719,7 +1719,7 @@ export const messages = defineMessages({
     },
     TR_ALLOW_ANALYTICS_DESCRIPTION: {
         defaultMessage:
-            'Help us improve your experience. We never collect sensitive data like balances or transactions. All data is completely anonymous and used solely to enhance the Trezor ecosystem.',
+            'Help us improve your experience. We never collect sensitive data like balances or transactions. All data is completely anonymous and used solely to enhance the device ecosystem.',
         id: 'TR_ALLOW_ANALYTICS_DESCRIPTION',
     },
     TR_ALLOW_ANALYTICS_PRIVACY_TITLE: {
@@ -1737,12 +1737,12 @@ export const messages = defineMessages({
         id: 'TR_ALLOW_ANALYTICS_WHAT_WE_COLLECT_DESCRIPTION',
     },
     TR_ALLOW_AUTOMATIC_SUITE_UPDATES: {
-        defaultMessage: 'Automatic Trezor Suite updates',
+        defaultMessage: 'Automatic PHYLAX Suite updates',
         id: 'TR_ALLOW_AUTOMATIC_SUITE_UPDATES',
     },
     TR_ALLOW_AUTOMATIC_SUITE_UPDATES_DESCRIPTION: {
         defaultMessage:
-            "Automatically download the latest version of Trezor Suite in the background and install it when restarting the app. This ensures you're always up-to-date with the latest features and security patches. Updates occur without requiring your permission.",
+            "Automatically download the latest version of PHYLAX Suite in the background and install it when restarting the app. This ensures you're always up-to-date with the latest features and security patches. Updates occur without requiring your permission.",
         id: 'TR_ALLOW_AUTOMATIC_SUITE_UPDATES_DESCRIPTION',
     },
     TR_BIO_AUTH: {
@@ -1750,7 +1750,7 @@ export const messages = defineMessages({
         id: 'TR_BIO_AUTH',
     },
     TR_BIO_AUTH_DESCRIPTION: {
-        defaultMessage: 'Use Touch ID or Windows Hello authentication to access Trezor Suite.',
+        defaultMessage: 'Use Touch ID or Windows Hello authentication to access PHYLAX Suite.',
         id: 'TR_BIO_AUTH_DESCRIPTION',
     },
     TR_BIO_AUTH_FAILED: {
@@ -1762,7 +1762,7 @@ export const messages = defineMessages({
         id: 'TR_BIO_AUTH_SYSTEM_MESSAGE_MAC',
     },
     TR_BIO_AUTH_SYSTEM_MESSAGE_WIN: {
-        defaultMessage: 'Use your fingerprint or enter your PIN to access Trezor Suite.',
+        defaultMessage: 'Use your fingerprint or enter your PIN to access PHYLAX Suite.',
         id: 'TR_BIO_AUTH_SYSTEM_MESSAGE_WIN',
     },
     TR_ADDRESS_DISPLAY: {
@@ -1914,13 +1914,13 @@ export const messages = defineMessages({
     },
     TR_BACKUP_FINISHED_TEXT: {
         defaultMessage:
-            "Your Trezor is nearly ready. Just make sure your wallet backup is written down and stored safely—without it, your funds can't be recovered.",
+            "Your device is nearly ready. Just make sure your wallet backup is written down and stored safely—without it, your funds can't be recovered.",
         description: 'Text that appears after backup is finished',
         id: 'TR_BACKUP_FINISHED_TEXT',
     },
     TR_BACKUP_FINISHED_TEXT_NFC: {
         defaultMessage:
-            'Make sure to store your tags in a secure, private place. No one can recover your assets if you lose your wallet backup, not even Trezor Support.',
+            'Make sure to store your tags in a secure, private place. No one can recover your assets if you lose your wallet backup, not even support.',
         id: 'TR_BACKUP_FINISHED_TEXT_NFC',
     },
     TR_BACKUP_RECOVERY_SEED: {
@@ -1929,18 +1929,18 @@ export const messages = defineMessages({
     },
     TR_BACKUP_SUBHEADING_1: {
         defaultMessage:
-            "A wallet backup is a series of randomly generated words created by your Trezor. It's important to write down your wallet backup and keep it safe, as it's the only way to recover and access your assets.",
+            "A wallet backup is a series of randomly generated words created by your device. It's important to write down your wallet backup and keep it safe, as it's the only way to recover and access your assets.",
         description: 'Explanation what recovery seed is',
         id: 'TR_BACKUP_SUBHEADING_1',
     },
     TR_ONBOARDING_TREZOR_WILL_DISPLAY_BACKUP: {
         defaultMessage:
-            "Your Trezor will display the words of your wallet backup. Write them down accurately and store them securely. It's the only way to recover access to your assets.",
+            "Your device will display the words of your wallet backup. Write them down accurately and store them securely. It's the only way to recover access to your assets.",
         id: 'TR_ONBOARDING_TREZOR_WILL_DISPLAY_BACKUP',
     },
     TR_ONBOARDING_BACKUP_SUBHEADING: {
         defaultMessage:
-            "Your wallet backup consists of a list of words generated by your Trezor. Write them down accurately and store them securely. It's the only way to recover access to your assets.",
+            "Your wallet backup consists of a list of words generated by your device. Write them down accurately and store them securely. It's the only way to recover access to your assets.",
         id: 'TR_ONBOARDING_BACKUP_SUBHEADING',
     },
     TR_BASIC_RECOVERY: {
@@ -1975,7 +1975,7 @@ export const messages = defineMessages({
     },
     TR_MULTI_SHARE_BACKUP_IN_PROGRESS_DESCRIPTION: {
         defaultMessage:
-            "It's necessary to finish generating your Multi-share Backup shares before continuing. Follow the instructions on your Trezor's screen.",
+            "It's necessary to finish generating your Multi-share Backup shares before continuing. Follow the instructions on your device's screen.",
         id: 'TR_MULTI_SHARE_BACKUP_IN_PROGRESS_DESCRIPTION',
     },
     TR_CREATE_MULTI_SHARE_BACKUP: {
@@ -2055,7 +2055,7 @@ export const messages = defineMessages({
         id: 'TR_MULTI_SHARE_BACKUP_SUCCESS_WHY_IS_BACKUP_IMPORTANT',
     },
     TR_MULTI_SHARE_BACKUP_LOST_YOUR_TREZOR: {
-        defaultMessage: 'Lost your Trezor?',
+        defaultMessage: 'Lost your device?',
         id: 'TR_MULTI_SHARE_BACKUP_LOST_YOUR_TREZOR',
     },
     TR_MULTI_SHARE_BACKUP_LOST_YOUR_TREZOR_INFO_TEXT: {
@@ -2067,7 +2067,7 @@ export const messages = defineMessages({
         id: 'TR_MULTI_SHARE_BACKUP_LOST_YOUR_BACKUP',
     },
     TR_MULTI_SHARE_BACKUP_LOST_YOUR_BACKUP_INFO_TEXT: {
-        defaultMessage: 'There may be no options to recover your wallet. Contact Trezor Support.',
+        defaultMessage: 'There may be no options to recover your wallet. Contact support.',
         id: 'TR_MULTI_SHARE_BACKUP_LOST_YOUR_BACKUP_INFO_TEXT',
     },
     TR_N_MIN: {
@@ -2075,12 +2075,12 @@ export const messages = defineMessages({
         id: 'TR_N_MIN',
     },
     TR_VERIFY_TREZOR_OWNERSHIP: {
-        defaultMessage: 'Verify you own this Trezor',
+        defaultMessage: 'Verify you own this device',
         id: 'TR_VERIFY_TREZOR_OWNERSHIP',
     },
     TR_VERIFY_TREZOR_OWNERSHIP_EXPLANATION: {
         defaultMessage:
-            'Confirm you own this wallet by entering your current wallet backup on your Trezor.',
+            'Confirm you own this wallet by entering your current wallet backup on your device.',
         id: 'TR_VERIFY_TREZOR_OWNERSHIP_EXPLANATION',
     },
     TR_VERIFY_TREZOR_OWNERSHIP_CARD_1: {
@@ -2092,12 +2092,12 @@ export const messages = defineMessages({
         id: 'TR_VERIFY_TREZOR_OWNERSHIP_CARD_2',
     },
     TR_CREATE_SHARES: {
-        defaultMessage: 'Create shares on Trezor',
+        defaultMessage: 'Create shares on device',
         id: 'TR_CREATE_SHARES',
     },
     TR_CREATE_SHARES_EXPLANATION: {
         defaultMessage:
-            'Select the total number of shares, then choose the minimum number required to recover your Trezor.',
+            'Select the total number of shares, then choose the minimum number required to recover your device.',
         id: 'TR_CREATE_SHARES_EXPLANATION',
     },
     TR_CREATE_SHARES_EXAMPLE: {
@@ -2118,7 +2118,7 @@ export const messages = defineMessages({
         id: 'TR_CREATE_SHARES_CARD_3',
     },
     TR_ENTER_EXISTING_BACKUP: {
-        defaultMessage: 'Enter current wallet backup on Trezor',
+        defaultMessage: 'Enter current wallet backup on device',
         id: 'TR_ENTER_EXISTING_BACKUP',
     },
     TR_DONT_HAVE_BACKUP: {
@@ -2138,7 +2138,7 @@ export const messages = defineMessages({
         id: 'TR_CAMERA_PERMISSION_DENIED',
     },
     TR_CHECK_FOR_DEVICES: {
-        defaultMessage: 'Find Trezor',
+        defaultMessage: 'Find device',
         id: 'TR_CHECK_FOR_DEVICES',
     },
     TR_CHECK_RECOVERY_SEED: {
@@ -2222,11 +2222,11 @@ export const messages = defineMessages({
         id: 'TR_CONFIRM',
     },
     TR_CONFIRM_ACTION_ON_YOUR: {
-        defaultMessage: "Follow the instructions on your Trezor's screen.",
+        defaultMessage: "Follow the instructions on your device's screen.",
         id: 'TR_CONFIRM_ACTION_ON_YOUR',
     },
     TR_COMPARE_ADDRESS_ON_TREZOR: {
-        defaultMessage: 'View the address on your Trezor',
+        defaultMessage: 'View the address on your device',
         id: 'TR_COMPARE_ADDRESS_ON_TREZOR',
     },
     TR_CONFIRM_EMPTY_HIDDEN_WALLET_ON: {
@@ -2260,7 +2260,7 @@ export const messages = defineMessages({
         id: 'TR_CONFIRMED_TX',
     },
     TR_CONNECT_UNLOCK_YOUR_DEVICE: {
-        defaultMessage: 'Connect & unlock your Trezor',
+        defaultMessage: 'Connect & unlock your device',
         description: 'Prompt to user to connect and unlock device in modal.',
         id: 'TR_CONNECT_UNLOCK_YOUR_DEVICE',
     },
@@ -2281,22 +2281,22 @@ export const messages = defineMessages({
         id: 'TR_VIA_BLUETOOTH',
     },
     TR_CONNECT_YOUR_DEVICE: {
-        defaultMessage: 'Connect & unlock your Trezor',
+        defaultMessage: 'Connect & unlock your device',
         description: 'Prompt to user to connect his device.',
         id: 'TR_CONNECT_YOUR_DEVICE',
     },
     TR_CONNECT_DEVICE_DESCRIPTION: {
-        defaultMessage: 'Connect your Trezor to manage your assets.',
+        defaultMessage: 'Connect your device to manage your assets.',
         description: 'Description under the connection prompt',
         id: 'TR_CONNECT_DEVICE_DESCRIPTION',
     },
     TR_RECONNECT_YOUR_DEVICE: {
-        defaultMessage: 'Reconnect your Trezor',
+        defaultMessage: 'Reconnect your device',
         description: 'Prompt to user to reconnect his device.',
         id: 'TR_RECONNECT_YOUR_DEVICE',
     },
     TR_CONNECT_DEVICE: {
-        defaultMessage: 'Connect Trezor',
+        defaultMessage: 'Connect device',
         id: 'TR_CONNECT_DEVICE',
     },
     TR_CONNECTED: {
@@ -2305,7 +2305,7 @@ export const messages = defineMessages({
         id: 'TR_CONNECTED',
     },
     TR_CONTACT_SUPPORT: {
-        defaultMessage: 'Contact Trezor Support',
+        defaultMessage: 'Contact support',
         description: 'Button to click to contact support',
         id: 'TR_CONTACT_SUPPORT',
     },
@@ -2319,7 +2319,7 @@ export const messages = defineMessages({
         id: 'TR_YES_CONTINUE',
     },
     TR_SETUP_MY_TREZOR: {
-        defaultMessage: 'Set up my Trezor',
+        defaultMessage: 'Set up my device',
         id: 'TR_SETUP_MY_TREZOR',
     },
     TR_UNHIDE_TOKEN_TITLE: {
@@ -2360,7 +2360,7 @@ export const messages = defineMessages({
     },
     TR_CREATE_ADDITIONAL_BACKUP_HOW_DESCRIPTION: {
         defaultMessage:
-            'Your Trezor creates a new wallet backup in addition to the one you already have.',
+            'Your device creates a new wallet backup in addition to the one you already have.',
         id: 'TR_CREATE_ADDITIONAL_BACKUP_HOW_DESCRIPTION',
     },
     TR_CREATE_ADDITIONAL_BACKUP_CURRENT: {
@@ -2477,23 +2477,23 @@ export const messages = defineMessages({
         id: 'TR_I_UNDERSTAND_THE_RISK',
     },
     TR_NEEDS_ATTENTION_NEW_DEVICE: {
-        defaultMessage: 'A new Trezor is connected.',
+        defaultMessage: 'A new device is connected.',
         id: 'TR_NEEDS_ATTENTION_NEW_DEVICE',
     },
     TR_NEEDS_ATTENTION_SEEDLESS: {
-        defaultMessage: "Your Trezor doesn't have a wallet backup.",
+        defaultMessage: "Your device doesn't have a wallet backup.",
         id: 'TR_NEEDS_ATTENTION_SEEDLESS',
     },
     TR_NEEDS_ATTENTION_USED_IN_OTHER_WINDOW: {
-        defaultMessage: 'Your Trezor is already in use.',
+        defaultMessage: 'Your device is already in use.',
         id: 'TR_NEEDS_ATTENTION_USED_IN_OTHER_WINDOW',
     },
     TR_NEEDS_ATTENTION_WAS_USED_IN_OTHER_WINDOW: {
-        defaultMessage: 'Your Trezor is already in use.',
+        defaultMessage: 'Your device is already in use.',
         id: 'TR_NEEDS_ATTENTION_WAS_USED_IN_OTHER_WINDOW',
     },
     TR_NEEDS_ATTENTION_UNACQUIRED: {
-        defaultMessage: 'Your Trezor is already in use in another window.',
+        defaultMessage: 'Your device is already in use in another window.',
         id: 'TR_NEEDS_ATTENTION_UNACQUIRED',
     },
     TR_USE_HERE: {
@@ -2505,15 +2505,15 @@ export const messages = defineMessages({
         id: 'TR_NEEDS_ATTENTION_FIRMWARE_REQUIRED',
     },
     TR_NEEDS_ATTENTION_FIRMWARE_CORRUPTED: {
-        defaultMessage: "Your Trezor's firmware is corrupt. Reinstall it to continue.",
+        defaultMessage: "Your device's firmware is corrupt. Reinstall it to continue.",
         id: 'TR_NEEDS_ATTENTION_FIRMWARE_CORRUPTED',
     },
     TR_NEEDS_ATTENTION_UNAVAILABLE: {
-        defaultMessage: 'Your Trezor is unavailable.',
+        defaultMessage: 'Your device is unavailable.',
         id: 'TR_NEEDS_ATTENTION_UNAVAILABLE',
     },
     TR_NEEDS_ATTENTION_UNREADABLE: {
-        defaultMessage: "Your Trezor isn't readable.",
+        defaultMessage: "Your device isn't readable.",
         id: 'TR_NEEDS_ATTENTION_UNREADABLE',
     },
     TR_NEEDS_ATTENTION_UNACQUIRED_THP_REQUIRED: {
@@ -2521,23 +2521,23 @@ export const messages = defineMessages({
         id: 'TR_NEEDS_ATTENTION_UNACQUIRED_THP_REQUIRED',
     },
     TR_NEEDS_ATTENTION_UNABLE_TO_CONNECT: {
-        defaultMessage: "We can't connect to your Trezor",
+        defaultMessage: "We can't connect to your device",
         id: 'TR_NEEDS_ATTENTION_UNABLE_TO_CONNECT',
     },
     TR_NEEDS_ATTENTION_CONNECT_USB_OR_BLUETOOTH: {
         id: 'TR_NEEDS_ATTENTION_CONNECT_USB_OR_BLUETOOTH',
-        defaultMessage: 'Make sure your Trezor is connected via USB or Bluetooth and unlocked.',
+        defaultMessage: 'Make sure your device is connected via USB or Bluetooth and unlocked.',
     },
     TR_NEEDS_ATTENTION_DEVICE_BUSY: {
-        defaultMessage: 'Your Trezor is in an incorrect state. Restart it to connect.',
+        defaultMessage: 'Your device is in an incorrect state. Restart it to connect.',
         id: 'TR_NEEDS_ATTENTION_DEVICE_BUSY',
     },
     TR_NEEDS_ATTENTION_DEVICE_LOCKED: {
-        defaultMessage: 'Your Trezor is locked. Unlock it to continue.',
+        defaultMessage: 'Your device is locked. Unlock it to continue.',
         id: 'TR_NEEDS_ATTENTION_DEVICE_LOCKED',
     },
     TR_DEVICE_CONNECTED_BUSY_BOOTLOADER: {
-        defaultMessage: 'Trezor is already in use',
+        defaultMessage: 'Device is already in use',
         id: 'TR_DEVICE_CONNECTED_BUSY_BOOTLOADER',
     },
     TR_DEVICE_CONNECTED_BUSY_BOOTLOADER_DESCRIPTION: {
@@ -2549,7 +2549,7 @@ export const messages = defineMessages({
         id: 'TR_NEEDS_TREZOR_HOST_PROTOCOL_PAIRING',
     },
     TR_FIRMWARE_CORRUPTED_CONNECT_TITLE: {
-        defaultMessage: "Your Trezor's firmware is corrupt",
+        defaultMessage: "Your device's firmware is corrupt",
         id: 'TR_FIRMWARE_CORRUPTED_CONNECT_TITLE',
     },
     TR_FIRMWARE_CORRUPTED_CONNECT_DESCRIPTION: {
@@ -2562,7 +2562,7 @@ export const messages = defineMessages({
     },
     TR_UDEV_DOWNLOAD_DESC: {
         defaultMessage:
-            'In some cases, Linux users need to install udev rules to access their Trezor. Install the following package and reconnect your Trezor.',
+            'In some cases, Linux users need to install udev rules to access their device. Install the following package and reconnect your device.',
         id: 'TR_UDEV_DOWNLOAD_DESC',
     },
     TR_UDEV_DOWNLOAD_MANUAL: {
@@ -2608,7 +2608,7 @@ export const messages = defineMessages({
     },
     TR_DEVICE_SETTINGS_HOMESCREEN_IMAGE_SETTINGS: {
         defaultMessage:
-            "Change your Trezor's wallpaper. Recommended dimensions: {width}×{height} px.",
+            "Change your device's wallpaper. Recommended dimensions: {width}×{height} px.",
         id: 'TR_DEVICE_SETTINGS_HOMESCREEN_IMAGE_SETTINGS',
     },
     TR_DEVICE_SETTINGS_HOMESCREEN_IMAGE_SETTINGS_BW: {
@@ -2671,7 +2671,7 @@ export const messages = defineMessages({
     },
     TR_SAFETY_CHECKS_PROMPT_LEVEL_DESC: {
         defaultMessage:
-            'Enable potentially unsafe actions, including mismatched keys or high fees, by manually approving them on your Trezor.',
+            'Enable potentially unsafe actions, including mismatched keys or high fees, by manually approving them on your device.',
         id: 'TR_SAFETY_CHECKS_PROMPT_LEVEL_DESC',
     },
     TR_SAFETY_CHECKS_DISABLED_WARNING: {
@@ -2713,7 +2713,7 @@ export const messages = defineMessages({
         id: 'TR_DEVICE_SETTINGS_HAPTIC_FEEDBACK_TITLE',
     },
     TR_DEVICE_SETTINGS_BRIGHTNESS_DESC: {
-        defaultMessage: "Adjust your Trezor's screen brightness.",
+        defaultMessage: "Adjust your device's screen brightness.",
         id: 'TR_DEVICE_SETTINGS_BRIGHTNESS_DESC',
     },
     TR_DEVICE_SETTINGS_BRIGHTNESS_TITLE: {
@@ -2730,7 +2730,7 @@ export const messages = defineMessages({
     },
     TR_DEVICE_SETTINGS_WIPE_CODE_DESC: {
         defaultMessage:
-            'Set up a wipe code to create a "self-destruct" code that securely erases your Trezor\'s data when entered.',
+            'Set up a wipe code to create a "self-destruct" code that securely erases your device\'s data when entered.',
         id: 'TR_DEVICE_SETTINGS_WIPE_CODE_DESC',
     },
     TR_DEVICE_SETTINGS_AUTO_LOCK: {
@@ -2747,11 +2747,11 @@ export const messages = defineMessages({
     },
     TR_SECURITY_CHECK_HOLOGRAM: {
         defaultMessage:
-            "Note that device packaging, including holograms and security seals, have been updated over time. You can verify packaging details <packaging>here</packaging>. \n\nEnsure your device was purchased from either the official Trezor Shop or from one of <reseller>our trusted sellers</reseller>. Otherwise, there's a risk that your device might be a counterfeit. \n\nIf you suspect that your device isn't genuine, <support>contact Trezor Support</support>.",
+            "Note that device packaging, including holograms and security seals, have been updated over time. You can verify packaging details <packaging>here</packaging>. \n\nEnsure your device was purchased from either the official Trezor Shop or from one of <reseller>our trusted sellers</reseller>. Otherwise, there's a risk that your device might be a counterfeit. \n\nIf you suspect that your device isn't genuine, <support>contact support</support>.",
         id: 'TR_SECURITY_CHECK_HOLOGRAM',
     },
     TR_DISCONNECT_YOUR_DEVICE: {
-        defaultMessage: 'Disconnect your Trezor',
+        defaultMessage: 'Disconnect your device',
         description: 'Prompt to disconnect device.',
         id: 'TR_DISCONNECT_YOUR_DEVICE',
     },
@@ -2778,7 +2778,7 @@ export const messages = defineMessages({
         id: 'TR_ENTER_PASSPHRASE',
     },
     TR_ENTER_PASSPHRASE_ON_DEVICE: {
-        defaultMessage: 'Enter passphrase on Trezor',
+        defaultMessage: 'Enter passphrase on device',
         id: 'TR_ENTER_PASSPHRASE_ON_DEVICE',
     },
     TR_ENTER_PASSPHRASE_ON_DEVICE_LABEL: {
@@ -2812,7 +2812,7 @@ export const messages = defineMessages({
     },
     TR_ENTER_SEED_WORDS_INSTRUCTION: {
         defaultMessage:
-            'Enter the words from your wallet backup here in the order displayed on your Trezor.',
+            'Enter the words from your wallet backup here in the order displayed on your device.',
         description:
             'User is instructed to enter words from seed (backup) into the form in browser',
         id: 'TR_ENTER_SEED_WORDS_INSTRUCTION',
@@ -2830,7 +2830,7 @@ export const messages = defineMessages({
         defaultMessage: '7D change',
     },
     TR_FAILED_BACKUP: {
-        defaultMessage: 'Wallet backup failed. Wipe your Trezor and start the setup again.',
+        defaultMessage: 'Wallet backup failed. Wipe your device and start the setup again.',
         id: 'TR_FAILED_BACKUP',
     },
     TR_RECEIVE_ADDRESS_FAILED_BACKUP: {
@@ -2875,20 +2875,20 @@ export const messages = defineMessages({
     },
     TR_FIRMWARE_SUBHEADING_NONE: {
         defaultMessage:
-            'Your Trezor ships without firmware for security reasons. To start using it safely, install the latest firmware. Bitcoin-only user? We recommend the <button>{bitcoinOnly} firmware</button>.',
+            'Your device ships without firmware for security reasons. To start using it safely, install the latest firmware. Bitcoin-only user? We recommend the <button>{bitcoinOnly} firmware</button>.',
         description: 'Main text on firmware page for devices without firmware',
         id: 'TR_FIRMWARE_SUBHEADING_NONE',
     },
     TR_FIRMWARE_SUBHEADING_UNKNOWN: {
         defaultMessage:
-            'Your Trezor ships without firmware for security reasons. To start using it safely, install the latest firmware. Bitcoin-only user? We recommend the <button>{bitcoinOnly} firmware</button>.',
+            'Your device ships without firmware for security reasons. To start using it safely, install the latest firmware. Bitcoin-only user? We recommend the <button>{bitcoinOnly} firmware</button>.',
         description:
             'Main text on firmware page for devices in bootloader mode, i.e. when Suite cannot determine current firmware type',
         id: 'TR_FIRMWARE_SUBHEADING_UNKNOWN',
     },
     TR_FIRMWARE_SUBHEADING_BITCOIN_ONLY_DEVICE: {
         defaultMessage:
-            'Your Trezor ships without firmware for security reasons. To start using it safely, install the latest Bitcoin-only firmware.',
+            'Your device ships without firmware for security reasons. To start using it safely, install the latest Bitcoin-only firmware.',
         description: 'Main text on firmware page for Bitcoin-only devices without firmware',
         id: 'TR_FIRMWARE_SUBHEADING_BITCOIN_ONLY_DEVICE',
     },
@@ -2949,7 +2949,7 @@ export const messages = defineMessages({
     },
     TR_SKIP_PIN_DESCRIPTION: {
         defaultMessage:
-            'A PIN prevents unauthorized access to your Trezor. Without it, anyone with your Trezor can access your funds.',
+            'A PIN prevents unauthorized access to your device. Without it, anyone with your device can access your funds.',
         id: 'TR_SKIP_PIN_DESCRIPTION',
     },
     TR_SKIP_BACKUP: {
@@ -2962,7 +2962,7 @@ export const messages = defineMessages({
     },
     TR_SKIP_BACKUP_DESCRIPTION: {
         defaultMessage:
-            'A wallet backup lets you recover your assets if your Trezor gets lost, stolen, or damaged. Without a wallet backup, you could lose access to your assets permanently.',
+            'A wallet backup lets you recover your assets if your device gets lost, stolen, or damaged. Without a wallet backup, you could lose access to your assets permanently.',
         id: 'TR_SKIP_BACKUP_DESCRIPTION',
     },
     TR_DONT_SKIP: {
@@ -2979,7 +2979,7 @@ export const messages = defineMessages({
             'All data collected is anonymous and is used to improve product performance and development. More in <analytics>technical documentation</analytics> and <tos>Terms & Conditions</tos>.',
     },
     TR_HOLOGRAM_STEP_HEADING: {
-        defaultMessage: "Verify your Trezor's seal",
+        defaultMessage: "Verify your device's seal",
         description: 'Heading on hologram step page',
         id: 'TR_HOLOGRAM_STEP_HEADING',
     },
@@ -2995,7 +2995,7 @@ export const messages = defineMessages({
     },
     TR_IF_YOUR_DEVICE_IS_EVER_LOST: {
         defaultMessage:
-            'If your Trezor gets lost, stolen, or damaged, your funds may be permanently lost.',
+            'If your device gets lost, stolen, or damaged, your funds may be permanently lost.',
         id: 'TR_IF_YOUR_DEVICE_IS_EVER_LOST',
     },
     TR_INCOMING: {
@@ -3113,12 +3113,12 @@ export const messages = defineMessages({
     },
     TR_AUTO_EJECT_DESCRIPTION: {
         defaultMessage:
-            'Automatically eject all wallets when you disconnect your Trezor. Your balances are hidden in Trezor Suite until you reconnect your device.',
+            'Automatically eject all wallets when you disconnect your device. Your balances are hidden in PHYLAX Suite until you reconnect your device.',
         id: 'TR_AUTO_EJECT_DESCRIPTION',
     },
     TR_AUTO_EJECT_CONFIRMATION_DESCRIPTION: {
         defaultMessage:
-            "Your wallets and balances won't be visible in Trezor Suite until you reconnect your Trezor.",
+            "Your wallets and balances won't be visible in PHYLAX Suite until you reconnect your device.",
         id: 'TR_AUTO_EJECT_CONFIRMATION_DESCRIPTION',
     },
     TR_AUTO_EJECT_CONFIRMATION_TITLE: {
@@ -3131,7 +3131,7 @@ export const messages = defineMessages({
     },
     TR_LANGUAGE_DESCRIPTION: {
         defaultMessage:
-            'A big thanks to the Trezor community for helping out with this translation. You can always refer to one of the official languages if needed.',
+            'A big thanks to the community for helping out with this translation. You can always refer to one of the official languages if needed.',
         id: 'TR_LANGUAGE_DESCRIPTION',
     },
     TR_LANGUAGE_CREDITS: {
@@ -3224,7 +3224,7 @@ export const messages = defineMessages({
     TR_LOG_DESCRIPTION: {
         id: 'TR_LOG_DESCRIPTION',
         defaultMessage:
-            'Use this log to access essential technical information about Trezor Suite, which may be needed when contacting Trezor Support.',
+            'Use this log to access essential technical information about PHYLAX Suite, which may be needed when contacting support.',
     },
     TR_MAXIMUM_PIN_LENGTH: {
         defaultMessage: 'Enter up to 50 digits.',
@@ -3327,7 +3327,7 @@ export const messages = defineMessages({
     },
     TR_SOLANA_DEVNET_SHORTCUT_WARNING: {
         defaultMessage:
-            'DSOL will display SOL on your Trezor due to network limitations. Check the provided blockhash on Devnet explorer if you want to verify the transaction network.',
+            'DSOL will display SOL on your device due to network limitations. Check the provided blockhash on Devnet explorer if you want to verify the transaction network.',
         id: 'TR_SOLANA_DEVNET_SHORTCUT_WARNING',
     },
     TR_NO_PASSPHRASE_WALLET: {
@@ -3406,7 +3406,7 @@ export const messages = defineMessages({
     },
     TR_PIN_SUBHEADING: {
         defaultMessage:
-            'Use 6 or more digits for a strong PIN. Avoid obvious choices like birthdays. The keypad on your Trezor device changes position each time, so no one can see what you type.',
+            'Use 6 or more digits for a strong PIN. Avoid obvious choices like birthdays. The keypad on your device changes position each time, so no one can see what you type.',
         description: 'Subheading on PIN page',
         id: 'TR_PIN_SUBHEADING',
     },
@@ -3415,7 +3415,7 @@ export const messages = defineMessages({
         id: 'TR_PLEASE_ALLOW_YOUR_CAMERA',
     },
     TR_PLEASE_CONNECT_YOUR_DEVICE: {
-        defaultMessage: 'Connect your Trezor to continue with the verification process.',
+        defaultMessage: 'Connect your device to continue with the verification process.',
         id: 'TR_PLEASE_CONNECT_YOUR_DEVICE',
     },
     TR_PLEASE_ENABLE_PASSPHRASE: {
@@ -3491,7 +3491,7 @@ export const messages = defineMessages({
     },
     TR_GLOBAL_RECEIVE_NO_ASSETS_RESULTS_DESCRIPTION: {
         defaultMessage:
-            'If the token uses a network supported by Trezor Suite, you can receive it using that network account instead.',
+            'If the token uses a network supported by PHYLAX Suite, you can receive it using that network account instead.',
         id: 'TR_GLOBAL_RECEIVE_NO_ASSETS_RESULTS_DESCRIPTION',
     },
     TR_GLOBAL_RECEIVE_NO_RESULTS: {
@@ -3551,7 +3551,7 @@ export const messages = defineMessages({
         id: 'TR_GOT_IT',
     },
     TR_RECONNECT_HEADER: {
-        defaultMessage: 'Reconnect your Trezor',
+        defaultMessage: 'Reconnect your device',
         id: 'TR_RECONNECT_HEADER',
     },
     TR_RECOVER_SUBHEADING_COMPUTER: {
@@ -3561,13 +3561,13 @@ export const messages = defineMessages({
     },
     TR_RECOVER_SUBHEADING_TOUCH: {
         defaultMessage:
-            "The entire wallet recovery process is completed using your Trezor's touchscreen.",
+            "The entire wallet recovery process is completed using your device's touchscreen.",
         description: 'Subheading in recover page. Basic info about recovery',
         id: 'TR_RECOVER_SUBHEADING_TOUCH',
     },
     TR_RECOVER_SUBHEADING_BUTTONS: {
         defaultMessage:
-            "The entire wallet recovery process is completed on your Trezor's screen using the two-button pad.",
+            "The entire wallet recovery process is completed on your device's screen using the two-button pad.",
         description: 'Subheading in recover page. Basic info about recovery',
         id: 'TR_RECOVER_SUBHEADING_BUTTONS',
     },
@@ -3577,7 +3577,7 @@ export const messages = defineMessages({
     },
     TR_RECOVERY_SOURCE_WARNING_DESCRIPTION: {
         defaultMessage:
-            'A wallet created elsewhere may not have the same security as one created on your Trezor. If you are unsure, we recommend setting up a new wallet here and moving your funds to it.',
+            'A wallet created elsewhere may not have the same security as one created on your device. If you are unsure, we recommend setting up a new wallet here and moving your funds to it.',
         id: 'TR_RECOVERY_SOURCE_WARNING_DESCRIPTION',
     },
     TR_RECOVERY_ERROR: {
@@ -3592,18 +3592,18 @@ export const messages = defineMessages({
     TR_BIO_AUTH_NOT_AVAILABLE_TOOLTIP_CONTENT: {
         id: 'TR_BIO_AUTH_NOT_AVAILABLE_TOOLTIP_CONTENT',
         defaultMessage:
-            "Biometric authentication isn't currently available. Try restarting your computer, or open Trezor Suite on another device. If that doesn't help, reinstall the app and reconnect your Trezor.",
+            "Biometric authentication isn't currently available. Try restarting your computer, or open PHYLAX Suite on another device. If that doesn't help, reinstall the app and reconnect your device.",
     },
     TR_RECOVERY_TYPES_DESCRIPTION: {
         defaultMessage:
-            "Both methods are secure. Select advanced recovery if you prefer entering your wallet backup on your Trezor's screen.",
+            "Both methods are secure. Select advanced recovery if you prefer entering your wallet backup on your device's screen.",
         description:
             'There are two methods of recovery for T1B1. This is a short explanation text.',
         id: 'TR_RECOVERY_TYPES_DESCRIPTION',
     },
     TR_RECOVERY_TYPES_DESCRIPTION_24_T1B1_ONLY: {
         defaultMessage:
-            "Standard recovery is secure and efficient. Select advanced recovery if you prefer entering your wallet backup on your Trezor's screen. <a>Learn more</a>",
+            "Standard recovery is secure and efficient. Select advanced recovery if you prefer entering your wallet backup on your device's screen. <a>Learn more</a>",
         description:
             'The updated recovery types description for T1B1 with standard or advanced recovery for 24 words backup. It is a short explanation text.',
         id: 'TR_RECOVERY_TYPES_DESCRIPTION_24_T1B1_ONLY',
@@ -3652,7 +3652,7 @@ export const messages = defineMessages({
         id: 'TR_SELECT_DEVICE_SHORT',
     },
     TR_CONTINUE_SETUP: {
-        defaultMessage: 'Set up my Trezor',
+        defaultMessage: 'Set up my device',
         id: 'TR_CONTINUE_SETUP',
     },
     TR_SENT_TO_SELF: {
@@ -3688,15 +3688,15 @@ export const messages = defineMessages({
         id: 'TR_SETTINGS_SAME_AS_SYSTEM',
     },
     TR_SETTINGS_DEVICE_BANNER_TITLE_DISCONNECTED: {
-        defaultMessage: 'Trezor disconnected',
+        defaultMessage: 'Device disconnected',
         id: 'TR_SETTINGS_DEVICE_BANNER_TITLE_DISCONNECTED',
     },
     TR_SETTINGS_DEVICE_BANNER_DESCRIPTION_DISCONNECTED: {
-        defaultMessage: 'Connect & unlock your Trezor to change settings.',
+        defaultMessage: 'Connect & unlock your device to change settings.',
         id: 'TR_SETTINGS_DEVICE_BANNER_DESCRIPTION_DISCONNECTED',
     },
     TR_SETTINGS_DEVICE_BANNER_TITLE_UNAVAILABLE: {
-        defaultMessage: 'Your Trezor is in an incorrect state',
+        defaultMessage: 'Your device is in an incorrect state',
         id: 'TR_SETTINGS_DEVICE_BANNER_TITLE_UNAVAILABLE',
     },
     TR_SETTINGS_DEVICE_BANNER_DESCRIPTION_UNAVAILABLE: {
@@ -3708,7 +3708,7 @@ export const messages = defineMessages({
         id: 'TR_SETTINGS_DEVICE_BANNER_TITLE_BOOTLOADER',
     },
     TR_SETTINGS_DEVICE_BANNER_TITLE_REMEMBERED: {
-        defaultMessage: 'Connect & unlock your Trezor to change settings.',
+        defaultMessage: 'Connect & unlock your device to change settings.',
         id: 'TR_SETTINGS_DEVICE_BANNER_TITLE_REMEMBERED',
     },
     TR_SETTINGS_COINS_REGULAR_FIRMWARE_SUGGESTION: {
@@ -3775,7 +3775,7 @@ export const messages = defineMessages({
         id: 'TR_SKIP_UPDATE',
     },
     TR_SKIP_UPDATE_DESCRIPTION: {
-        defaultMessage: 'Updating to the latest firmware helps keep your Trezor secure.',
+        defaultMessage: 'Updating to the latest firmware helps keep your device secure.',
         id: 'TR_SKIP_UPDATE_DESCRIPTION',
     },
     TR_SOLVE_ISSUE: {
@@ -3783,7 +3783,7 @@ export const messages = defineMessages({
         id: 'TR_SOLVE_ISSUE',
     },
     TR_THP_RESET_CREDENTIALS_SUCCESS: {
-        defaultMessage: 'THP credentials have been reset. Reconnect your Trezor.',
+        defaultMessage: 'THP credentials have been reset. Reconnect your device.',
         id: 'TR_THP_RESET_CREDENTIALS_SUCCESS',
     },
     TR_SIGN_TRANSACTION_TIMEOUT: {
@@ -3804,7 +3804,7 @@ export const messages = defineMessages({
     },
     TR_THP_CHECK_TREZOR_FOR_CODE: {
         id: 'TR_THP_CHECK_TREZOR_FOR_CODE',
-        defaultMessage: 'Check your Trezor for the code.',
+        defaultMessage: 'Check your device for the code.',
     },
     TR_THP_CREATE_SECURE_CONNECTION: {
         id: 'TR_THP_CREATE_SECURE_CONNECTION',
@@ -3812,15 +3812,15 @@ export const messages = defineMessages({
     },
     TR_THP_CREATE_SECURE_CONNECTION_DESCRIPTION: {
         id: 'TR_THP_CREATE_SECURE_CONNECTION_DESCRIPTION',
-        defaultMessage: 'Trezor Suite will create a secure connection to your Trezor.',
+        defaultMessage: 'PHYLAX Suite will create a secure connection to your device.',
     },
     TR_THP_SECURELY_CONNECT_WITH_TREZOR: {
         id: 'TR_THP_SECURELY_CONNECT_WITH_TREZOR',
-        defaultMessage: 'Securely connect with your Trezor',
+        defaultMessage: 'Securely connect with your device',
     },
     TR_THP_SECURELY_AUTOCONNECT_WITH_TREZOR: {
         id: 'TR_THP_SECURELY_AUTOCONNECT_WITH_TREZOR',
-        defaultMessage: 'Securely connect automatically with your Trezor',
+        defaultMessage: 'Securely connect automatically with your device',
     },
     TR_THP_CONFIRM_SECURE_CONNECTION: {
         id: 'TR_THP_CONFIRM_SECURE_CONNECTION',
@@ -3833,7 +3833,7 @@ export const messages = defineMessages({
     TR_THP_SETTINGS_AUTO_CONNECT_DESCRIPTION: {
         id: 'TR_THP_SETTINGS_AUTO_CONNECT_DESCRIPTION',
         defaultMessage:
-            "Trezor will connect automatically, so you don't need to approve each connection.",
+            "Your device will connect automatically, so you don't need to approve each connection.",
     },
     TR_THP_AUTO_CONNECT_INFO_MODAL_HEADER: {
         id: 'TR_THP_AUTO_CONNECT_INFO_MODAL_HEADER',
@@ -3842,7 +3842,7 @@ export const messages = defineMessages({
     TR_THP_AUTO_CONNECT_INFO_MODAL_DESCRIPTION: {
         id: 'TR_THP_AUTO_CONNECT_INFO_MODAL_DESCRIPTION',
         defaultMessage:
-            'Use this computer regularly with your Trezor? Let Trezor Suite connect automatically—no need to approve it each time.',
+            'Use this computer regularly with your device? Let PHYLAX Suite connect automatically—no need to approve it each time.',
     },
     TR_THP_TURN_ON_AUTO_CONNECT: {
         id: 'TR_THP_TURN_ON_AUTO_CONNECT',
@@ -3875,7 +3875,7 @@ export const messages = defineMessages({
         id: 'TR_START',
     },
     TR_SUITE_VERSION: {
-        defaultMessage: 'Trezor Suite version',
+        defaultMessage: 'PHYLAX Suite version',
         id: 'TR_SUITE_VERSION',
     },
     TR_SUITE_SYNC_GET_KEYS: {
@@ -3900,7 +3900,7 @@ export const messages = defineMessages({
     },
     TR_SUITE_SYNC_FIRMWARE_UPDATE_NEEDED_BANNER: {
         defaultMessage:
-            'Firmware update required. Update firmware on your Trezor to use Suite Sync.',
+            'Firmware update required. Update firmware on your device to use Suite Sync.',
         id: 'TR_SUITE_SYNC_FIRMWARE_UPDATE_NEEDED_BANNER',
     },
     TR_SUITE_SYNC_KEYS_NEEDED_BANNER: {
@@ -3910,12 +3910,12 @@ export const messages = defineMessages({
     },
     TR_SUITE_SYNC_KEYS_NEEDED_CONNECT_DEVICE_BANNER: {
         defaultMessage:
-            'Connect your Trezor and allow Suite Sync to view and edit your labels, wallet names, and account names.',
+            'Connect your device and allow Suite Sync to view and edit your labels, wallet names, and account names.',
         id: 'TR_SUITE_SYNC_KEYS_NEEDED_CONNECT_DEVICE_BANNER',
     },
     TR_SUITE_SYNC_UNSUPPORTED_DEVICE_BANNER: {
         defaultMessage:
-            "Your Trezor doesn't support Suite Sync. To view and manage your existing labels, switch to legacy labeling.",
+            "Your device doesn't support Suite Sync. To view and manage your existing labels, switch to legacy labeling.",
         id: 'TR_SUITE_SYNC_UNSUPPORTED_DEVICE_BANNER',
     },
     TR_SUITE_SYNC_OUT_OF_QUOTA_BANNER_DESCRIPTION: {
@@ -3944,22 +3944,22 @@ export const messages = defineMessages({
         id: 'TR_UNSUPPORTED_COINS',
     },
     TR_UNSUPPORTED_COINS_DESCRIPTION: {
-        defaultMessage: 'These networks are supported on Trezor Safe devices and Trezor Model T.',
+        defaultMessage: 'These networks are supported on device Safe devices and Trezor Model T.',
         id: 'TR_UNSUPPORTED_COINS_DESCRIPTION',
     },
     TR_THIS_HIDDEN_WALLET_IS_EMPTY_SOURCE: {
         defaultMessage:
-            "This Passphrase wallet is empty. To make sure you're in the correct wallet, enter the passphrase on your Trezor.",
+            "This Passphrase wallet is empty. To make sure you're in the correct wallet, enter the passphrase on your device.",
         id: 'TR_THIS_HIDDEN_WALLET_IS_EMPTY_SOURCE',
     },
     TR_ADDRESS_PHISHING_WARNING: {
         defaultMessage:
-            'To prevent phishing attacks, verify the receive address on your Trezor. {claim}',
+            'To prevent phishing attacks, verify the receive address on your device. {claim}',
         id: 'TR_ADDRESS_PHISHING_WARNING',
     },
     TR_XPUB_PHISHING_WARNING: {
         defaultMessage:
-            'To prevent phishing attacks, verify the public key on your Trezor. {claim}',
+            'To prevent phishing attacks, verify the public key on your device. {claim}',
         id: 'TR_XPUB_PHISHING_WARNING',
     },
     TR_TOO_LONG: {
@@ -3987,7 +3987,7 @@ export const messages = defineMessages({
         id: 'TR_TOKEN_ID_COLON',
     },
     TR_NO_TRANSPORT: {
-        defaultMessage: 'Trezor Suite is having trouble connecting to your device.',
+        defaultMessage: 'PHYLAX Suite is having trouble connecting to your device.',
         description: '',
         id: 'TR_NO_TRANSPORT',
     },
@@ -4085,7 +4085,7 @@ export const messages = defineMessages({
         id: 'TR_VERIFIED',
     },
     TR_RESTARTING_TREZOR: {
-        defaultMessage: 'Restarting your Trezor...',
+        defaultMessage: 'Restarting your device...',
         description: 'Info what is happening with users device.',
         id: 'TR_RESTARTING_TREZOR',
     },
@@ -4120,7 +4120,7 @@ export const messages = defineMessages({
     },
     TR_WIPE_DEVICE_DESCRIPTION: {
         defaultMessage:
-            "Permanently erase all stored data on your Trezor, including your wallet backup and PIN. Make sure you have your wallet backup before wiping the device, as it's essential for restoring access to your funds. Proceed with caution.",
+            "Permanently erase all stored data on your device, including your wallet backup and PIN. Make sure you have your wallet backup before wiping the device, as it's essential for restoring access to your funds. Proceed with caution.",
         id: 'TR_WIPE_DEVICE_DESCRIPTION',
     },
     TR_WORDS: {
@@ -4175,7 +4175,7 @@ export const messages = defineMessages({
         id: 'TR_YOUR_NEW_VERSION_IS_READY',
     },
     TR_YOUR_TREZOR_IS_NOT_BACKED_UP: {
-        defaultMessage: "Your Trezor isn't backed up.",
+        defaultMessage: "Your device isn't backed up.",
         id: 'TR_YOUR_TREZOR_IS_NOT_BACKED_UP',
     },
     TR_YOUR_WALLET_IS_READY_WHAT: {
@@ -4281,7 +4281,7 @@ export const messages = defineMessages({
     TR_ACCOUNT_TYPE_BIP84_DESC: {
         id: 'TR_ACCOUNT_TYPE_BIP84_DESC',
         defaultMessage:
-            'SegWit is the default address type in Trezor Suite. It reduces transaction size, boosts capacity, and enhances scalability while enabling smaller transaction fees, but may not work with some older services.',
+            'SegWit is the default address type in PHYLAX Suite. It reduces transaction size, boosts capacity, and enhances scalability while enabling smaller transaction fees, but may not work with some older services.',
     },
     TR_ACCOUNT_TYPE_BIP86_DESC: {
         id: 'TR_ACCOUNT_TYPE_BIP86_DESC',
@@ -4405,7 +4405,7 @@ export const messages = defineMessages({
     },
     TR_ACCOUNT_TYPE_NO_SUPPORT: {
         id: 'TR_ACCOUNT_TYPE_NO_SUPPORT',
-        defaultMessage: 'This account type is not supported on this Trezor model.',
+        defaultMessage: 'This account type is not supported on this device model.',
     },
     TR_ACCOUNT_TYPE_UPDATE_REQUIRED: {
         id: 'TR_ACCOUNT_TYPE_UPDATE_REQUIRED',
@@ -4481,7 +4481,7 @@ export const messages = defineMessages({
     },
     SUITE_SYNC_KEY_RETRIEVAL_FAILED: {
         id: 'SUITE_SYNC_KEY_RETRIEVAL_FAILED',
-        defaultMessage: 'Suite Sync key retrieval failed. Reconnect your Trezor and try again.',
+        defaultMessage: 'Suite Sync key retrieval failed. Reconnect your device and try again.',
     },
     TOAST_COIN_SCHEME_PROTOCOL: {
         id: 'TOAST_COIN_SCHEME_PROTOCOL',
@@ -4547,7 +4547,7 @@ export const messages = defineMessages({
     },
     TOAST_DEVICE_WIPED: {
         id: 'TOAST_DEVICE_WIPED',
-        defaultMessage: 'Trezor wiped successfully',
+        defaultMessage: 'Device wiped successfully',
     },
     TOAST_COPY_TO_CLIPBOARD: {
         id: 'TOAST_COPY_TO_CLIPBOARD',
@@ -4700,11 +4700,11 @@ export const messages = defineMessages({
     },
     TR_QUICK_ACTION_TOOLTIP_TREZOR_SUITE: {
         id: 'TR_QUICK_ACTION_TOOLTIP_TREZOR_SUITE',
-        defaultMessage: 'Trezor Suite',
+        defaultMessage: 'PHYLAX Suite',
     },
     TR_QUICK_ACTION_TOOLTIP_TREZOR_DEVICE: {
         id: 'TR_QUICK_ACTION_TOOLTIP_TREZOR_DEVICE',
-        defaultMessage: 'Trezor',
+        defaultMessage: 'Device',
     },
     TR_QUICK_ACTION_TOOLTIP_UP_TO_DATE: {
         id: 'TR_QUICK_ACTION_TOOLTIP_UP_TO_DATE',
@@ -4716,7 +4716,7 @@ export const messages = defineMessages({
     },
     TR_QUICK_ACTION_TOOLTIP_DEVICE_DISCONNECTED: {
         id: 'TR_QUICK_ACTION_TOOLTIP_DEVICE_DISCONNECTED',
-        defaultMessage: 'Trezor disconnected',
+        defaultMessage: 'Device disconnected',
     },
     TR_QUICK_ACTION_TOOLTIP_RESTART_TO_UPDATE: {
         id: 'TR_QUICK_ACTION_TOOLTIP_RESTART_TO_UPDATE',
@@ -4728,15 +4728,15 @@ export const messages = defineMessages({
     },
     TR_QUICK_ACTION_UPDATE_POPOVER_APP_UPDATE_AVAILABLE: {
         id: 'TR_QUICK_ACTION_UPDATE_POPOVER_APP_UPDATE_AVAILABLE',
-        defaultMessage: 'Trezor Suite update available',
+        defaultMessage: 'PHYLAX Suite update available',
     },
     TR_QUICK_ACTION_UPDATE_POPOVER_APP_HAS_BEEN_UPDATED: {
         id: 'TR_QUICK_ACTION_UPDATE_POPOVER_APP_HAS_BEEN_UPDATED',
-        defaultMessage: 'Trezor Suite has been updated',
+        defaultMessage: 'PHYLAX Suite has been updated',
     },
     TR_QUICK_ACTION_UPDATE_POPOVER_APP_DOWNLOADED: {
         id: 'TR_QUICK_ACTION_UPDATE_POPOVER_APP_DOWNLOADED',
-        defaultMessage: 'Trezor Suite downloaded a new update.',
+        defaultMessage: 'PHYLAX Suite downloaded a new update.',
     },
     TR_QUICK_ACTION_UPDATE_POPOVER_TREZOR_UPDATE_AVAILABLE: {
         id: 'TR_QUICK_ACTION_UPDATE_POPOVER_TREZOR_UPDATE_AVAILABLE',
@@ -4822,7 +4822,7 @@ export const messages = defineMessages({
     TR_TOR_DESCRIPTION: {
         id: 'TR_TOR_DESCRIPTION',
         defaultMessage:
-            "Route all of Trezor Suite's traffic through the Tor network, increasing your privacy and security. It may take some time for Tor to load and establish a connection.",
+            "Route all of PHYLAX Suite's traffic through the Tor network, increasing your privacy and security. It may take some time for Tor to load and establish a connection.",
     },
     TR_TOR_REMOVE_ONION_AND_DISABLE: {
         id: 'TR_TOR_REMOVE_ONION_AND_DISABLE',
@@ -4909,7 +4909,7 @@ export const messages = defineMessages({
     },
     TR_WIPE_DEVICE_MODAL_PROCEED_WITH_CAUTION: {
         id: 'TR_WIPE_DEVICE_MODAL_PROCEED_WITH_CAUTION',
-        defaultMessage: 'This will erase all data on your Trezor. Proceed with caution.',
+        defaultMessage: 'This will erase all data on your device. Proceed with caution.',
     },
     TR_WIPE_DEVICE_ERASE_ALL_DATA: {
         id: 'TR_WIPE_DEVICE_ERASE_ALL_DATA',
@@ -4917,7 +4917,7 @@ export const messages = defineMessages({
     },
     TR_WIPE_DEVICE_ERASE_ALL_DATA_DESCRIPTION: {
         id: 'TR_WIPE_DEVICE_ERASE_ALL_DATA_DESCRIPTION',
-        defaultMessage: "All data on your Trezor will be erased. This action can't be undone.",
+        defaultMessage: "All data on your device will be erased. This action can't be undone.",
     },
     TR_WIPE_DEVICE_WALLET_BACKUP: {
         id: 'TR_WIPE_DEVICE_WALLET_BACKUP',
@@ -4930,7 +4930,7 @@ export const messages = defineMessages({
     },
     TR_WIPE_DEVICE_SUCCESS_HEADING: {
         id: 'TR_WIPE_DEVICE_SUCCESS_HEADING',
-        defaultMessage: 'Trezor wiped successfully',
+        defaultMessage: 'Device wiped successfully',
     },
     TR_BACK_TO_DASHBOARD: {
         id: 'TR_BACK_TO_DASHBOARD',
@@ -4951,7 +4951,7 @@ export const messages = defineMessages({
     TR_ADVANCED_RECOVERY_TEXT: {
         id: 'TR_ADVANCED_RECOVERY_TEXT',
         defaultMessage:
-            "Spell each word of your wallet backup using the keypad below, according to where the letters are located on your Trezor's screen.",
+            "Spell each word of your wallet backup using the keypad below, according to where the letters are located on your device's screen.",
     },
     TR_ADVANCED_RECOVERY_NOT_SURE: {
         id: 'TR_ADVANCED_RECOVERY_NOT_SURE',
@@ -4996,7 +4996,7 @@ export const messages = defineMessages({
     TR_SEED_WORDS_ENTER_COMPUTER: {
         id: 'TR_SEED_WORDS_ENTER_COMPUTER',
         defaultMessage:
-            'Enter the words from your wallet backup here in the order displayed on your Trezor.',
+            'Enter the words from your wallet backup here in the order displayed on your device.',
     },
     TR_SEED_WORDS_ENTER_TOUCHSCREEN: {
         id: 'TR_SEED_WORDS_ENTER_TOUCHSCREEN',
@@ -5013,7 +5013,7 @@ export const messages = defineMessages({
     },
     TR_ENTER_SEED_WORDS_ON_DEVICE: {
         id: 'TR_ENTER_SEED_WORDS_ON_DEVICE',
-        defaultMessage: 'Enter the words directly on your Trezor in the correct order.',
+        defaultMessage: 'Enter the words directly on your device in the correct order.',
     },
     TR_SEED_CHECK_SUCCESS_TITLE: {
         id: 'TR_SEED_CHECK_SUCCESS_TITLE',
@@ -5042,12 +5042,12 @@ export const messages = defineMessages({
     TR_DRY_RUN_CHECK_ITEM_TITLE: {
         id: 'TR_DRY_RUN_CHECK_ITEM_TITLE',
         defaultMessage:
-            "I understand this is a simulated check. It won't affect my Trezor or funds.",
+            "I understand this is a simulated check. It won't affect my device or funds.",
     },
     TR_DRY_RUN_CHECK_ITEM_DESCRIPTION: {
         id: 'TR_DRY_RUN_CHECK_ITEM_DESCRIPTION',
         defaultMessage:
-            "This wallet backup check is precisely the same as the normal recovery process. You should only trust the information and instructions displayed on your Trezor's screen.",
+            "This wallet backup check is precisely the same as the normal recovery process. You should only trust the information and instructions displayed on your device's screen.",
     },
     TR_ACTIVATION_IN_PROGRESS_BANNER: {
         id: 'TR_ACTIVATION_IN_PROGRESS_BANNER',
@@ -5175,7 +5175,7 @@ export const messages = defineMessages({
     },
     MODAL_ADD_ACCOUNT_COINJOIN_DESKTOP_ONLY: {
         id: 'MODAL_ADD_ACCOUNT_COINJOIN_DESKTOP_ONLY',
-        defaultMessage: 'Coinjoin account only available in the Trezor Suite desktop app.',
+        defaultMessage: 'Coinjoin account only available in the PHYLAX Suite desktop app.',
     },
     TR_DEVICE_IN_RECOVERY_MODE: {
         id: 'TR_DEVICE_IN_RECOVERY_MODE',
@@ -5207,7 +5207,7 @@ export const messages = defineMessages({
     },
     TR_TO_ADD_NEW_ACCOUNT_PLEASE_CONNECT: {
         id: 'TR_TO_ADD_NEW_ACCOUNT_PLEASE_CONNECT',
-        defaultMessage: 'Connect your Trezor to add new accounts.',
+        defaultMessage: 'Connect your device to add new accounts.',
     },
     TR_FORGET_DEVICE_HEADING: {
         id: 'TR_FORGET_DEVICE_HEADING',
@@ -5216,7 +5216,7 @@ export const messages = defineMessages({
     TR_FORGET_DEVICE_DESCRIPTION: {
         id: 'TR_FORGET_DEVICE_DESCRIPTION',
         defaultMessage:
-            'Permanently delete all data related to your Trezor from this computer, including Bluetooth pairing and connection settings.',
+            'Permanently delete all data related to your device from this computer, including Bluetooth pairing and connection settings.',
     },
     TR_DEVICE_CONNECTION: {
         id: 'TR_DEVICE_CONNECTION',
@@ -5224,15 +5224,15 @@ export const messages = defineMessages({
     },
     TR_FORGET_DEVICE_MODAL_HEADING: {
         id: 'TR_FORGET_DEVICE_MODAL_HEADING',
-        defaultMessage: 'Forget this Trezor?',
+        defaultMessage: 'Forget this device?',
     },
     TR_FORGET_DEVICE_MODAL_BULLET_FORGET: {
         id: 'TR_FORGET_DEVICE_MODAL_BULLET_FORGET',
-        defaultMessage: 'Trezor Suite will forget this Trezor.',
+        defaultMessage: 'PHYLAX Suite will forget this device.',
     },
     TR_FORGET_DEVICE_MODAL_BLUETOOTH_REMOVED_AND_DISCONNECTED: {
         id: 'TR_FORGET_DEVICE_MODAL_BLUETOOTH_REMOVED_AND_DISCONNECTED',
-        defaultMessage: 'Your Trezor will be disconnected and its Bluetooth pairing removed.',
+        defaultMessage: 'Your device will be disconnected and its Bluetooth pairing removed.',
     },
     TR_FORGET_DEVICE_MODAL_BLUETOOTH_REMOVED: {
         id: 'TR_FORGET_DEVICE_MODAL_BLUETOOTH_REMOVED',
@@ -5260,12 +5260,12 @@ export const messages = defineMessages({
     },
     TR_FORGET_DEVICE_MODAL_ON_YOUR_TREZOR: {
         id: 'TR_FORGET_DEVICE_MODAL_ON_YOUR_TREZOR',
-        defaultMessage: 'On your Trezor',
+        defaultMessage: 'On your device',
     },
     TR_FORGET_DEVICE_MODAL_REMOVE_FROM_OS: {
         id: 'TR_FORGET_DEVICE_MODAL_REMOVE_FROM_OS',
         defaultMessage:
-            '<b>Go to <link>Bluetooth settings</link> and remove your Trezor.</b> If not, you might have trouble pairing it again in the future.',
+            '<b>Go to <link>Bluetooth settings</link> and remove your device.</b> If not, you might have trouble pairing it again in the future.',
     },
     TR_FORGET_DEVICE_MODAL_REMOVE_FROM_TREZOR: {
         id: 'TR_FORGET_DEVICE_MODAL_REMOVE_FROM_TREZOR',
@@ -5278,11 +5278,11 @@ export const messages = defineMessages({
     },
     TR_FORGET_DEVICE_MODAL_FINISH_FORGETTING_HEADING: {
         id: 'TR_FORGET_DEVICE_MODAL_FINISH_FORGETTING_HEADING',
-        defaultMessage: 'Finish removing this Trezor',
+        defaultMessage: 'Finish removing this device',
     },
     TR_FORGET_DEVICE_MODAL_DISCONNECT_SUBTITLE: {
         id: 'TR_FORGET_DEVICE_MODAL_DISCONNECT_SUBTITLE',
-        defaultMessage: 'Disconnect your Trezor from your computer.',
+        defaultMessage: 'Disconnect your device from your computer.',
     },
     RECEIVE_TITLE: {
         id: 'RECEIVE_TITLE',
@@ -5321,11 +5321,11 @@ export const messages = defineMessages({
     },
     RECEIVE_ADDRESS_COPIED_STEP_VERIFY: {
         id: 'RECEIVE_ADDRESS_COPIED_STEP_VERIFY',
-        defaultMessage: 'Verify the pasted address against your Trezor for maximum safety.',
+        defaultMessage: 'Verify the pasted address against your device for maximum safety.',
     },
     RECEIVE_VERIFY_ON_TREZOR: {
         id: 'RECEIVE_VERIFY_ON_TREZOR',
-        defaultMessage: 'Verify on Trezor',
+        defaultMessage: 'Verify on device',
     },
     RECEIVE_SHARE: {
         id: 'RECEIVE_SHARE',
@@ -5423,7 +5423,7 @@ export const messages = defineMessages({
     },
     TR_CHARGE_TREZOR_BEFORE_CONTINUING: {
         id: 'TR_CHARGE_TREZOR_BEFORE_CONTINUING',
-        defaultMessage: 'Charge your Trezor before continuing',
+        defaultMessage: 'Charge your device before continuing',
     },
     TR_FW_INSTALL_MAY_TAKE_A_WHILE: {
         id: 'TR_FW_INSTALL_MAY_TAKE_A_WHILE',
@@ -5431,7 +5431,7 @@ export const messages = defineMessages({
     },
     TR_CHARGE_BATTERY_TO_ATLEAST: {
         id: 'TR_CHARGE_BATTERY_TO_ATLEAST',
-        defaultMessage: 'Charge your Trezor to at least {percentage}% to prevent interruptions.',
+        defaultMessage: 'Charge your device to at least {percentage}% to prevent interruptions.',
     },
     TR_REMOVE_WIPE_CODE: {
         id: 'TR_REMOVE_WIPE_CODE',
@@ -5544,7 +5544,7 @@ export const messages = defineMessages({
     TR_WALLET_CREATED_NOT_SECURED_DESCRIPTION: {
         id: 'TR_WALLET_CREATED_NOT_SECURED_DESCRIPTION',
         defaultMessage:
-            "If your Trezor is lost, stolen, or damaged, you won't be able to regain access to your assets without a wallet backup. Finish setting up your Trezor, then create a wallet backup in device settings.",
+            "If your device is lost, stolen, or damaged, you won't be able to regain access to your assets without a wallet backup. Finish setting up your device, then create a wallet backup in device settings.",
     },
     TR_CONTINUE_TO_PIN: {
         id: 'TR_CONTINUE_TO_PIN',
@@ -5568,11 +5568,11 @@ export const messages = defineMessages({
     },
     TR_REBOOT_INTO_BOOTLOADER: {
         id: 'TR_REBOOT_INTO_BOOTLOADER',
-        defaultMessage: "Update your Trezor's firmware",
+        defaultMessage: "Update your device's firmware",
     },
     TR_RECONNECT_IN_BOOTLOADER: {
         id: 'TR_RECONNECT_IN_BOOTLOADER',
-        defaultMessage: 'Reconnect your Trezor in bootloader mode',
+        defaultMessage: 'Reconnect your device in bootloader mode',
     },
     TR_RECONNECT_IN_BOOTLOADER_SUCCESS: {
         id: 'TR_RECONNECT_IN_BOOTLOADER_SUCCESS',
@@ -5617,7 +5617,7 @@ export const messages = defineMessages({
     TR_CONTINUE_ONLY_WITH_SEED_DESCRIPTION: {
         id: 'TR_CONTINUE_ONLY_WITH_SEED_DESCRIPTION',
         defaultMessage:
-            "If you don't have your wallet backup, not even Trezor Support can help you recover your assets if your device is reset. If you have multiple wallet backups, make sure that you have the correct one ready and easily accessible to recover this specific Trezor.",
+            "If you don't have your wallet backup, not even support can help you recover your assets if your device is reset. If you have multiple wallet backups, make sure that you have the correct one ready and easily accessible to recover this specific Trezor.",
     },
     TR_CONTINUE_ONLY_WITH_SEED_DESCRIPTION_2: {
         id: 'TR_CONTINUE_ONLY_WITH_SEED_DESCRIPTION_2',
@@ -5632,7 +5632,7 @@ export const messages = defineMessages({
     TR_SWITCH_FIRMWARE_NO_BACKUP_2: {
         id: 'TR_SWITCH_FIRMWARE_NO_BACKUP_2',
         defaultMessage:
-            'In all cases, we strongly recommend creating a wallet backup. With a wallet backup, your assets are safe and secure even if your Trezor gets lost, stolen, or damaged.',
+            'In all cases, we strongly recommend creating a wallet backup. With a wallet backup, your assets are safe and secure even if your device gets lost, stolen, or damaged.',
     },
     TR_FIRMWARE_SWITCH_WARNING_1: {
         id: 'TR_FIRMWARE_SWITCH_WARNING_1',
@@ -5691,7 +5691,7 @@ export const messages = defineMessages({
     },
     TR_GO_TO_ONBOARDING: {
         id: 'TR_GO_TO_ONBOARDING',
-        defaultMessage: 'Set up my Trezor',
+        defaultMessage: 'Set up my device',
     },
     TR_GO_TO_SETTINGS: {
         id: 'TR_GO_TO_SETTINGS',
@@ -5716,11 +5716,11 @@ export const messages = defineMessages({
     TR_FIRMWARE_UPDATE_REQUIRED_EXPLAINED: {
         id: 'TR_FIRMWARE_UPDATE_REQUIRED_EXPLAINED',
         defaultMessage:
-            "Your Trezor's firmware is no longer supported. Update to continue using your device.",
+            "Your device's firmware is no longer supported. Update to continue using your device.",
     },
     FW_CORRUPTED_REINSTALL_REQUIRED: {
         id: 'FW_CORRUPTED_REINSTALL_REQUIRED',
-        defaultMessage: "Reinstall your Trezor's firmware.",
+        defaultMessage: "Reinstall your device's firmware.",
     },
     TR_FIRMWARE_CORRUPTED_REQUIRED_EXPLAINED: {
         id: 'TR_FIRMWARE_CORRUPTED_REQUIRED_EXPLAINED',
@@ -5791,7 +5791,7 @@ export const messages = defineMessages({
     TR_BACKUP_SEED_IS_ULTIMATE: {
         id: 'TR_BACKUP_SEED_IS_ULTIMATE',
         defaultMessage:
-            "If you ever need to restore your wallet, you'll need your wallet backup. Keep it safe and secure. If your wallet backup is lost, no one can recover it for you—not even Trezor Support.",
+            "If you ever need to restore your wallet, you'll need your wallet backup. Keep it safe and secure. If your wallet backup is lost, no one can recover it for you—not even support.",
     },
     TR_FIRMWARE_IS_POTENTIALLY_RISKY: {
         id: 'TR_FIRMWARE_IS_POTENTIALLY_RISKY',
@@ -5800,21 +5800,21 @@ export const messages = defineMessages({
     },
     ONBOARDING_UNEXPECTED_DEVICE_DIFFERENT_HEADING: {
         id: 'ONBOARDING_UNEXPECTED_DEVICE_DIFFERENT_HEADING',
-        defaultMessage: "You're using a different Trezor",
+        defaultMessage: "You're using a different device",
     },
     ONBOARDING_UNEXPECTED_DEVICE_DIFFERENT_P1: {
         id: 'ONBOARDING_UNEXPECTED_DEVICE_DIFFERENT_P1',
         defaultMessage:
-            "This Trezor doesn't match the one previously used. Reconnect the correct device.",
+            "This device doesn't match the one previously used. Reconnect the correct device.",
     },
     ONBOARDING_UNEXPECTED_DEVICE_DIFFERENT_P2: {
         id: 'ONBOARDING_UNEXPECTED_DEVICE_DIFFERENT_P2',
-        defaultMessage: 'Want to use this Trezor instead? Start again.',
+        defaultMessage: 'Want to use this device instead? Start again.',
     },
     TR_ONBOARDING_SELECTED_OPTIMAL_BACKUP_TYPE: {
         id: 'TR_ONBOARDING_SELECTED_OPTIMAL_BACKUP_TYPE',
         defaultMessage:
-            "We've selected the <primary>optimal wallet backup type</primary> for your Trezor.",
+            "We've selected the <primary>optimal wallet backup type</primary> for your device.",
     },
     TR_ONBOARDING_SELECTED_DEFAULT_BACKUP_TYPE: {
         id: 'TR_ONBOARDING_SELECTED_DEFAULT_BACKUP_TYPE',
@@ -5824,7 +5824,7 @@ export const messages = defineMessages({
     TR_ONBOARDING_WILL_CREATE_BACKUP_TYPE: {
         id: 'TR_ONBOARDING_WILL_CREATE_BACKUP_TYPE',
         defaultMessage:
-            'Your Trezor will create a new wallet based on<br></br>the selected wallet backup type.',
+            'Your device will create a new wallet based on<br></br>the selected wallet backup type.',
     },
     TR_ONBOARDING_BACKUP_TYPE: {
         id: 'TR_ONBOARDING_BACKUP_TYPE',
@@ -5878,7 +5878,7 @@ export const messages = defineMessages({
     },
     TR_ONBOARDING_BACKUP_TYPE_12_DEFAULT_TOOLTIP: {
         id: 'TR_ONBOARDING_BACKUP_TYPE_12_DEFAULT_TOOLTIP',
-        defaultMessage: 'Default is the recommended option for your Trezor.',
+        defaultMessage: 'Default is the recommended option for your device.',
     },
     TR_THESE_WONT_ALLOW_YOU_UPGRADE_HEADER: {
         id: 'TR_THESE_WONT_ALLOW_YOU_UPGRADE_HEADER',
@@ -5929,11 +5929,11 @@ export const messages = defineMessages({
     TR_ONBOARDING_BACKUP_SHAMIR_WARNING: {
         id: 'TR_ONBOARDING_BACKUP_SHAMIR_WARNING',
         defaultMessage:
-            "This backup type allows for <strong>future upgrades</strong> but includes 20 words, which <strong>won't fit</strong> on the 12-word paper card packaged with your Trezor. <strong>Write them in numbered order on durable paper and don't store them anywhere digital.</strong>",
+            "This backup type allows for <strong>future upgrades</strong> but includes 20 words, which <strong>won't fit</strong> on the 12-word paper card packaged with your device. <strong>Write them in numbered order on durable paper and don't store them anywhere digital.</strong>",
     },
     TR_ONBOARDING_CANNOT_SELECT_SEED_TYPE: {
         id: 'TR_ONBOARDING_CANNOT_SELECT_SEED_TYPE',
-        defaultMessage: 'Trezor will create your new wallet.',
+        defaultMessage: 'Your device will create your new wallet.',
     },
     TR_ONBOARDING_SELECT_SEED_TYPE_CONTINUE: {
         id: 'TR_ONBOARDING_SELECT_SEED_TYPE_CONTINUE',
@@ -5954,7 +5954,7 @@ export const messages = defineMessages({
     TR_ONBOARDING_NEW_FW_DESCRIPTION: {
         id: 'TR_ONBOARDING_NEW_FW_DESCRIPTION',
         defaultMessage:
-            'New firmware is available. Update your device now, or finish setup first and update later in Trezor Suite.',
+            'New firmware is available. Update your device now, or finish setup first and update later in PHYLAX Suite.',
     },
     TR_FIRMWARE_NEW_FW_DESCRIPTION: {
         id: 'TR_FIRMWARE_NEW_FW_DESCRIPTION',
@@ -6027,7 +6027,7 @@ export const messages = defineMessages({
     TR_EXPERIMENTAL_TOR_EXTERNAL_DESCRIPTION: {
         id: 'TR_EXPERIMENTAL_TOR_EXTERNAL_DESCRIPTION',
         defaultMessage:
-            'Connect to Tor daemon running on port 9050, rather than using the one bundled with Trezor Suite.',
+            'Connect to Tor daemon running on port 9050, rather than using the one bundled with PHYLAX Suite.',
     },
     TR_EXPERIMENTAL_TOR_EXTERNAL_PORT: {
         id: 'TR_EXPERIMENTAL_TOR_EXTERNAL_PORT',
@@ -6036,7 +6036,7 @@ export const messages = defineMessages({
     TR_EXPERIMENTAL_TOR_EXTERNAL_PORT_DESCRIPTION: {
         id: 'TR_EXPERIMENTAL_TOR_EXTERNAL_PORT_DESCRIPTION',
         defaultMessage:
-            'Use Tor daemon running in an external process instead of the one bundled with Trezor Suite.',
+            'Use Tor daemon running in an external process instead of the one bundled with PHYLAX Suite.',
     },
     TR_EXPERIMENTAL_NETWORKS: {
         id: 'TR_EXPERIMENTAL_NETWORKS',
@@ -6080,7 +6080,7 @@ export const messages = defineMessages({
     TR_TRON_VOTE_CONSENT_MODAL_BANNER_2_TEXT: {
         id: 'TR_TRON_VOTE_CONSENT_MODAL_BANNER_2_TEXT',
         defaultMessage:
-            'Use Trezor Suite to securely delegate your voting rights to {representativeName}. Earn rewards, rely on a trusted Super Representative, and keep full ownership of your TRX at all times. To process rewards correctly, your voting transaction ID is shared with the Trezor backend.',
+            'Use PHYLAX Suite to securely delegate your voting rights to {representativeName}. Earn rewards, rely on a trusted Super Representative, and keep full ownership of your TRX at all times. To process rewards correctly, your voting transaction ID is shared with the device backend.',
     },
     TR_TRON_BANDWIDTH: {
         id: 'TR_TRON_BANDWIDTH',
@@ -6195,7 +6195,7 @@ export const messages = defineMessages({
     TR_EXPERIMENTAL_GAP_LIMIT_DESCRIPTION: {
         id: 'TR_EXPERIMENTAL_GAP_LIMIT_DESCRIPTION',
         defaultMessage:
-            'Allow your Trezor to scan wallet addresses beyond the default 20 unused addresses during recovery if transactions are missing.',
+            'Allow your device to scan wallet addresses beyond the default 20 unused addresses during recovery if transactions are missing.',
     },
     TR_EXPERIMENTAL_MCP_SERVER: {
         id: 'TR_EXPERIMENTAL_MCP_SERVER',
@@ -6204,7 +6204,7 @@ export const messages = defineMessages({
     TR_EXPERIMENTAL_MCP_SERVER_DESCRIPTION: {
         id: 'TR_EXPERIMENTAL_MCP_SERVER_DESCRIPTION',
         defaultMessage:
-            'Enable the MCP (Model Context Protocol) server to allow AI agents interact with your Trezor. The server runs on localhost only.',
+            'Enable the MCP (Model Context Protocol) server to allow AI agents interact with your device. The server runs on localhost only.',
     },
     TR_MCP_CLIENT_CONFIGURATION: {
         id: 'TR_MCP_CLIENT_CONFIGURATION',
@@ -6238,7 +6238,7 @@ export const messages = defineMessages({
     TR_EXPERIMENTAL_SLIP24_DESCRIPTION: {
         id: 'TR_EXPERIMENTAL_SLIP24_DESCRIPTION',
         defaultMessage:
-            'View transaction details on your Trezor in a human-readable format before confirming.',
+            'View transaction details on your device in a human-readable format before confirming.',
     },
     TR_EARLY_ACCESS: {
         id: 'TR_EARLY_ACCESS',
@@ -6286,7 +6286,7 @@ export const messages = defineMessages({
     TR_EARLY_ACCESS_ENABLE_CONFIRM_CHECK: {
         id: 'TR_EARLY_ACCESS_ENABLE_CONFIRM_CHECK',
         defaultMessage:
-            'I understand this allows me to test pre-release software, which may contain errors that affect the normal operation of Trezor Suite.',
+            'I understand this allows me to test pre-release software, which may contain errors that affect the normal operation of PHYLAX Suite.',
     },
     TR_EARLY_ACCESS_ENABLE_CONFIRM_TOOLTIP: {
         id: 'TR_EARLY_ACCESS_ENABLE_CONFIRM_TOOLTIP',
@@ -6315,7 +6315,7 @@ export const messages = defineMessages({
     TR_EARLY_ACCESS_LEFT_DESCRIPTION: {
         id: 'TR_EARLY_ACCESS_LEFT_DESCRIPTION',
         defaultMessage:
-            'To get to the latest public release of Trezor Suite, click "Download stable" and reinstall the app.',
+            'To get to the latest public release of PHYLAX Suite, click "Download stable" and reinstall the app.',
     },
     TR_EARLY_ACCESS_SKIP_REINSTALL: {
         id: 'TR_EARLY_ACCESS_SKIP_REINSTALL',
@@ -6351,7 +6351,7 @@ export const messages = defineMessages({
     LOG_DESCRIPTION: {
         id: 'LOG_DESCRIPTION',
         defaultMessage:
-            'This log contains essential technical information about Trezor Suite and may be needed when contacting Trezor Support.',
+            'This log contains essential technical information about PHYLAX Suite and may be needed when contacting support.',
     },
     TR_RESTORE_EXISTING_WALLET: {
         id: 'TR_RESTORE_EXISTING_WALLET',
@@ -6432,7 +6432,7 @@ export const messages = defineMessages({
     },
     TR_NFC_BACKUP_NO_TAGS_DESCRIPTION: {
         id: 'TR_NFC_BACKUP_NO_TAGS_DESCRIPTION',
-        defaultMessage: 'You can finish your Trezor setup now and create your wallet backup later.',
+        defaultMessage: 'You can finish your device setup now and create your wallet backup later.',
     },
     TR_NFC_BACKUP_FINISH_AND_ORDER_HEADING: {
         id: 'TR_NFC_BACKUP_FINISH_AND_ORDER_HEADING',
@@ -6441,7 +6441,7 @@ export const messages = defineMessages({
     TR_NFC_BACKUP_FINISH_AND_ORDER_DESCRIPTION: {
         id: 'TR_NFC_BACKUP_FINISH_AND_ORDER_DESCRIPTION',
         defaultMessage:
-            "Finish setting up your Trezor. You'll then be redirected to the Trezor Store to order wallet backup tags. Once they arrive, create your wallet backup.",
+            "Finish setting up your device. You'll then be redirected to the Trezor Store to order wallet backup tags. Once they arrive, create your wallet backup.",
     },
     TR_NFC_BACKUP_ALTERNATIVE_BADGE: {
         id: 'TR_NFC_BACKUP_ALTERNATIVE_BADGE',
@@ -6462,7 +6462,7 @@ export const messages = defineMessages({
     },
     DISCONNECT_DEVICE_DESCRIPTION: {
         id: 'DISCONNECT_DEVICE_DESCRIPTION',
-        defaultMessage: 'Your Trezor was wiped and no longer holds any private keys.',
+        defaultMessage: 'Your device was wiped and no longer holds any private keys.',
     },
     TR_CHANGE_HOMESCREEN: {
         id: 'TR_CHANGE_HOMESCREEN',
@@ -6502,7 +6502,7 @@ export const messages = defineMessages({
     },
     TR_CONFIRM_ON_TREZOR: {
         id: 'TR_CONFIRM_ON_TREZOR',
-        defaultMessage: 'Confirm on Trezor',
+        defaultMessage: 'Confirm on device',
     },
     TR_MY_ASSETS: {
         id: 'TR_MY_ASSETS',
@@ -7245,7 +7245,7 @@ export const messages = defineMessages({
     },
     TR_YOUR_LABELING_IS_SYNCED: {
         defaultMessage:
-            'Your labels are synced with a cloud storage provider. Your data is safe, as only your Trezor can decrypt it.',
+            'Your labels are synced with a cloud storage provider. Your data is safe, as only your device can decrypt it.',
         id: 'TR_YOUR_LABELING_IS_SYNCED',
     },
     TR_YOUR_LABELING_IS_SYNCED_LOCALLY: {
@@ -7331,7 +7331,7 @@ export const messages = defineMessages({
     },
     FIRMWARE_NEEDS_UPGRADE_FOR_SUITE_SYNC: {
         id: 'FIRMWARE_NEEDS_UPGRADE_FOR_SUITE_SYNC',
-        defaultMessage: "Upgrade your Trezor's firmware to use Suite Sync.",
+        defaultMessage: "Upgrade your device's firmware to use Suite Sync.",
     },
     FIRMWARE_UNSUPPORTED_DEVICE_SUITE_SYNC: {
         id: 'FIRMWARE_UNSUPPORTED_DEVICE_SUITE_SYNC',
@@ -7509,7 +7509,7 @@ export const messages = defineMessages({
     },
     TR_LABELING_LEGACY_DISABLED_TOOLTIP: {
         id: 'TR_LABELING_LEGACY_DISABLED_TOOLTIP',
-        defaultMessage: 'Connect your Trezor to switch to legacy labeling',
+        defaultMessage: 'Connect your device to switch to legacy labeling',
     },
     TR_LABELING_SECURE_SYNC: {
         id: 'TR_LABELING_SECURE_SYNC',
@@ -7615,7 +7615,7 @@ export const messages = defineMessages({
     },
     TR_FEEDBACK_ANALYTICS_ITEM_APP: {
         id: 'TR_FEEDBACK_ANALYTICS_ITEM_APP',
-        defaultMessage: 'Trezor Suite version',
+        defaultMessage: 'PHYLAX Suite version',
     },
     TR_FEEDBACK_CATEGORY_SELECT_PLACEHOLDER: {
         id: 'TR_FEEDBACK_CATEGORY_SELECT_PLACEHOLDER',
@@ -7774,7 +7774,7 @@ export const messages = defineMessages({
     TR_WERE_CONSTANTLY_WORKING_TO_IMPROVE: {
         id: 'TR_WERE_CONSTANTLY_WORKING_TO_IMPROVE',
         defaultMessage:
-            'Download the latest version of Trezor Suite for improved performance and features.',
+            'Download the latest version of PHYLAX Suite for improved performance and features.',
     },
     TR_UPDATE_MODAL_UPDATE_DOWNLOADED: {
         id: 'TR_UPDATE_MODAL_UPDATE_DOWNLOADED',
@@ -7782,7 +7782,7 @@ export const messages = defineMessages({
     },
     TR_UPDATE_MODAL_RESTART_NEEDED: {
         id: 'TR_UPDATE_MODAL_RESTART_NEEDED',
-        defaultMessage: 'This will restart Trezor Suite.',
+        defaultMessage: 'This will restart PHYLAX Suite.',
     },
     SETTINGS_UPDATE_CHECKING: {
         id: 'SETTINGS_UPDATE_CHECKING',
@@ -7807,7 +7807,7 @@ export const messages = defineMessages({
     TR_BACKUP_CHECKBOX_1_TITLE: {
         id: 'TR_BACKUP_CHECKBOX_1_TITLE',
         defaultMessage:
-            'I can recover my assets with my wallet backup if I lose or damage my Trezor.',
+            'I can recover my assets with my wallet backup if I lose or damage my device.',
     },
     TR_BACKUP_CHECKBOX_1_DESCRIPTION: {
         id: 'TR_BACKUP_CHECKBOX_1_DESCRIPTION',
@@ -8276,8 +8276,7 @@ export const messages = defineMessages({
     },
     TR_SUITE_META_DESCRIPTION: {
         id: 'TR_SUITE_META_DESCRIPTION',
-        defaultMessage:
-            'New desktop & browser app for Trezor hardware wallets. Trezor Suite brings significant improvements across our three key pillars of usability, security, and privacy.',
+        defaultMessage: 'Desktop app for PHYLAX Blocks and Trezor hardware wallets.',
     },
     TR_DATABASE_UPGRADE_BLOCKED: {
         id: 'TR_DATABASE_UPGRADE_BLOCKED',
@@ -8314,7 +8313,7 @@ export const messages = defineMessages({
     },
     TR_GUIDE_SUPPORT: {
         id: 'TR_GUIDE_SUPPORT',
-        defaultMessage: 'Trezor Support',
+        defaultMessage: 'support',
     },
     TR_GUIDE_SUPPORT_CONSENT_TITLE: {
         id: 'TR_GUIDE_SUPPORT_CONSENT_TITLE',
@@ -8327,15 +8326,15 @@ export const messages = defineMessages({
     TR_GUIDE_SUPPORT_CONSENT_DESCRIPTION: {
         id: 'TR_GUIDE_SUPPORT_CONSENT_DESCRIPTION',
         defaultMessage:
-            'Securely share your firmware version, Trezor Suite version, and hardware wallet model with Trezor Support so we can resolve your issue faster. Your balances and account details are never shared.',
+            'Securely share your firmware version, PHYLAX Suite version, and hardware wallet model with support so we can resolve your issue faster. Your balances and account details are never shared.',
     },
     TR_GUIDE_SUPPORT_CONSENT_BUTTON: {
         id: 'TR_GUIDE_SUPPORT_CONSENT_BUTTON',
-        defaultMessage: 'Contact Trezor Support',
+        defaultMessage: 'Contact support',
     },
     TR_GUIDE_SUPPORT_DEVICE_DISCONNECTED: {
         id: 'TR_GUIDE_SUPPORT_DEVICE_DISCONNECTED',
-        defaultMessage: 'Trezor disconnected',
+        defaultMessage: 'Device disconnected',
     },
     TR_GUIDE_FORUM: {
         id: 'TR_GUIDE_FORUM',
@@ -8541,7 +8540,7 @@ export const messages = defineMessages({
     },
     TR_GUIDE_FEEDBACK_RATING_HEADLINE: {
         id: 'TR_GUIDE_FEEDBACK_RATING_HEADLINE',
-        defaultMessage: 'Enjoying Trezor Suite?',
+        defaultMessage: 'Enjoying PHYLAX Suite?',
     },
     TR_GUIDE_FEEDBACK_SUGGESTION_TEXT_HEADLINE: {
         id: 'TR_GUIDE_FEEDBACK_SUGGESTION_TEXT_HEADLINE',
@@ -8605,7 +8604,7 @@ export const messages = defineMessages({
     },
     TR_NEEDS_ATTENTION_INITIALIZE: {
         id: 'TR_NEEDS_ATTENTION_INITIALIZE',
-        defaultMessage: "Your Trezor isn't set up.",
+        defaultMessage: "Your device isn't set up.",
     },
     TR_DEVICE_CONNECTED_NEW_DEVICE_STATE: {
         id: 'TR_DEVICE_CONNECTED_NEW_DEVICE_STATE',
@@ -8613,7 +8612,7 @@ export const messages = defineMessages({
     },
     TR_DEVICE_CONNECTED_INITIAL_DEVICE_STATE: {
         id: 'TR_DEVICE_CONNECTED_INITIAL_DEVICE_STATE',
-        defaultMessage: "Complete your Trezor's setup to continue",
+        defaultMessage: "Complete your device's setup to continue",
     },
     TR_INITIAL_RECONNECT_DEVICE_TITLE: {
         id: 'TR_INITIAL_RECONNECT_DEVICE_TITLE',
@@ -8621,7 +8620,7 @@ export const messages = defineMessages({
     },
     TR_INITIAL_RECONNECT_DEVICE_DESCRIPTION: {
         id: 'TR_INITIAL_RECONNECT_DEVICE_DESCRIPTION',
-        defaultMessage: 'Disconnect and reconnect your Trezor to continue.',
+        defaultMessage: 'Disconnect and reconnect your device to continue.',
     },
     TR_DEVICE_CONNECTED_BOOTLOADER: {
         id: 'TR_DEVICE_CONNECTED_BOOTLOADER',
@@ -8641,16 +8640,16 @@ export const messages = defineMessages({
     },
     TR_DEVICE_CONNECTED_BOOTLOADER_RESTART_FROM_MENU: {
         id: 'TR_DEVICE_CONNECTED_BOOTLOADER_RESTART_FROM_MENU',
-        defaultMessage: 'Go to the Trezor menu to restart your device.',
+        defaultMessage: 'Go to the device menu to restart your device.',
     },
     TR_DEVICE_CONNECTED_UNACQUIRED: {
         id: 'TR_DEVICE_CONNECTED_UNACQUIRED',
-        defaultMessage: 'This Trezor is being used by another app',
+        defaultMessage: 'This device is being used by another app',
     },
     TR_DEVICE_CONNECTED_UNACQUIRED_DESCRIPTION: {
         id: 'TR_DEVICE_CONNECTED_UNACQUIRED_DESCRIPTION',
         defaultMessage:
-            'The app {transportSessionOwner} is currently using your Trezor. You can take control of your device if needed.',
+            'The app {transportSessionOwner} is currently using your device. You can take control of your device if needed.',
     },
     TR_WIPE_OR_UPDATE: {
         id: 'TR_WIPE_OR_UPDATE',
@@ -8676,7 +8675,7 @@ export const messages = defineMessages({
     },
     TR_USED_TREZOR_BEFORE: {
         id: 'TR_USED_TREZOR_BEFORE',
-        defaultMessage: 'Have you used this Trezor before?',
+        defaultMessage: 'Have you used this device before?',
     },
     TR_ONBOARDING_DEVICE_CHECK_1: {
         id: 'TR_ONBOARDING_DEVICE_CHECK_1',
@@ -8695,7 +8694,7 @@ export const messages = defineMessages({
         id: 'TR_ONBOARDING_DEVICE_CHECK_4',
         description: 'Shown only if device has firmware already installed',
         defaultMessage:
-            'Firmware is already installed on this device. Continue only if you have used this Trezor before.',
+            'Firmware is already installed on this device. Continue only if you have used this device before.',
     },
     TR_I_HAVE_NOT_USED_IT: {
         id: 'TR_I_HAVE_NOT_USED_IT',
@@ -8712,7 +8711,7 @@ export const messages = defineMessages({
     TR_DEVICE_COMPROMISED_TEXT: {
         id: 'TR_DEVICE_COMPROMISED_TEXT',
         defaultMessage:
-            "Contact Trezor Support to figure out what's going on with your device and what to do next.",
+            "Contact support to figure out what's going on with your device and what to do next.",
     },
     TR_FAILED_VERIFY_DEVICE_HEADING: {
         id: 'TR_FAILED_VERIFY_DEVICE_HEADING',
@@ -8736,7 +8735,7 @@ export const messages = defineMessages({
     },
     TR_DEVICE_COMPROMISED_INVARIABILITY_CHECK_FAILED_TEXT: {
         id: 'TR_DEVICE_COMPROMISED_INVARIABILITY_CHECK_FAILED_TEXT',
-        defaultMessage: "Your Trezor's model or color appears to have been manipulated.",
+        defaultMessage: "Your device's model or color appears to have been manipulated.",
     },
     TR_DEVICE_COMPROMISED_FW_HASH_CHECK_TEXT: {
         id: 'TR_DEVICE_COMPROMISED_FW_HASH_CHECK_TEXT',
@@ -8748,11 +8747,11 @@ export const messages = defineMessages({
     },
     TR_DEVICE_COMPROMISED_FW_REVISION_CHECK_TEXT: {
         id: 'TR_DEVICE_COMPROMISED_FW_REVISION_CHECK_TEXT',
-        defaultMessage: "Your Trezor's firmware authenticity check failed.",
+        defaultMessage: "Your device's firmware authenticity check failed.",
     },
     TR_DEVICE_COMPROMISED_FIRMWARE_WONT_UPDATE_TEXT: {
         id: 'TR_DEVICE_COMPROMISED_FIRMWARE_WONT_UPDATE_TEXT',
-        defaultMessage: 'Your Trezor rejected the firmware installation.',
+        defaultMessage: 'Your device rejected the firmware installation.',
     },
     TR_DEVICE_COMPROMISED_DEVICE_AUTHENTICITY_TEXT: {
         id: 'TR_DEVICE_COMPROMISED_DEVICE_AUTHENTICITY_TEXT',
@@ -8765,7 +8764,7 @@ export const messages = defineMessages({
     TR_DEVICE_COMPROMISED_TEXT_SOFT: {
         id: 'TR_DEVICE_COMPROMISED_TEXT_SOFT',
         defaultMessage:
-            "Your Trezor's security is our top priority. Before using it, reach out to Trezor Support—they'll guide you through what to do next.",
+            "Your device's security is our top priority. Before using it, reach out to support—they'll guide you through what to do next.",
     },
     TR_AVOID_USING_DEVICE: {
         id: 'TR_AVOID_USING_DEVICE',
@@ -8773,7 +8772,7 @@ export const messages = defineMessages({
     },
     TR_USE_CHAT: {
         id: 'TR_USE_CHAT',
-        defaultMessage: 'Click below and use the <b>Chat</b> option on the Trezor Support page.',
+        defaultMessage: 'Click below and use the <b>Chat</b> option on the support page.',
     },
     TR_CONFIRM_PAIRING_TREZOR: {
         id: 'TR_CONFIRM_PAIRING_TREZOR',
@@ -8781,7 +8780,7 @@ export const messages = defineMessages({
     },
     TR_CONNECT_YOUR_TREZOR: {
         id: 'TR_CONNECT_YOUR_TREZOR',
-        defaultMessage: 'Connect your Trezor',
+        defaultMessage: 'Connect your device',
     },
     TR_CONNECT_YOUR_TREZOR_DESCRIPTION: {
         id: 'TR_CONNECT_YOUR_TREZOR_DESCRIPTION',
@@ -8789,7 +8788,7 @@ export const messages = defineMessages({
     },
     TR_CONFIRM_PAIRING_TREZOR_DESCRIPTION: {
         id: 'TR_CONFIRM_PAIRING_TREZOR_DESCRIPTION',
-        defaultMessage: 'Confirm pairing using your Trezor.',
+        defaultMessage: 'Confirm pairing using your device.',
     },
     TR_DISCONNECT_YOUR_TREZOR: {
         id: 'TR_DISCONNECT_YOUR_TREZOR',
@@ -8797,7 +8796,7 @@ export const messages = defineMessages({
     },
     TR_CONTACT_TREZOR_SUPPORT: {
         id: 'TR_CONTACT_TREZOR_SUPPORT',
-        defaultMessage: 'Contact Trezor Support',
+        defaultMessage: 'Contact support',
     },
     TR_LETS_CHECK_YOUR_DEVICE: {
         id: 'TR_LETS_CHECK_YOUR_DEVICE',
@@ -8809,7 +8808,7 @@ export const messages = defineMessages({
     },
     TR_AUTHENTICATE_DEVICE_DESCRIPTION: {
         id: 'TR_AUTHENTICATE_DEVICE_DESCRIPTION',
-        defaultMessage: 'We just want to make sure that your Trezor is genuine.',
+        defaultMessage: 'We just want to make sure that your device is genuine.',
     },
     TR_DEVICE_AUTHENTICITY_ITEM_1: {
         id: 'TR_DEVICE_AUTHENTICITY_ITEM_1',
@@ -8832,7 +8831,7 @@ export const messages = defineMessages({
     },
     TR_CONGRATS: {
         id: 'TR_CONGRATS',
-        defaultMessage: 'Your Trezor is genuine',
+        defaultMessage: 'Your device is genuine',
     },
     TR_DEVICE_AUTHENTICITY_SUCCESS_DESCRIPTION: {
         id: 'TR_DEVICE_AUTHENTICITY_SUCCESS_DESCRIPTION',
@@ -8845,7 +8844,7 @@ export const messages = defineMessages({
     TR_CHECK_DEVICE_ORIGIN_DESCRIPTION: {
         id: 'TR_CHECK_DEVICE_ORIGIN_DESCRIPTION',
         defaultMessage:
-            "Verify your Trezor to ensure its security and confirm the chip's authenticity.",
+            "Verify your device to ensure its security and confirm the chip's authenticity.",
     },
     TR_CHECK_ORIGIN: {
         id: 'TR_CHECK_ORIGIN',
@@ -8862,12 +8861,12 @@ export const messages = defineMessages({
     TR_DEVICE_AUTHENTICITY_OPT_OUT_DESCRIPTION: {
         id: 'TR_DEVICE_AUTHENTICITY_OPT_OUT_DESCRIPTION',
         defaultMessage:
-            'Checks that your connected device is a genuine Trezor before you use it in Trezor Suite.',
+            'Checks that your connected device is a genuine Trezor before you use it in PHYLAX Suite.',
     },
     TR_DEVICE_AUTHENTICITY_OPT_OUT_DESCRIPTION_DISABLED: {
         id: 'TR_DEVICE_AUTHENTICITY_OPT_OUT_DESCRIPTION_DISABLED',
         defaultMessage:
-            'Device authenticity check is turned off. Trezor Suite won’t verify your device. A fake or tampered device could connect without warning. We recommend turning it on.',
+            'Device authenticity check is turned off. PHYLAX Suite won’t verify your device. A fake or tampered device could connect without warning. We recommend turning it on.',
     },
     TR_NOT_SUPPORTED_ON_THIS_DEVICE: {
         id: 'TR_NOT_SUPPORTED_ON_THIS_DEVICE',
@@ -8896,7 +8895,7 @@ export const messages = defineMessages({
     TR_DEVICE_AUTHENTICITY_OPT_OUT_MODAL_DESCRIPTION_1: {
         id: 'TR_DEVICE_AUTHENTICITY_OPT_OUT_MODAL_DESCRIPTION_1',
         defaultMessage:
-            "Only turn off the device authenticity check if you're fully aware of what you're doing and have clear reasons for doing so. If you're uncertain, contact Trezor Support for assistance.",
+            "Only turn off the device authenticity check if you're fully aware of what you're doing and have clear reasons for doing so. If you're uncertain, contact support for assistance.",
     },
     TR_DEVICE_AUTHENTICITY_OPT_OUT_MODAL_DESCRIPTION_2: {
         id: 'TR_DEVICE_AUTHENTICITY_OPT_OUT_MODAL_DESCRIPTION_2',
@@ -8906,7 +8905,7 @@ export const messages = defineMessages({
     TR_DEVICE_AUTHENTICITY_OPT_OUT_MODAL_DESCRIPTION_3: {
         id: 'TR_DEVICE_AUTHENTICITY_OPT_OUT_MODAL_DESCRIPTION_3',
         defaultMessage:
-            'Trezor Support will never ask you to turn off the device authenticity check. This feature has been designed to ensure your security.',
+            'support will never ask you to turn off the device authenticity check. This feature has been designed to ensure your security.',
     },
     TR_DEVICE_FIRMWARE_REVISION_CHECK_TITLE: {
         id: 'TR_DEVICE_FIRMWARE_REVISION_CHECK_TITLE',
@@ -8919,12 +8918,12 @@ export const messages = defineMessages({
     TR_DEVICE_FIRMWARE_REVISION_CHECK_DESCRIPTION: {
         id: 'TR_DEVICE_FIRMWARE_REVISION_CHECK_DESCRIPTION',
         defaultMessage:
-            'Checks that your Trezor is using genuine Trezor firmware before you use it in Trezor Suite.',
+            'Checks that your device is using genuine Trezor firmware before you use it in PHYLAX Suite.',
     },
     TR_DEVICE_FIRMWARE_REVISION_CHECK_DESCRIPTION_DISABLED: {
         id: 'TR_DEVICE_FIRMWARE_REVISION_CHECK_DESCRIPTION_DISABLED',
         defaultMessage:
-            'Firmware authenticity check is turned off. Trezor Suite won’t verify your firmware. Modified or unofficial firmware could run without warning. We recommend turning this check on.',
+            'Firmware authenticity check is turned off. PHYLAX Suite won’t verify your firmware. Modified or unofficial firmware could run without warning. We recommend turning this check on.',
     },
     TR_DEVICE_FIRMWARE_REVISION_CHECK_BUTTON: {
         id: 'TR_DEVICE_FIRMWARE_REVISION_CHECK_BUTTON',
@@ -8945,21 +8944,21 @@ export const messages = defineMessages({
     TR_DEVICE_FIRMWARE_REVISION_CHECK_MODAL_DESCRIPTION_1: {
         id: 'TR_DEVICE_FIRMWARE_REVISION_CHECK_MODAL_DESCRIPTION_1',
         defaultMessage:
-            'Turn off firmware authenticity check only if you fully understand the risks and have a valid reason. If unsure, contact Trezor Support for help.',
+            'Turn off firmware authenticity check only if you fully understand the risks and have a valid reason. If unsure, contact support for help.',
     },
     TR_DEVICE_FIRMWARE_REVISION_CHECK_MODAL_DESCRIPTION_2: {
         id: 'TR_DEVICE_FIRMWARE_REVISION_CHECK_MODAL_DESCRIPTION_2',
         defaultMessage:
-            'Only continue if your Trezor has successfully passed this check before. Using an unverified device could result in the loss of your funds.',
+            'Only continue if your device has successfully passed this check before. Using an unverified device could result in the loss of your funds.',
     },
     TR_DEVICE_FIRMWARE_REVISION_CHECK_MODAL_DESCRIPTION_3: {
         id: 'TR_DEVICE_FIRMWARE_REVISION_CHECK_MODAL_DESCRIPTION_3',
         defaultMessage:
-            'Trezor Support will never ask you to turn off the firmware authenticity check. This feature is designed to protect your security.',
+            'support will never ask you to turn off the firmware authenticity check. This feature is designed to protect your security.',
     },
     TR_FIRMWARE_REVISION_CHECK_FAILED: {
         id: 'TR_FIRMWARE_REVISION_CHECK_FAILED',
-        defaultMessage: 'Firmware authenticity check failed. Your Trezor may be counterfeit.',
+        defaultMessage: 'Firmware authenticity check failed. Your device may be counterfeit.',
     },
     TR_DEVICE_FIRMWARE_REVISION_CHECK_UNABLE_TO_PERFORM: {
         id: 'TR_DEVICE_FIRMWARE_REVISION_CHECK_UNABLE_TO_PERFORM',
@@ -8972,21 +8971,21 @@ export const messages = defineMessages({
     },
     TR_DEVICE_FIRMWARE_HASH_CHECK_HASH_MISMATCH: {
         id: 'TR_DEVICE_FIRMWARE_HASH_CHECK_HASH_MISMATCH',
-        defaultMessage: 'Your device firmware hash check failed. Your Trezor might be counterfeit.',
+        defaultMessage: 'Your device firmware hash check failed. Your device might be counterfeit.',
     },
     TR_DEVICE_FIRMWARE_HASH_TAKES_TOO_LONG: {
         id: 'TR_DEVICE_FIRMWARE_HASH_TAKES_TOO_LONG',
         defaultMessage:
-            'Your device firmware hash check has timed out. Your Trezor might be counterfeit.',
+            'Your device firmware hash check has timed out. Your device might be counterfeit.',
     },
     TR_DEVICE_FIRMWARE_HASH_CHECK_OTHER_ERROR: {
         id: 'TR_DEVICE_FIRMWARE_HASH_CHECK_OTHER_ERROR',
         defaultMessage:
-            "Failed to verify device. Reconnect your Trezor and try again. Don't send any funds until the issue is resolved. If the issue persists, contact Trezor Support.",
+            "Failed to verify device. Reconnect your device and try again. Don't send any funds until the issue is resolved. If the issue persists, contact support.",
     },
     TR_DEVICE_FIRMWARE_HASH_CHECK_OTHER_ERROR_AGAIN: {
         id: 'TR_DEVICE_FIRMWARE_HASH_CHECK_OTHER_ERROR_AGAIN',
-        defaultMessage: 'Verification failed multiple times. Your Trezor might not be genuine.',
+        defaultMessage: 'Verification failed multiple times. Your device might not be genuine.',
     },
     TR_FIRMWARE_INSTALLATION_PROGRESS_CHECK_HEADING: {
         id: 'TR_FIRMWARE_INSTALLATION_PROGRESS_CHECK_HEADING',
@@ -9020,15 +9019,15 @@ export const messages = defineMessages({
     },
     TR_STILL_DONT_SEE_YOUR_TREZOR: {
         id: 'TR_STILL_DONT_SEE_YOUR_TREZOR',
-        defaultMessage: "Don't see your Trezor?",
+        defaultMessage: "Don't see your device?",
     },
     TR_TREZOR_NEEDS_TO_BE_IN_PAIRING_MODE: {
         id: 'TR_TREZOR_NEEDS_TO_BE_IN_PAIRING_MODE',
-        defaultMessage: 'Turn on pairing mode on your Trezor',
+        defaultMessage: 'Turn on pairing mode on your device',
     },
     TR_WINDOW_WILL_CLOSE_WHEN_TREZOR_IS_PAIRED: {
         id: 'TR_WINDOW_WILL_CLOSE_WHEN_TREZOR_IS_PAIRED',
-        defaultMessage: 'This window will close automatically once your Trezor is paired.',
+        defaultMessage: 'This window will close automatically once your device is paired.',
     },
     TR_STILL_NOT_WORKING: {
         id: 'TR_STILL_NOT_WORKING',
@@ -9062,7 +9061,7 @@ export const messages = defineMessages({
     },
     TR_TROUBLESHOOTING_TIP_SUITE_DESKTOP_DESCRIPTION: {
         id: 'TR_TROUBLESHOOTING_TIP_SUITE_DESKTOP_DESCRIPTION',
-        defaultMessage: 'Run the  <a>Trezor Suite</a> desktop app',
+        defaultMessage: 'Run the  <a>PHYLAX Suite</a> desktop app',
     },
     TR_TROUBLESHOOTING_TIP_UDEV_INSTALL_DESCRIPTION: {
         id: 'TR_TROUBLESHOOTING_TIP_UDEV_INSTALL_DESCRIPTION',
@@ -9070,7 +9069,7 @@ export const messages = defineMessages({
             'Try installing <a>udev rules</a>. Make sure they are saved to the desktop before opening.',
     },
     TR_TROUBLESHOOTING_CLOSE_TABS: {
-        defaultMessage: 'Close other tabs and windows that might be using your Trezor',
+        defaultMessage: 'Close other tabs and windows that might be using your device',
         id: 'TR_TROUBLESHOOTING_CLOSE_TABS',
     },
     TR_TROUBLESHOOTING_CLOSE_TABS_DESCRIPTION: {
@@ -9079,7 +9078,7 @@ export const messages = defineMessages({
     },
     TR_TROUBLESHOOTING_CLOSE_TABS_DESCRIPTION_DESKTOP: {
         defaultMessage:
-            'After closing other browser tabs and windows, try quitting and reopening Trezor Suite.',
+            'After closing other browser tabs and windows, try quitting and reopening PHYLAX Suite.',
         id: 'TR_TROUBLESHOOTING_CLOSE_TABS_DESCRIPTION_DESKTOP',
     },
     TR_TROUBLESHOOTING_TIP_CABLE_TITLE: {
@@ -9088,7 +9087,7 @@ export const messages = defineMessages({
     },
     TR_TROUBLESHOOTING_TIP_DIFFERENT_COMPUTER_TITLE: {
         id: 'TR_TROUBLESHOOTING_TIP_DIFFERENT_COMPUTER_TITLE',
-        defaultMessage: 'Connect your Trezor to a different mobile device or computer.',
+        defaultMessage: 'Connect your device to a different mobile device or computer.',
     },
     TR_TROUBLESHOOTING_TIP_RESTART_COMPUTER_TITLE: {
         id: 'TR_TROUBLESHOOTING_TIP_RESTART_COMPUTER_TITLE',
@@ -9097,11 +9096,11 @@ export const messages = defineMessages({
     TR_TROUBLESHOOTING_TIP_RESTART_COMPUTER_DESCRIPTION: {
         id: 'TR_TROUBLESHOOTING_TIP_RESTART_COMPUTER_DESCRIPTION',
         defaultMessage:
-            'Restarting your computer may fix the communication issue between Trezor Suite and your Trezor.',
+            'Restarting your computer may fix the communication issue between PHYLAX Suite and your device.',
     },
     TR_SEEDLESS_SETUP_IS_NOT_SUPPORTED_TITLE: {
         id: 'TR_SEEDLESS_SETUP_IS_NOT_SUPPORTED_TITLE',
-        defaultMessage: "Seedless setup isn't supported in Trezor Suite",
+        defaultMessage: "Seedless setup isn't supported in PHYLAX Suite",
     },
     TR_ONBOARDING_CLICK_TO_CONFIRM: {
         id: 'TR_ONBOARDING_CLICK_TO_CONFIRM',
@@ -9111,7 +9110,7 @@ export const messages = defineMessages({
     TR_SEEDLESS_SETUP_IS_NOT_SUPPORTED_DESCRIPTION: {
         id: 'TR_SEEDLESS_SETUP_IS_NOT_SUPPORTED_DESCRIPTION',
         defaultMessage:
-            "Devices set up in seedless mode can't access Trezor Suite to prevent irreversible asset loss, which can occur if the device is used incorrectly.",
+            "Devices set up in seedless mode can't access PHYLAX Suite to prevent irreversible asset loss, which can occur if the device is used incorrectly.",
     },
     TR_FORMAT: {
         id: 'TR_FORMAT',
@@ -9124,7 +9123,7 @@ export const messages = defineMessages({
     },
     TR_BIP_SIG_FORMAT: {
         id: 'TR_BIP_SIG_FORMAT',
-        defaultMessage: 'Trezor',
+        defaultMessage: 'Device',
     },
     TR_COMPATIBILITY_SIG_FORMAT: {
         id: 'TR_COMPATIBILITY_SIG_FORMAT',
@@ -9501,7 +9500,7 @@ export const messages = defineMessages({
     TR_COINJOIN_TILE_3_TITLE: {
         id: 'TR_COINJOIN_TILE_3_TITLE',
         description: 'Tile in coinjoin settings',
-        defaultMessage: 'Protected by your Trezor',
+        defaultMessage: 'Protected by your device',
     },
     TR_COINJOIN_TILE_1_DESCRIPTION: {
         id: 'TR_COINJOIN_TILE_1_DESCRIPTION',
@@ -9808,7 +9807,7 @@ export const messages = defineMessages({
         id: 'TR_LOADING_FACT_0',
         description: '140 symbols max',
         defaultMessage:
-            "Your coinjoin account isn't detected automatically. If you haven't enabled view-only mode on this wallet, you'll need to manually re-add the account after reconnecting your Trezor.",
+            "Your coinjoin account isn't detected automatically. If you haven't enabled view-only mode on this wallet, you'll need to manually re-add the account after reconnecting your device.",
     },
     TR_LOADING_FACT_1: {
         id: 'TR_LOADING_FACT_1',
@@ -9820,12 +9819,12 @@ export const messages = defineMessages({
         id: 'TR_LOADING_FACT_2',
         description: '140 symbols max',
         defaultMessage:
-            "Your coinjoin account isn't detected automatically. If you haven't enabled view-only mode on this wallet, you'll need to manually re-add the account after reconnecting your Trezor.",
+            "Your coinjoin account isn't detected automatically. If you haven't enabled view-only mode on this wallet, you'll need to manually re-add the account after reconnecting your device.",
     },
     TR_LOADING_FACT_3: {
         id: 'TR_LOADING_FACT_3',
         defaultMessage:
-            "Trezor Suite won't remember your coinjoin account in order to protect your privacy, unless you explicitly choose to remember the wallet.",
+            "PHYLAX Suite won't remember your coinjoin account in order to protect your privacy, unless you explicitly choose to remember the wallet.",
     },
     TR_LOADING_FACT_4: {
         id: 'TR_LOADING_FACT_4',
@@ -9963,7 +9962,7 @@ export const messages = defineMessages({
     TR_BIO_AUTH_LOCKED_HEADING: {
         id: 'TR_BIO_AUTH_LOCKED_HEADING',
         description: 'Heading of the modal saying that bio auth is not available',
-        defaultMessage: 'Trezor Suite is locked',
+        defaultMessage: 'PHYLAX Suite is locked',
     },
     TR_BIO_AUTH_LOCKED_TEXT_MAC: {
         id: 'TR_BIO_AUTH_LOCKED_TEXT_MAC',
@@ -10117,7 +10116,7 @@ export const messages = defineMessages({
     },
     TR_COINJOIN_STEP_2_DESCRIPTION: {
         id: 'TR_COINJOIN_STEP_2_DESCRIPTION',
-        defaultMessage: 'Click the button and confirm it on your Trezor.',
+        defaultMessage: 'Click the button and confirm it on your device.',
     },
     TR_COINJOIN_STEP_3_TITLE: {
         id: 'TR_COINJOIN_STEP_3_TITLE',
@@ -10294,7 +10293,7 @@ export const messages = defineMessages({
     },
     TR_DESKTOP_APP_PROMO_HEADING: {
         id: 'TR_DESKTOP_APP_PROMO_HEADING',
-        defaultMessage: 'Get the most out of Trezor Suite',
+        defaultMessage: 'Get the most out of PHYLAX Suite',
     },
     TR_DESKTOP_APP_PROMO_TEXT: {
         id: 'TR_DESKTOP_APP_PROMO_TEXT',
@@ -10302,7 +10301,7 @@ export const messages = defineMessages({
     },
     TR_DESKTOP_APP_PROMO_GET: {
         id: 'TR_DESKTOP_APP_PROMO_GET',
-        defaultMessage: 'Get the Trezor Suite desktop app',
+        defaultMessage: 'Get the PHYLAX Suite desktop app',
     },
     TR_DASHBOARD_REFERRAL_BUTTON: {
         id: 'TR_DASHBOARD_REFERRAL_BUTTON',
@@ -10403,19 +10402,19 @@ export const messages = defineMessages({
     },
     TR_TREZOR_WALLET: {
         id: 'TR_TREZOR_WALLET',
-        defaultMessage: 'Trezor wallet',
+        defaultMessage: 'Hardware wallet',
     },
     TR_TREZOR_DEVICE_TUTORIAL_HEADING: {
         id: 'TR_TREZOR_DEVICE_TUTORIAL_HEADING',
-        defaultMessage: 'Know your Trezor',
+        defaultMessage: 'Know your device',
     },
     TR_TREZOR_DEVICE_TUTORIAL_DESCRIPTION: {
         id: 'TR_TREZOR_DEVICE_TUTORIAL_DESCRIPTION',
-        defaultMessage: 'Learn how to use your Trezor with a short tutorial.',
+        defaultMessage: 'Learn how to use your device with a short tutorial.',
     },
     TR_CONTINUE_ON_TREZOR: {
         id: 'TR_CONTINUE_ON_TREZOR',
-        defaultMessage: 'Continue on Trezor',
+        defaultMessage: 'Continue on device',
     },
     TR_HIDE_BALANCES: {
         id: 'TR_HIDE_BALANCES',
@@ -10444,20 +10443,20 @@ export const messages = defineMessages({
     },
     TR_SEND_ADDRESS_CONFIRMATION_ITEM_2_HEADING: {
         id: 'TR_SEND_ADDRESS_CONFIRMATION_ITEM_2_HEADING',
-        defaultMessage: "Compare the original address with what's on your Trezor.",
+        defaultMessage: "Compare the original address with what's on your device.",
     },
     TR_SEND_ADDRESS_CONFIRMATION_ITEM_3_HEADING: {
         id: 'TR_SEND_ADDRESS_CONFIRMATION_ITEM_3_HEADING',
-        defaultMessage: 'If they match exactly, confirm on your Trezor.',
+        defaultMessage: 'If they match exactly, confirm on your device.',
     },
     TR_SEND_ADDRESS_CONFIRMATION_NOTE: {
         id: 'TR_SEND_ADDRESS_CONFIRMATION_NOTE',
         defaultMessage:
-            'Verify that the original address matches the address on your Trezor exactly.',
+            'Verify that the original address matches the address on your device exactly.',
     },
     TR_RECEIVE_ADDRESS_CONFIRMATION_HEADING: {
         id: 'TR_RECEIVE_ADDRESS_CONFIRMATION_HEADING',
-        defaultMessage: 'Before confirming on Trezor',
+        defaultMessage: 'Before confirming on device',
     },
     TR_RECEIVE_ADDRESS_CONFIRMATION_ITEM_1_HEADING: {
         id: 'TR_RECEIVE_ADDRESS_CONFIRMATION_ITEM_1_HEADING',
@@ -10465,7 +10464,7 @@ export const messages = defineMessages({
     },
     TR_RECEIVE_ADDRESS_CONFIRMATION_ITEM_1_DESCRIPTION: {
         id: 'TR_RECEIVE_ADDRESS_CONFIRMATION_ITEM_1_DESCRIPTION',
-        defaultMessage: 'Copy from Trezor Suite or scan the QR code on your Trezor.',
+        defaultMessage: 'Copy from PHYLAX Suite or scan the QR code on your device.',
     },
     TR_RECEIVE_ADDRESS_CONFIRMATION_ITEM_2_HEADING: {
         id: 'TR_RECEIVE_ADDRESS_CONFIRMATION_ITEM_2_HEADING',
@@ -10478,12 +10477,12 @@ export const messages = defineMessages({
     },
     TR_RECEIVE_ADDRESS_CONFIRMATION_ITEM_3_HEADING: {
         id: 'TR_RECEIVE_ADDRESS_CONFIRMATION_ITEM_3_HEADING',
-        defaultMessage: 'Verify address on your Trezor',
+        defaultMessage: 'Verify address on your device',
     },
     TR_RECEIVE_ADDRESS_CONFIRMATION_ITEM_3_DESCRIPTION: {
         id: 'TR_RECEIVE_ADDRESS_CONFIRMATION_ITEM_3_DESCRIPTION',
         defaultMessage:
-            'Check that the pasted address matches the one on your Trezor. Only then can you safely confirm and use it to receive funds.',
+            'Check that the pasted address matches the one on your device. Only then can you safely confirm and use it to receive funds.',
     },
     TR_DISCOVERY_NEW_COINS: {
         id: 'TR_DISCOVERY_NEW_COINS',
@@ -11863,7 +11862,7 @@ export const messages = defineMessages({
     TR_EARN_DEPOSIT_FULL_CONTROL_INFO: {
         id: 'TR_EARN_DEPOSIT_FULL_CONTROL_INFO',
         defaultMessage:
-            'You keep full control—your Trezor always remains the signer. Withdraw anytime, subject to vault liquidity.',
+            'You keep full control—your device always remains the signer. Withdraw anytime, subject to vault liquidity.',
     },
     TR_EARN_DEPOSIT_PROTOCOL_RISKS_INFO: {
         id: 'TR_EARN_DEPOSIT_PROTOCOL_RISKS_INFO',
@@ -12488,7 +12487,7 @@ export const messages = defineMessages({
     TR_EARN_STAKE_TREZOR_NO_LIABILITY: {
         id: 'TR_EARN_STAKE_TREZOR_NO_LIABILITY',
         defaultMessage:
-            "When you stake, the responsibility for your funds' security transitions from your Trezor device to Everstake.",
+            "When you stake, the responsibility for your funds' security transitions from your device to Everstake.",
     },
     TR_EARN_BY_STAKING_YOU_CAN_EARN_REWARDS: {
         id: 'TR_EARN_BY_STAKING_YOU_CAN_EARN_REWARDS',
@@ -12498,7 +12497,7 @@ export const messages = defineMessages({
     TR_EARN_SECURELY_DELEGATE_TO_EVERSTAKE: {
         id: 'TR_EARN_SECURELY_DELEGATE_TO_EVERSTAKE',
         defaultMessage:
-            'With Trezor Suite, easily and securely delegate your {symbol} voting rights to the Everstake validator node. Earn rewards, rely on a trusted validator, and retain full ownership of your assets.',
+            'With PHYLAX Suite, easily and securely delegate your {symbol} voting rights to the Everstake validator node. Earn rewards, rely on a trusted validator, and retain full ownership of your assets.',
     },
     TR_EARN_CONSENT_TO_STAKING_WITH_PROVIDER: {
         id: 'TR_EARN_CONSENT_TO_STAKING_WITH_PROVIDER',
@@ -12552,7 +12551,7 @@ export const messages = defineMessages({
     TR_SWITCH_DEVICE_EJECT_CONFIRMATION_DESCRIPTION: {
         id: 'TR_SWITCH_DEVICE_EJECT_CONFIRMATION_DESCRIPTION',
         defaultMessage:
-            "Your assets and transactions won't be visible until you reconnect your Trezor.",
+            "Your assets and transactions won't be visible until you reconnect your device.",
     },
     TR_SWITCH_DEVICE_EJECT_CONFIRMATION_PRIMARY_BUTTON: {
         id: 'TR_SWITCH_DEVICE_EJECT_CONFIRMATION_PRIMARY_BUTTON',
@@ -12610,8 +12609,7 @@ export const messages = defineMessages({
     },
     TR_PASSPHRASE_WALLET_CONFIRMATION_STEP2_WARNING: {
         id: 'TR_PASSPHRASE_WALLET_CONFIRMATION_STEP2_WARNING',
-        defaultMessage:
-            'No one can recover your passphrase or wallet backup, not even Trezor Support.',
+        defaultMessage: 'No one can recover your passphrase or wallet backup, not even support.',
     },
     TR_PASSPHRASE_WALLET_CONFIRMATION_STEP2_ITEM1_DESCRIPTION: {
         id: 'TR_PASSPHRASE_WALLET_CONFIRMATION_STEP2_ITEM1_DESCRIPTION',
@@ -12621,11 +12619,11 @@ export const messages = defineMessages({
     TR_PASSPHRASE_WALLET_CONFIRMATION_STEP2_ITEM2_DESCRIPTION: {
         id: 'TR_PASSPHRASE_WALLET_CONFIRMATION_STEP2_ITEM2_DESCRIPTION',
         defaultMessage:
-            'Store it in a secure location, separate from both your wallet backup and Trezor.',
+            'Store it in a secure location, separate from both your wallet backup and device.',
     },
     TR_PASSPHRASE_WALLET_CONFIRMATION_STEP2_ITEM3_DESCRIPTION: {
         id: 'TR_PASSPHRASE_WALLET_CONFIRMATION_STEP2_ITEM3_DESCRIPTION',
-        defaultMessage: 'Never share it with anyone, not even with Trezor Support.',
+        defaultMessage: 'Never share it with anyone, not even with support.',
     },
     TR_PASSPHRASE_WALLET_CONFIRMATION_STEP2_BUTTON: {
         id: 'TR_PASSPHRASE_WALLET_CONFIRMATION_STEP2_BUTTON',
@@ -12638,7 +12636,7 @@ export const messages = defineMessages({
     TR_PASSPHRASE_WALLET_CONFIRMATION_STEP3_WARNING: {
         id: 'TR_PASSPHRASE_WALLET_CONFIRMATION_STEP3_WARNING',
         defaultMessage:
-            'Write it down on paper, store it in a safe place, and keep it away from anything digital. No one can recover it, not even Trezor Support.',
+            'Write it down on paper, store it in a safe place, and keep it away from anything digital. No one can recover it, not even support.',
     },
     TR_PASSPHRASE_CREATE_NEW_HEADING: {
         id: 'TR_PASSPHRASE_CREATE_NEW_HEADING',
@@ -12658,8 +12656,7 @@ export const messages = defineMessages({
     },
     TR_PASSPHRASE_DESCRIPTION_ITEM3: {
         id: 'TR_PASSPHRASE_DESCRIPTION_ITEM3',
-        defaultMessage:
-            'No one can recover your passphrase or wallet backup, not even Trezor Support.',
+        defaultMessage: 'No one can recover your passphrase or wallet backup, not even support.',
     },
     TR_PASSPHRASE_EXAMPLES: {
         id: 'TR_PASSPHRASE_EXAMPLES',
@@ -12698,15 +12695,15 @@ export const messages = defineMessages({
     },
     TR_DEVICE_DISCONNECTED_TOOLTIP_TITLE: {
         id: 'TR_DEVICE_DISCONNECTED_TOOLTIP_TITLE',
-        defaultMessage: 'View balances without your Trezor connected',
+        defaultMessage: 'View balances without your device connected',
     },
     TR_DEVICE_DISCONNECTED_TOOLTIP_ITEM_1: {
         id: 'TR_DEVICE_DISCONNECTED_TOOLTIP_ITEM_1',
-        defaultMessage: 'Enable auto-eject to hide your balances when you disconnect your Trezor.',
+        defaultMessage: 'Enable auto-eject to hide your balances when you disconnect your device.',
     },
     TR_DEVICE_DISCONNECTED_TOOLTIP_ITEM_2: {
         id: 'TR_DEVICE_DISCONNECTED_TOOLTIP_ITEM_2',
-        defaultMessage: "Assets can't be moved or swapped without a connected Trezor.",
+        defaultMessage: "Assets can't be moved or swapped without a connected device.",
     },
     TR_DEVICE_DISCONNECTED_TOOLTIP_BUTTON_PRIMARY: {
         id: 'TR_DEVICE_DISCONNECTED_TOOLTIP_BUTTON_PRIMARY',
@@ -12718,19 +12715,19 @@ export const messages = defineMessages({
     },
     TR_CONNECT_DEVICE_GENERIC_PROMO_TITLE: {
         id: 'TR_CONNECT_DEVICE_GENERIC_PROMO_TITLE',
-        defaultMessage: 'Trezor disconnected',
+        defaultMessage: 'Device disconnected',
     },
     TR_CONNECT_DEVICE_GENERIC_PROMO_DESCRIPTION: {
         id: 'TR_CONNECT_DEVICE_GENERIC_PROMO_DESCRIPTION',
-        defaultMessage: 'Connect your Trezor to continue.',
+        defaultMessage: 'Connect your device to continue.',
     },
     TR_SELECT_TREZOR: {
         id: 'TR_SELECT_TREZOR',
-        defaultMessage: 'Select Trezor',
+        defaultMessage: 'Select device',
     },
     TR_SELECT_TREZOR_TO_CONTINUE: {
         id: 'TR_SELECT_TREZOR_TO_CONTINUE',
-        defaultMessage: 'Select your Trezor to continue.',
+        defaultMessage: 'Select your device to continue.',
     },
     TR_KEEP_RUNNING_IN_BACKGROUND: {
         id: 'TR_KEEP_RUNNING_IN_BACKGROUND',
@@ -12743,35 +12740,35 @@ export const messages = defineMessages({
     TR_BRIDGE_REQUESTED_DESCRIPTION: {
         id: 'TR_BRIDGE_REQUESTED_DESCRIPTION',
         defaultMessage:
-            'Another app requested Trezor Suite to connect with your Trezor. Keep Trezor Suite running in the background and try the action again in the other app.',
+            'Another app requested PHYLAX Suite to connect with your device. Keep PHYLAX Suite running in the background and try the action again in the other app.',
     },
     TR_BRIDGE_GO_TO_WALLET_DESCRIPTION: {
         id: 'TR_BRIDGE_GO_TO_WALLET_DESCRIPTION',
         defaultMessage:
-            "Are you sure? Your device can only be used by one app at a time. If you're currently using another app with your Trezor, finish that session first.",
+            "Are you sure? Your device can only be used by one app at a time. If you're currently using another app with your device, finish that session first.",
     },
     TR_BRIDGE_TIP_AUTOSTART: {
         id: 'TR_BRIDGE_TIP_AUTOSTART',
         defaultMessage:
-            'Tip: Enable Trezor Suite to start automatically and run in the background for smoother interaction with third-party apps.',
+            'Tip: Enable PHYLAX Suite to start automatically and run in the background for smoother interaction with third-party apps.',
     },
     TR_BRIDGE_NEEDED_DESCRIPTION: {
         id: 'TR_BRIDGE_NEEDED_DESCRIPTION',
         defaultMessage:
-            "Your browser isn't supported. For the best experience, download and run the Trezor Suite desktop app in the background, or use a supported Chromium-based browser that is compatible with WebUSB.",
+            "Your browser isn't supported. For the best experience, download and run the PHYLAX Suite desktop app in the background, or use a supported Chromium-based browser that is compatible with WebUSB.",
     },
     TR_OPEN_TREZOR_SUITE_DESKTOP: {
         id: 'TR_OPEN_TREZOR_SUITE_DESKTOP',
-        defaultMessage: 'Open the Trezor Suite desktop app',
+        defaultMessage: 'Open the PHYLAX Suite desktop app',
     },
     TR_AUTO_START: {
         id: 'TR_AUTO_START',
-        defaultMessage: 'Start Trezor Suite automatically',
+        defaultMessage: 'Start PHYLAX Suite automatically',
     },
     TR_AUTO_START_DESCRIPTION: {
         id: 'TR_AUTO_START_DESCRIPTION',
         defaultMessage:
-            'Start Trezor Suite automatically in the background when you log in to your computer.',
+            'Start PHYLAX Suite automatically in the background when you log in to your computer.',
     },
     TR_SHOW_ON_TRAY: {
         id: 'TR_SHOW_ON_TRAY',
@@ -12779,7 +12776,7 @@ export const messages = defineMessages({
     },
     TR_SHOW_ON_TRAY_DESCRIPTION: {
         id: 'TR_SHOW_ON_TRAY_DESCRIPTION',
-        defaultMessage: 'Monitor when Trezor Suite is running in the background.',
+        defaultMessage: 'Monitor when PHYLAX Suite is running in the background.',
     },
     TR_CUSTOM_FEE_WARNING: {
         id: 'TR_CUSTOM_FEE_WARNING',
@@ -12864,16 +12861,16 @@ export const messages = defineMessages({
     },
     TR_SCAN_TREZORS_NEARBY: {
         id: 'TR_SCAN_TREZORS_NEARBY',
-        defaultMessage: 'Scanning for nearby Trezors',
+        defaultMessage: 'Scanning for nearby devices',
     },
     TR_CHECK_CONNECTED_TREZORS: {
         id: 'TR_CHECK_CONNECTED_TREZORS',
-        defaultMessage: 'Checking for connected Trezors...',
+        defaultMessage: 'Checking for connected devices...',
     },
     TR_BLUETOOTH_CANNOT_OPEN_BLUETOOTH_SETTINGS_REMOVE_DEVICE: {
         id: 'TR_BLUETOOTH_CANNOT_OPEN_BLUETOOTH_SETTINGS_REMOVE_DEVICE',
         defaultMessage:
-            "Unable to open Bluetooth settings. Go to your device's settings manually. If your Trezor appears in the Bluetooth list, remove it and then pair it again.",
+            "Unable to open Bluetooth settings. Go to your device's settings manually. If your device appears in the Bluetooth list, remove it and then pair it again.",
     },
     TR_BLUETOOTH_OPEN_BLUETOOTH_SETTINGS: {
         id: 'TR_BLUETOOTH_OPEN_BLUETOOTH_SETTINGS',
@@ -12885,7 +12882,7 @@ export const messages = defineMessages({
     },
     TR_BLUETOOTH_REMOVE_FROM_BLUETOOTH_SETTINGS: {
         id: 'TR_BLUETOOTH_REMOVE_FROM_BLUETOOTH_SETTINGS',
-        defaultMessage: 'Remove your Trezor from Bluetooth settings',
+        defaultMessage: 'Remove your device from Bluetooth settings',
     },
     TR_BLUETOOTH_UNPAIRING: {
         id: 'TR_BLUETOOTH_UNPAIRING',
@@ -12894,7 +12891,7 @@ export const messages = defineMessages({
     TR_BLUETOOTH_REMOVE_FROM_BLUETOOTH_SETTINGS_DESCRIPTION: {
         id: 'TR_BLUETOOTH_REMOVE_FROM_BLUETOOTH_SETTINGS_DESCRIPTION',
         defaultMessage:
-            "To unpair completely, make sure you remove your Trezor from your computer's Bluetooth settings. If not, your Trezor won't appear in Trezor Suite when you try to pair it again.",
+            "To unpair completely, make sure you remove your device from your computer's Bluetooth settings. If not, your device won't appear in PHYLAX Suite when you try to pair it again.",
     },
     TR_BLUETOOTH_VERSION_NOT_COMPATIBLE_LINE1: {
         id: 'TR_BLUETOOTH_VERSION_NOT_COMPATIBLE_LINE1',
@@ -12903,7 +12900,7 @@ export const messages = defineMessages({
     TR_BLUETOOTH_VERSION_NOT_COMPATIBLE_LINE2: {
         id: 'TR_BLUETOOTH_VERSION_NOT_COMPATIBLE_LINE2',
         defaultMessage:
-            "Your computer's Bluetooth version doesn't support Trezor Suite. Use a cable or an adapter that supports Bluetooth 5.0 or higher.",
+            "Your computer's Bluetooth version doesn't support PHYLAX Suite. Use a cable or an adapter that supports Bluetooth 5.0 or higher.",
     },
     TR_BLUETOOTH_TURNED_OFF: {
         id: 'TR_BLUETOOTH_TURNED_OFF',
@@ -12917,27 +12914,27 @@ export const messages = defineMessages({
     },
     TR_BLUETOOTH_DEVICE_TURNED_ON_UNLOCKED_HEADING: {
         id: 'TR_BLUETOOTH_DEVICE_TURNED_ON_UNLOCKED_HEADING',
-        defaultMessage: 'Make sure your Trezor is turned on and unlocked.',
+        defaultMessage: 'Make sure your device is turned on and unlocked.',
         description: 'Displayed as hints of bluetooth connection in connect modal',
     },
     TR_BLUETOOTH_MANUAL_PAIR_DEVICE_GUIDE_HEADING: {
         id: 'TR_BLUETOOTH_MANUAL_PAIR_DEVICE_GUIDE_HEADING',
-        defaultMessage: 'Manually pair your Trezor',
+        defaultMessage: 'Manually pair your device',
         description: 'Displayed as hints of bluetooth connection in connect modal',
     },
     TR_BLUETOOTH_MANUAL_PAIR_DEVICE_GUIDE_DESCRIPTION: {
         id: 'TR_BLUETOOTH_MANUAL_PAIR_DEVICE_GUIDE_DESCRIPTION',
-        defaultMessage: "Go to your Trezor's Menu > Pair & Connect > Pair new device",
+        defaultMessage: "Go to your device's Menu > Pair & Connect > Pair new device",
         description: 'Displayed as hints of bluetooth connection in connect modal',
     },
     TR_BLUETOOTH_REQUIRE_MANUAL_PAIRING: {
         id: 'TR_BLUETOOTH_REQUIRE_MANUAL_PAIRING',
-        defaultMessage: 'Your Trezor needs to be paired manually',
+        defaultMessage: 'Your device needs to be paired manually',
     },
     TR_BLUETOOTH_REQUIRE_MANUAL_PAIRING_TEXT: {
         id: 'TR_BLUETOOTH_REQUIRE_MANUAL_PAIRING_TEXT',
         defaultMessage:
-            "Your system doesn't support automatic pairing in Trezor Suite. To connect, open your Bluetooth settings and pair your Trezor manually.",
+            "Your system doesn't support automatic pairing in PHYLAX Suite. To connect, open your Bluetooth settings and pair your device manually.",
     },
     TR_DONE: {
         id: 'TR_DONE',
@@ -13042,7 +13039,7 @@ export const messages = defineMessages({
     TR_CONNECT_ADDRESS_CONFIRMATION_DESCRIPTION: {
         id: 'TR_CONNECT_ADDRESS_CONFIRMATION_DESCRIPTION',
         defaultMessage:
-            'Before continuing, verify that the addresses exported to {thirdParty} match exactly with those displayed on your Trezor.',
+            'Before continuing, verify that the addresses exported to {thirdParty} match exactly with those displayed on your device.',
     },
     TR_ADDRESSES: {
         id: 'TR_ADDRESSES',
@@ -13110,28 +13107,28 @@ export const messages = defineMessages({
     },
     TR_NO_CONNECTED_APPS_DESCRIPTION: {
         id: 'TR_NO_CONNECTED_APPS_DESCRIPTION',
-        defaultMessage: 'Use your Trezor with third-party apps and wallets to manage your assets.',
+        defaultMessage: 'Use your device with third-party apps and wallets to manage your assets.',
     },
     TR_CONNECT_APP_SILENT_MODE: {
         id: 'TR_CONNECT_APP_SILENT_MODE',
-        defaultMessage: 'Keep Trezor Suite hidden',
+        defaultMessage: 'Keep PHYLAX Suite hidden',
     },
     TR_CONNECT_APP_SILENT_MODE_DESCRIPTION: {
         id: 'TR_CONNECT_APP_SILENT_MODE_DESCRIPTION',
         defaultMessage:
-            'Trezor Suite will only open when your action is needed, such as entering your PIN or passphrase.',
+            'PHYLAX Suite will only open when your action is needed, such as entering your PIN or passphrase.',
     },
     TR_PERMISSION_READ_ADDRESS: {
         id: 'TR_PERMISSION_READ_ADDRESS',
-        defaultMessage: 'Read an address derived on your Trezor',
+        defaultMessage: 'Read an address derived on your device',
     },
     TR_PERMISSION_READ_XPUB: {
         id: 'TR_PERMISSION_READ_XPUB',
-        defaultMessage: 'Read an extended public key from your Trezor',
+        defaultMessage: 'Read an extended public key from your device',
     },
     TR_PERMISSION_READ_ACCOUNT_INFO: {
         id: 'TR_PERMISSION_READ_ACCOUNT_INFO',
-        defaultMessage: 'Read account info (balances, transactions) from your Trezor',
+        defaultMessage: 'Read account info (balances, transactions) from your device',
     },
     TR_PERMISSION_READ_FEATURES: {
         id: 'TR_PERMISSION_READ_FEATURES',
@@ -13139,15 +13136,15 @@ export const messages = defineMessages({
     },
     TR_PERMISSION_SIGN: {
         id: 'TR_PERMISSION_SIGN',
-        defaultMessage: 'Allow transaction and data signing on Trezor',
+        defaultMessage: 'Allow transaction and data signing on device',
     },
     TR_PERMISSION_SIGN_MESSAGE: {
         id: 'TR_PERMISSION_SIGN_MESSAGE',
-        defaultMessage: 'Allow message signing on Trezor',
+        defaultMessage: 'Allow message signing on device',
     },
     TR_PERMISSION_VERIFY_MESSAGE: {
         id: 'TR_PERMISSION_VERIFY_MESSAGE',
-        defaultMessage: 'Display a signed message on Trezor for verification',
+        defaultMessage: 'Display a signed message on device for verification',
     },
     TR_PERMISSION_MANAGEMENT: {
         id: 'TR_PERMISSION_MANAGEMENT',
@@ -13168,7 +13165,7 @@ export const messages = defineMessages({
     TR_GRANT_PERMISSIONS_DESCRIPTION: {
         id: 'TR_GRANT_PERMISSIONS_DESCRIPTION',
         defaultMessage:
-            'This app wants to connect with Trezor Suite and needs the following permissions.',
+            'This app wants to connect with PHYLAX Suite and needs the following permissions.',
     },
     TR_PERMISSIONS: {
         id: 'TR_PERMISSIONS',
@@ -13195,7 +13192,7 @@ export const messages = defineMessages({
     TR_STANDALONE_BRIDGE_DEPRECATED_DESCRIPTION: {
         id: 'TR_STANDALONE_BRIDGE_DEPRECATED_DESCRIPTION',
         defaultMessage:
-            'We recommend <a>uninstalling</a> Trezor Bridge as described in this article. Keeping it installed may cause issues with your Trezor in future releases.',
+            'We recommend <a>uninstalling</a> Trezor Bridge as described in this article. Keeping it installed may cause issues with your device in future releases.',
     },
     TR_REQUESTED_NETWORKS: {
         id: 'TR_REQUESTED_NETWORKS',
@@ -13215,12 +13212,12 @@ export const messages = defineMessages({
     },
     TR_RUN_IN_BACKGROUND_TITLE: {
         id: 'TR_RUN_IN_BACKGROUND_TITLE',
-        defaultMessage: 'Run Trezor Suite in the background',
+        defaultMessage: 'Run PHYLAX Suite in the background',
     },
     TR_RUN_IN_BACKGROUND_DESCRIPTION: {
         id: 'TR_RUN_IN_BACKGROUND_DESCRIPTION',
         defaultMessage:
-            'Keep Trezor Suite running in the background for a better experience—this enables auto-launch when your Trezor is connected and seamless connection with third-party wallets.',
+            'Keep PHYLAX Suite running in the background for a better experience—this enables auto-launch when your device is connected and seamless connection with third-party wallets.',
     },
     TR_RUN_IN_BACKGROUND: {
         id: 'TR_RUN_IN_BACKGROUND',
@@ -13256,7 +13253,7 @@ export const messages = defineMessages({
     },
     TR_TURN_ON_SECURE_SYNC_ONLY_AUTHORIZED_DEVICES: {
         id: 'TR_TURN_ON_SECURE_SYNC_ONLY_AUTHORIZED_DEVICES',
-        defaultMessage: 'Only devices you approve using your Trezor can access your labels.',
+        defaultMessage: 'Only devices you approve using your device can access your labels.',
     },
     TR_TURN_ON_SECURE_SYNC_MIGRATION: {
         id: 'TR_TURN_ON_SECURE_SYNC_MIGRATION',
@@ -13280,11 +13277,11 @@ export const messages = defineMessages({
     },
     TR_SUITE_SYNC_ERROR_DEVICE_CANCELLED: {
         id: 'TR_SUITE_SYNC_ERROR_DEVICE_CANCELLED',
-        defaultMessage: 'Suite Sync activation was canceled on your Trezor.',
+        defaultMessage: 'Suite Sync activation was canceled on your device.',
     },
     TR_SUITE_SYNC_ERROR_DEVICE_ERROR: {
         id: 'TR_SUITE_SYNC_ERROR_DEVICE_ERROR',
-        defaultMessage: 'Failed to communicate with your Trezor.',
+        defaultMessage: 'Failed to communicate with your device.',
     },
     TR_SUITE_SYNC_ERROR_UPDATE_FAILED: {
         id: 'TR_SUITE_SYNC_ERROR_UPDATE_FAILED',
@@ -13477,7 +13474,7 @@ export const messages = defineMessages({
     TR_CONNECT_SELECT_ACCOUNT_DESCRIPTION: {
         id: 'TR_CONNECT_SELECT_ACCOUNT_DESCRIPTION',
         defaultMessage:
-            'Only the accounts you select are shared. Verify an address on your Trezor to confirm it before connecting.',
+            'Only the accounts you select are shared. Verify an address on your device to confirm it before connecting.',
     },
     TR_CONNECT_SELECT_ACCOUNT_PICK_ACCOUNT_DESCRIPTION: {
         id: 'TR_CONNECT_SELECT_ACCOUNT_PICK_ACCOUNT_DESCRIPTION',
@@ -13506,7 +13503,7 @@ export const messages = defineMessages({
     TR_CONNECT_SELECT_ACCOUNT_EXPORTED_DESCRIPTION: {
         id: 'TR_CONNECT_SELECT_ACCOUNT_EXPORTED_DESCRIPTION',
         defaultMessage:
-            'You can verify the shared addresses on your Trezor to make sure they are correct.',
+            'You can verify the shared addresses on your device to make sure they are correct.',
     },
     TR_DYK_TITLE: {
         id: 'TR_DYK_TITLE',
@@ -13592,7 +13589,7 @@ export const messages = defineMessages({
     },
     TR_CONFIRM_BLUETOOTH_PAIRING: {
         id: 'TR_CONFIRM_BLUETOOTH_PAIRING',
-        defaultMessage: 'Make sure the pairing code on your Trezor matches.',
+        defaultMessage: 'Make sure the pairing code on your device matches.',
     },
     TR_FIND_PLACEHOLDER: {
         id: 'TR_FIND_PLACEHOLDER',
@@ -13642,7 +13639,7 @@ export const messages = defineMessages({
     TR_LOCAL_NETWORK_ACCESS_PERMISSION_WARNING: {
         id: 'TR_LOCAL_NETWORK_ACCESS_PERMISSION_WARNING',
         defaultMessage:
-            'To use all features of Trezor Suite for web, enable local network access in your browser settings.',
+            'To use all features of PHYLAX Suite for web, enable local network access in your browser settings.',
     },
     TR_REINSTALL: {
         id: 'TR_REINSTALL',
@@ -13702,7 +13699,7 @@ export const messages = defineMessages({
     },
     TR_OUTSIDE_STAKING_CARD_TITLE: {
         id: 'TR_OUTSIDE_STAKING_CARD_TITLE',
-        defaultMessage: "You're staking outside of Trezor Suite.",
+        defaultMessage: "You're staking outside of PHYLAX Suite.",
     },
     TR_OUTSIDE_STAKING_CARD_TEXT: {
         id: 'TR_OUTSIDE_STAKING_CARD_TEXT',
@@ -13738,6 +13735,6 @@ export const messages = defineMessages({
     },
     KILLSWITCH_SCREEN_DEFAULT_CONTENT: {
         id: 'KILLSWITCH_SCREEN_DEFAULT_CONTENT',
-        defaultMessage: 'Update to continue using Trezor Suite. Your funds are secure.',
+        defaultMessage: 'Update to continue using PHYLAX Suite. Your funds are secure.',
     },
 } as const);
