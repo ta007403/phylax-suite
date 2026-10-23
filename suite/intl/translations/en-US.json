@@ -3072,7 +3072,7 @@
   "TR_UP_TO_DAYS": "~{count, plural, one {# day} other {# days}}",
   "TR_URL_IN_TOKEN": "Never visit URLs in token names or symbols; they're usually scams.",
   "TR_USED_TREZOR_BEFORE": "Have you used this device before?",
-  "TR_USE_CHAT": "Click below and use the <b>Chat</b> option on the support page.",
+  "TR_USE_CHAT": "Please contact support.",
   "TR_USE_DEFAULT_BACKENDS": "Use default backends",
   "TR_USE_HERE": "Use here",
   "TR_UTXO_LONG_BANNED_IN_COINJOIN": "Rejected by coordinator",

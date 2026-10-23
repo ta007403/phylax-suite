@@ -8772,7 +8772,7 @@ export const messages = defineMessages({
     },
     TR_USE_CHAT: {
         id: 'TR_USE_CHAT',
-        defaultMessage: 'Click below and use the <b>Chat</b> option on the support page.',
+        defaultMessage: 'Please contact support.',
     },
     TR_CONFIRM_PAIRING_TREZOR: {
         id: 'TR_CONFIRM_PAIRING_TREZOR',
