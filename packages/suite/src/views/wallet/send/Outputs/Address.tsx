@@ -55,6 +55,7 @@ import { capitalizeFirstLetter } from '@trezor/utils';
 import { AccountLabelForOwnAddress } from 'src/components/suite/labeling/AccountLabelForOwnAddress';
 import { InputError } from 'src/components/wallet';
 import { type InputErrorProps } from 'src/components/wallet/InputError';
+import { PHYLAX_ARE_EXTRA_SETTINGS_SHOWN } from 'src/constants/suite/phylax';
 import { useSelector } from 'src/hooks/suite';
 import { useSendFormContext } from 'src/hooks/wallet';
 import { useReportEnsResolutionToAnalytics } from 'src/hooks/wallet/useReportEnsResolutionToAnalytics';
@@ -129,7 +130,9 @@ export const Address = ({ output, outputId, outputsCount }: AddressProps) => {
             : null,
     );
 
-    const shouldShowLabelAction = suiteSyncInteraction === null || !!device?.connected;
+    // PHYLAX Blocks (fork): no labeling
+    const shouldShowLabelAction =
+        PHYLAX_ARE_EXTRA_SETTINGS_SHOWN && (suiteSyncInteraction === null || !!device?.connected);
     const queryClient = useQueryClient();
     const {
         mode: namedAddressMode,

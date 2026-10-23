@@ -31,6 +31,7 @@ import { injectDispatch, returnStableArrayIfEmpty } from '@trezor/redux-utils';
 
 import { BaseCurrencyValue, FormattedCryptoAmount } from 'src/components/suite';
 import { TransactionTimestamp, UtxoAnonymity } from 'src/components/wallet';
+import { PHYLAX_ARE_EXTRA_SETTINGS_SHOWN } from 'src/constants/suite/phylax';
 import { useSelector } from 'src/hooks/suite';
 import { useSendFormContext } from 'src/hooks/wallet';
 import { useCoinjoinUnavailableUtxos } from 'src/hooks/wallet/form/useCoinjoinUnavailableUtxos';
@@ -259,32 +260,35 @@ export const UtxoSelection = ({ transaction, utxo }: UtxoSelectionProps) => {
                                     <Translation id="TR_DETAIL" />
                                 </TextButton>
                             )}
-                            <Labeling
-                                deviceStaticSessionId={account.deviceState}
-                                displayValue={<Translation id="TR_LABELING_ADD_LABEL" />}
-                                payload={{
-                                    type: 'outputLabel',
-                                    entityKey: account.key,
-                                    txid: utxo.txid,
-                                    outputIndex: `${utxo.vout}`,
-                                    defaultValue: `${utxo.txid}-${utxo.vout}`,
-                                    networkSymbol: account.symbol,
-                                    accountDescriptor: account.descriptor,
-                                }}
-                                gap={6}
-                                leftAddon={
-                                    <Icon
-                                        as={outputLabel ? TagFilledIcon : TagIcon}
-                                        intent="neutral"
-                                        priority="secondary"
-                                        size={12}
-                                    />
-                                }
-                                placeholder={translationString('TR_LABELING_OUTPUT_LABEL')}
-                                maxWidth={250}
-                            >
-                                {outputLabel}
-                            </Labeling>
+                            {/* PHYLAX Blocks (fork): no labeling */}
+                            {PHYLAX_ARE_EXTRA_SETTINGS_SHOWN && (
+                                <Labeling
+                                    deviceStaticSessionId={account.deviceState}
+                                    displayValue={<Translation id="TR_LABELING_ADD_LABEL" />}
+                                    payload={{
+                                        type: 'outputLabel',
+                                        entityKey: account.key,
+                                        txid: utxo.txid,
+                                        outputIndex: `${utxo.vout}`,
+                                        defaultValue: `${utxo.txid}-${utxo.vout}`,
+                                        networkSymbol: account.symbol,
+                                        accountDescriptor: account.descriptor,
+                                    }}
+                                    gap={6}
+                                    leftAddon={
+                                        <Icon
+                                            as={outputLabel ? TagFilledIcon : TagIcon}
+                                            intent="neutral"
+                                            priority="secondary"
+                                            size={12}
+                                        />
+                                    }
+                                    placeholder={translationString('TR_LABELING_OUTPUT_LABEL')}
+                                    maxWidth={250}
+                                >
+                                    {outputLabel}
+                                </Labeling>
+                            )}
                         </InfoSegments>
                         {shallDisplayBaseCurrency && (
                             <Text
