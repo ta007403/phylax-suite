@@ -59,9 +59,10 @@ Suite has no signet; signet coins do not show.
 
 Open items, newest first. Remind the owner of these at the start of the next session.
 
-| Added      | Item                                                                                                                                               | Status                    |
-| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
-| 2026-11-03 | **Cannot eject the wallet** in PHYLAX Suite.                                                                                                       | To investigate (reported) |
-| 2026-11-03 | **Cannot connect a wallet** with the button in the upper right corner.                                                                             | To investigate (reported) |
-| 2026-11-03 | A key block plugged into the PC directly shows "Firmware authenticity check failed": recognise it as "PHYLAX key block" and skip the Trezor check. | Waiting: after RS485 test |
-| 2026-11-03 | Device picture on the dashboard still shows "TREZOR"; yellow PHYLAX banner still mentions Trezor firmware authenticity checks.                     | Waiting for a decision    |
+| Added      | Item                                                                                                                                                                   | Status                    |
+| ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
+| 2026-11-03 | First time the key block and main block were connected together, PHYLAX Suite said the **firmware is compromised**. Note which block was on USB and the exact message. | To investigate (reported) |
+| 2026-11-03 | **Cannot eject the wallet** in PHYLAX Suite.                                                                                                                           | To investigate (reported) |
+| 2026-11-03 | **Cannot connect a wallet** with the button in the upper right corner.                                                                                                 | To investigate (reported) |
+| 2026-11-03 | A key block plugged into the PC directly shows "Firmware authenticity check failed": recognise it as "PHYLAX key block" and skip the Trezor check.                     | Waiting: after RS485 test |
+| 2026-11-03 | Device picture on the dashboard still shows "TREZOR"; yellow PHYLAX banner still mentions Trezor firmware authenticity checks.                                         | Waiting for a decision    |
