@@ -1,6 +1,11 @@
 import type { PROTO } from '@trezor/connect';
 
-import { getPhylaxAddress, getPhylaxDescriptor } from './phylaxWallet';
+import {
+    getPhylaxAddress,
+    getPhylaxAddressPath,
+    getPhylaxDescriptor,
+    getPhylaxMultisig,
+} from './phylaxWallet';
 
 const node = (fingerprint: number, chainCode: string, publicKey: string): PROTO.HDNodeType => ({
     depth: 4,
@@ -83,5 +88,35 @@ describe('PHYLAX wallet', () => {
         expect(getPhylaxAddress(WALLET, 'mainnet', 1, 0)).toBe(
             'bc1qzpyv5fzxelxa2m73p3vpsk5rrlaqms7yc3kcat4pe5ad422cjnjsk8sge5',
         );
+    });
+
+    // test_receive.py: the main block shows bc1qy0pk... and tb1qepjx... for exactly these requests
+    it('builds the GetAddress path and multisig the main block checks', () => {
+        expect(getPhylaxAddressPath('mainnet', 0, 0)).toBe("m/48'/0'/0'/2'/0/0");
+        expect(getPhylaxAddressPath('testnet', 0, 7)).toBe("m/48'/1'/0'/2'/0/7");
+
+        const multisig = getPhylaxMultisig(WALLET, 'testnet', 0, 1);
+        expect(multisig.m).toBe(2);
+        expect(multisig.signatures).toEqual(['', '']);
+        // sorted on the device (sortedmulti), whatever order the keys are saved in
+        expect(multisig.pubkeys_order).toBe(1);
+        expect(multisig.pubkeys).toEqual(
+            WALLET.keys.map(key => ({ node: key.testnet, address_n: [0, 1] })),
+        );
+        expect(getPhylaxMultisig(WALLET, 'mainnet', 0, 0).pubkeys.map(key => key.node)).toEqual(
+            WALLET.keys.map(key => key.mainnet),
+        );
+
+        // as decoded from the main block: optional fields are null, and must not be sent back
+        const decoded: PROTO.PhylaxWallet = {
+            ...WALLET,
+            keys: WALLET.keys.map(key => ({
+                ...key,
+                mainnet: { ...key.mainnet, private_key: null as unknown as undefined },
+            })),
+        };
+        getPhylaxMultisig(decoded, 'mainnet', 0, 0).pubkeys.forEach(pubkey => {
+            expect(pubkey.node).not.toHaveProperty('private_key');
+        });
     });
 });

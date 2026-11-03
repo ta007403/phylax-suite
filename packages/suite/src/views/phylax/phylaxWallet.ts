@@ -88,3 +88,39 @@ export const getPhylaxAddress = (
 
     return address;
 };
+
+/** BIP32 path of this block's own key for the wallet's address at `chain/index`. */
+export const getPhylaxAddressPath = (network: PhylaxNetwork, chain: PhylaxChain, index: number) =>
+    `m/48'/${COIN_TYPES[network]}'/0'/2'/${chain}/${index}`;
+
+// Only the fields of a public node. A node decoded from the device carries `private_key: null`
+// (Connect turns missing optional fields into null), which cannot be encoded back into a request.
+const getPublicNode = (node: PROTO.HDNodeType): PROTO.HDNodeType => ({
+    depth: node.depth,
+    fingerprint: node.fingerprint,
+    child_num: node.child_num,
+    chain_code: node.chain_code,
+    public_key: node.public_key,
+});
+
+// MultisigPubkeysOrder.LEXICOGRAPHIC: the device sorts the keys itself (sortedmulti, BIP67).
+const PUBKEYS_ORDER_LEXICOGRAPHIC = 1;
+
+/**
+ * The wallet as a multisig for GetAddress / SignTx on the main block: every block's saved
+ * account key, n-of-n, sorted on the device like the descriptor's sortedmulti.
+ */
+export const getPhylaxMultisig = (
+    wallet: PROTO.PhylaxWallet,
+    network: PhylaxNetwork,
+    chain: PhylaxChain,
+    index: number,
+): PROTO.MultisigRedeemScriptType => ({
+    pubkeys: wallet.keys.map(key => ({
+        node: getPublicNode(network === 'mainnet' ? key.mainnet : key.testnet),
+        address_n: [chain, index],
+    })),
+    signatures: wallet.keys.map(() => ''),
+    m: wallet.threshold,
+    pubkeys_order: PUBKEYS_ORDER_LEXICOGRAPHIC,
+});

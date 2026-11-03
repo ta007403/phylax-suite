@@ -1,4 +1,5 @@
-// PHYLAX Blocks (fork): one saved wallet: balance, descriptor (+ QR for Sparrow), rename, delete.
+// PHYLAX Blocks (fork): one saved wallet: balance, receive address (checked on the main block),
+// descriptor (+ QR for Sparrow), rename, delete.
 
 import { useMemo, useState } from 'react';
 
@@ -7,6 +8,7 @@ import TrezorConnect from '@trezor/connect';
 import { copyToClipboard } from '@trezor/dom-utils';
 import { QrCode } from '@trezor/product-components';
 
+import { PhylaxReceive } from './PhylaxReceive';
 import { type PhylaxNetwork, getFingerprintHex, getPhylaxDescriptor } from './phylaxWallet';
 import { usePhylaxBalance } from './usePhylaxBalance';
 import type { PhylaxTarget, PhylaxWalletEntry } from './usePhylaxStack';
@@ -128,6 +130,19 @@ export const PhylaxWalletCard = ({
                         </Text>
                     )}
                 </Row>
+
+                {details && (
+                    <PhylaxReceive
+                        wallet={details}
+                        network={network}
+                        nextIndex={
+                            balance.status === 'loaded' ? balance.nextReceiveIndex : undefined
+                        }
+                        isUsageUnknown={balance.status === 'error'}
+                        runOnDevice={runOnDevice}
+                        isDeviceBusy={isDeviceBusy}
+                    />
+                )}
 
                 <Column gap={4} alignItems="stretch">
                     <Text typographyStyle="body-sm" priority="secondary">

@@ -23,6 +23,8 @@ export type PhylaxBalance =
           // satoshis, including unconfirmed
           balance: bigint;
           usedAddressCount: number;
+          // the first receive address after the last used one
+          nextReceiveIndex: number;
       };
 
 const scanChain = async (
@@ -70,7 +72,7 @@ const scanChain = async (
         });
     }
 
-    return { balance, usedAddressCount };
+    return { balance, usedAddressCount, lastUsedIndex };
 };
 
 export const usePhylaxBalance = (
@@ -94,6 +96,8 @@ export const usePhylaxBalance = (
                         (sum, chain) => sum + chain.usedAddressCount,
                         0,
                     ),
+                    // CHAINS[0] is the receive chain
+                    nextReceiveIndex: (chains[0]?.lastUsedIndex ?? -1) + 1,
                 });
             })
             .catch((error: Error) => {
