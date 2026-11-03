@@ -1,10 +1,10 @@
 # PHYLAX Suite
 
-A fork of Trezor Suite for **PHYLAX Blocks**: snap-together n-of-n multisig built from Trezor One
+A fork of Trezor Suite for **PHYLAX Snap** (formerly PHYLAX Blocks): snap-together n-of-n multisig built from Trezor One
 boards (firmware: [ta007403/phylax-firmware](https://github.com/ta007403/phylax-firmware), branch
 `phylax`). Personal project, not affiliated with Trezor / SatoshiLabs.
 
-Everything added for PHYLAX is marked `PHYLAX Blocks (fork)` in the code.
+Everything added for PHYLAX is marked `PHYLAX Blocks (fork)` in the code (the old product name, kept as a search tag).
 
 ## What it adds
 

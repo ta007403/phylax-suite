@@ -3669,7 +3669,7 @@ export const messages = defineMessages({
         id: 'TR_PASSWORD_MANAGER',
     },
     TR_PHYLAX: {
-        defaultMessage: 'PHYLAX Blocks',
+        defaultMessage: 'PHYLAX Snap',
         description: 'PHYLAX Blocks (fork): name of the page with the block stack and its wallets',
         id: 'TR_PHYLAX',
     },

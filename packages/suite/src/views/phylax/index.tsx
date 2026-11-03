@@ -9,7 +9,7 @@ import { PhylaxPage } from './PhylaxPage';
 // PHYLAX Blocks (fork): the stack of blocks and its saved multisig wallets.
 const PhylaxView = () => {
     useLayout(
-        'PHYLAX Blocks',
+        'PHYLAX Snap',
         <PageHeader>
             <BasicName>
                 <Translation id="TR_PHYLAX" />
