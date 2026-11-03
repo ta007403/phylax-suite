@@ -602,10 +602,13 @@ const PHYLAX_DARK_SHADES: Record<string, string> = {
     'rgba(28,30,32,0.86)': 'rgba(13,13,26,0.86)',
 };
 
+// as plain strings, so any CSS colour can be looked up
+const PALETTE_VALUES = new Set<string>(Object.values(palette));
+
 const phylaxShade = (value: string) => {
     if (PHYLAX_DARK_SHADES[value] !== undefined) return PHYLAX_DARK_SHADES[value];
     // darkGreenAlphaNNN -> orange, globalWhiteAlphaNNN -> PHYLAX white (same alpha)
-    if (/^#[0-9A-F]{8}$/i.test(value) && Object.values(palette).includes(value)) {
+    if (/^#[0-9A-F]{8}$/i.test(value) && PALETTE_VALUES.has(value)) {
         const isGreenAlpha = Object.entries(palette).some(
             ([name, v]) => v === value && name.startsWith('darkGreenAlpha'),
         );

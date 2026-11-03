@@ -1,7 +1,7 @@
 import { type ExperimentalFeature } from '@suite/experimental';
 import { defaultEarnYieldWorkerBaseUrl } from '@suite-common/earn-stablecoin-api';
 
-import { type SuiteSettingsRootState } from './settingsSlice';
+import { type SuiteSettingsRootState, type SuiteSettingsState } from './settingsSlice';
 
 // PHYLAX Blocks (fork): PHYLAX Suite is English only and always dark (PHYLAX
 // colours, packages/theme/src/colors.ts), whatever was saved or the OS uses.
@@ -9,7 +9,9 @@ const PHYLAX_LANGUAGE = 'en-US' as const;
 const PHYLAX_THEME = 'dark' as const;
 
 export const selectSuiteSettings = (state: SuiteSettingsRootState) => state.suiteSettings;
-export const selectLanguage = (_state: SuiteSettingsRootState) => PHYLAX_LANGUAGE;
+// Typed as any locale, so code written for several languages still type-checks.
+export const selectLanguage = (_state: SuiteSettingsRootState): SuiteSettingsState['language'] =>
+    PHYLAX_LANGUAGE;
 export const selectThemeSettings = (state: SuiteSettingsRootState) => state.suiteSettings.theme;
 export const selectTheme = (_state: SuiteSettingsRootState) => PHYLAX_THEME;
 export const selectDebugSettings = (state: SuiteSettingsRootState) => state.suiteSettings.debug;
