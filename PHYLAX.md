@@ -54,3 +54,14 @@ Suite has no signet; signet coins do not show.
   (artifact `phylax-suite-desktop-win`). Enable Actions on the fork first.
 - Web development as upstream: `yarn suite:dev`, plus the bridge in emulator mode for the PHYLAX
   emulators (`node packages/transport-bridge/dist/bin.js udp`).
+
+## Backlog
+
+Open items, newest first. Remind the owner of these at the start of the next session.
+
+| Added      | Item                                                                                                                                               | Status                    |
+| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
+| 2026-11-03 | **Cannot eject the wallet** in PHYLAX Suite.                                                                                                       | To investigate (reported) |
+| 2026-11-03 | **Cannot connect a wallet** with the button in the upper right corner.                                                                             | To investigate (reported) |
+| 2026-11-03 | A key block plugged into the PC directly shows "Firmware authenticity check failed": recognise it as "PHYLAX key block" and skip the Trezor check. | Waiting: after RS485 test |
+| 2026-11-03 | Device picture on the dashboard still shows "TREZOR"; yellow PHYLAX banner still mentions Trezor firmware authenticity checks.                     | Waiting for a decision    |
