@@ -18,8 +18,8 @@ Everything added for PHYLAX is marked `PHYLAX Blocks (fork)` in the code (the ol
   (7700-7708) in `@trezor/protobuf`.
 - **Firmware checks**: connect asks a Trezor One once whether it is a PHYLAX main block
   (`PhylaxGetBlocks`). For such a device the firmware hash and revision checks are reported as
-  `phylax-firmware` (skipped) instead of failed, Suite shows an amber "PHYLAX custom firmware"
-  banner instead of "Device compromised", and no firmware update is offered (it would replace
+  `phylax-firmware` (skipped) instead of failed, Suite shows no "Device compromised" warning
+  (and no banner), and no firmware update is offered (it would replace
   PHYLAX with stock firmware). Every other Trezor is checked exactly as before.
 - **No reporting to Trezor**: Sentry and analytics are switched off in this fork.
 - **Bitcoin only, no Trezor services**: other networks, Buy/Sell/Swap/Earn, Trezor's message system

@@ -33,7 +33,9 @@ export const SecurityCheckLayout = ({
 }: SecurityCheckLayoutProps) => {
     const device = useSelector(selectSelectedDevice);
     const model = getDeviceModel(device?.features?.internal_model);
-    const isDeviceImageRotating = imageMode === 'ROTATE';
+    // PHYLAX Blocks (fork): the Trezor One rotation video shows the Trezor logo; the still picture is
+    // the plain PHYLAX one.
+    const isDeviceImageRotating = imageMode === 'ROTATE' && model !== DeviceModelInternal.T1B1;
     const deviceUnitColor = getDeviceColorVariant(device);
     const image = getLargeModelImagePath(model, deviceUnitColor);
 
