@@ -3,7 +3,7 @@
 
 import { useMemo, useState } from 'react';
 
-import { Badge, Button, Card, Column, H3, Input, Row, Text } from '@trezor/components';
+import { Badge, Button, Card, Column, Divider, H3, Input, Row, Text } from '@trezor/components';
 import TrezorConnect from '@trezor/connect';
 import { copyToClipboard } from '@trezor/dom-utils';
 import { QrCode } from '@trezor/product-components';
@@ -115,38 +115,6 @@ export const PhylaxWalletCard = ({
                     )}
                 </Row>
 
-                <Row gap={8} alignItems="baseline">
-                    <Text typographyStyle="body-sm" priority="secondary">
-                        Balance
-                    </Text>
-                    {balance.status === 'loading' && <Text>Checking the blockchain…</Text>}
-                    {balance.status === 'error' && <Text intent="critical">{balance.error}</Text>}
-                    {balance.status === 'loaded' && (
-                        <Text typographyStyle="body-md-strong" isTabular>
-                            {formatBtc(balance.balance)} {network === 'mainnet' ? 'BTC' : 'tBTC'}
-                        </Text>
-                    )}
-                    {balance.status === 'loaded' && (
-                        <Text typographyStyle="body-sm" priority="secondary">
-                            ({balance.usedAddressCount} used addresses)
-                        </Text>
-                    )}
-                </Row>
-
-                {details && (
-                    <PhylaxReceive
-                        wallet={details}
-                        network={network}
-                        nextIndex={
-                            balance.status === 'loaded' ? balance.nextReceiveIndex : undefined
-                        }
-                        isUsageUnknown={balance.status === 'error'}
-                        mainFingerprint={mainFingerprint}
-                        runOnDevice={runOnDevice}
-                        isDeviceBusy={isDeviceBusy}
-                    />
-                )}
-
                 <Column gap={4} alignItems="stretch">
                     <Text typographyStyle="body-sm" priority="secondary">
                         Descriptor ({network === 'mainnet' ? 'mainnet' : 'testnet'})
@@ -210,6 +178,40 @@ export const PhylaxWalletCard = ({
                     >
                         {action.text}
                     </Text>
+                )}
+
+                <Divider margin={{ top: 4, bottom: 4 }} />
+
+                <Row gap={8} alignItems="baseline">
+                    <Text typographyStyle="body-sm" priority="secondary">
+                        Balance
+                    </Text>
+                    {balance.status === 'loading' && <Text>Checking the blockchain…</Text>}
+                    {balance.status === 'error' && <Text intent="critical">{balance.error}</Text>}
+                    {balance.status === 'loaded' && (
+                        <Text typographyStyle="body-md-strong" isTabular>
+                            {formatBtc(balance.balance)} {network === 'mainnet' ? 'BTC' : 'tBTC'}
+                        </Text>
+                    )}
+                    {balance.status === 'loaded' && (
+                        <Text typographyStyle="body-sm" priority="secondary">
+                            ({balance.usedAddressCount} used addresses)
+                        </Text>
+                    )}
+                </Row>
+
+                {details && (
+                    <PhylaxReceive
+                        wallet={details}
+                        network={network}
+                        nextIndex={
+                            balance.status === 'loaded' ? balance.nextReceiveIndex : undefined
+                        }
+                        isUsageUnknown={balance.status === 'error'}
+                        mainFingerprint={mainFingerprint}
+                        runOnDevice={runOnDevice}
+                        isDeviceBusy={isDeviceBusy}
+                    />
                 )}
             </Column>
         </Card>

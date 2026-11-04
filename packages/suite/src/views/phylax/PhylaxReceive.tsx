@@ -6,11 +6,15 @@
 
 import { useEffect, useState } from 'react';
 
-import { Button, Column, Row, Text } from '@trezor/components';
+import { Address } from '@suite/address';
+import { CoinQrCode } from '@suite/receive';
+import { getNetwork } from '@suite-common/wallet-config';
+import { Box, Button, Column, Grid, Row, Text, useMediaQuery } from '@trezor/components';
 import TrezorConnect from '@trezor/connect';
 import type { PROTO } from '@trezor/connect';
 import { copyToClipboard } from '@trezor/dom-utils';
-import { QrCode } from '@trezor/product-components';
+import { CopyIcon, PlusIcon, ShieldCheckIcon } from '@trezor/icons';
+import { belowBreakpoint, breakpoints } from '@trezor/theme';
 
 import {
     PHYLAX_COIN_SYMBOLS,
@@ -23,6 +27,9 @@ import {
     getPublicKeyId,
 } from './phylaxWallet';
 import type { RunOnDevice } from './usePhylaxStack';
+
+const QR_CODE_SIZE = 200;
+const COMPACT_QR_CODE_SIZE = 148;
 
 type ReceiveState =
     | { status: 'idle' }
@@ -57,6 +64,7 @@ export const PhylaxReceive = ({
     runOnDevice,
     isDeviceBusy,
 }: PhylaxReceiveProps) => {
+    const isBelowTablet = useMediaQuery(belowBreakpoint(breakpoints.tablet));
     const startIndex = isUsageUnknown ? 0 : nextIndex;
     const [index, setIndex] = useState(startIndex);
     const [state, setState] = useState<ReceiveState>({ status: 'idle' });
@@ -170,64 +178,98 @@ export const PhylaxReceive = ({
         setState({ status: 'idle' });
     };
 
+    const isVerified = state.status === 'verified';
+    const qrCodeSize = isBelowTablet ? COMPACT_QR_CODE_SIZE : QR_CODE_SIZE;
+
+    // Laid out like Suite's own receive card (AddressCardDetail): the address in large type on
+    // the left, the QR code with the coin logo on the right. As in Suite, the QR code only
+    // appears once the address was checked on the device; here Copy waits for it too.
     return (
-        <Column gap={8} alignItems="stretch" data-testid="@phylax/receive">
-            <Text typographyStyle="body-sm" priority="secondary">
-                Receive address #{index}
-            </Text>
-            {isUsageUnknown && (
-                <Text typographyStyle="body-sm" intent="warning">
-                    The balance check failed, so this address may have been used before. Prefer a
-                    new address once the balance loads.
-                </Text>
-            )}
-
-            <Text isMonospaced typographyStyle="body-sm" data-testid="@phylax/receive-address">
-                <span style={{ wordBreak: 'break-all' }}>{address}</span>
-            </Text>
-
-            {state.status === 'verified' ? (
-                <>
-                    <Text typographyStyle="body-sm" priority="secondary">
-                        Confirmed on your main block.
-                    </Text>
-                    <div style={{ width: 220 }}>
-                        <QrCode value={address} data-testid="@phylax/receive-qr" />
-                    </div>
-                    <Row gap={8}>
-                        <Button size="small" priority="secondary" onClick={handleCopy}>
-                            {state.isCopied ? 'Copied' : 'Copy address'}
-                        </Button>
-                        <Button size="small" priority="secondary" onClick={handleNext}>
+        <Box data-testid="@phylax/receive">
+            <Grid
+                columns={isBelowTablet ? '1fr' : 'minmax(0, 1fr) auto'}
+                gap={24}
+                alignItems="stretch"
+            >
+                <Column
+                    gap={24}
+                    alignItems="flex-start"
+                    justifyContent="space-between"
+                    minWidth={0}
+                >
+                    <Column gap={8} alignItems="flex-start" minWidth={0}>
+                        <Text typographyStyle="body-md" priority="secondary">
+                            Receive address #{index}
+                        </Text>
+                        <Address
+                            value={address}
+                            isChunked
+                            typographyStyle="headline-md"
+                            data-testid="@phylax/receive-address"
+                        />
+                        {isUsageUnknown && (
+                            <Text typographyStyle="body-sm" intent="warning">
+                                The balance check failed, so this address may have been used before.
+                                Prefer a new address once the balance loads.
+                            </Text>
+                        )}
+                        <Text typographyStyle="body-sm" priority="secondary">
+                            {isVerified
+                                ? 'Confirmed on your main block.'
+                                : 'Before you use it, press Show on main block and check that the main block shows exactly this address. Confirm it there only if it does.'}
+                        </Text>
+                    </Column>
+                    <Row gap={12} flexWrap="wrap" width="100%">
+                        {isVerified ? (
+                            <Button
+                                size="large"
+                                iconLeft={CopyIcon}
+                                onClick={handleCopy}
+                                data-testid="@phylax/receive-copy"
+                            >
+                                {state.isCopied ? 'Copied' : 'Copy address'}
+                            </Button>
+                        ) : (
+                            <Button
+                                size="large"
+                                iconLeft={ShieldCheckIcon}
+                                onClick={handleShow}
+                                isDisabled={isDeviceBusy || state.status === 'waiting'}
+                                isLoading={state.status === 'waiting'}
+                                data-testid="@phylax/receive-show"
+                            >
+                                Show on main block
+                            </Button>
+                        )}
+                        <Button
+                            size="large"
+                            intent="neutral"
+                            priority="secondary"
+                            iconLeft={PlusIcon}
+                            onClick={handleNext}
+                            isDisabled={state.status === 'waiting'}
+                            data-testid="@phylax/receive-next"
+                        >
                             Next address
                         </Button>
                     </Row>
-                </>
-            ) : (
-                <>
-                    <Text typographyStyle="body-sm">
-                        Before you use it, press Show on main block and check that the main block
-                        shows exactly this address. Confirm it there only if it does.
-                    </Text>
-                    <Row gap={8}>
-                        <Button
-                            size="small"
-                            onClick={handleShow}
-                            isDisabled={isDeviceBusy || state.status === 'waiting'}
-                            isLoading={state.status === 'waiting'}
-                            data-testid="@phylax/receive-show"
-                        >
-                            Show on main block
-                        </Button>
-                    </Row>
-                </>
-            )}
-
-            {state.status === 'error' && (
-                <Text intent="critical" data-testid="@phylax/receive-error">
-                    {state.text}
-                </Text>
-            )}
-        </Column>
+                    {state.status === 'error' && (
+                        <Text intent="critical" data-testid="@phylax/receive-error">
+                            {state.text}
+                        </Text>
+                    )}
+                </Column>
+                <Box aspectRatio="1" width={qrCodeSize} maxWidth="100%">
+                    {isVerified && (
+                        <div data-testid="@phylax/receive-qr">
+                            <CoinQrCode
+                                value={address}
+                                symbol={getNetwork(PHYLAX_COIN_SYMBOLS[network]).symbol}
+                            />
+                        </div>
+                    )}
+                </Box>
+            </Grid>
+        </Box>
     );
 };
