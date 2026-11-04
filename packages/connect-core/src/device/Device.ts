@@ -179,6 +179,9 @@ export class Device extends TypedEmitter<DeviceEvents> implements IDevice {
     // undefined until then. Such a device is built from the PHYLAX source, so it can never match
     // an official Trezor build: its authenticity checks are reported as skipped instead of failed.
     private phylax?: boolean;
+    // PHYLAX Blocks (fork): a PHYLAX key block plugged in directly (it answers PhylaxGetBlocks with
+    // "Not a PHYLAX main block"). Its firmware is PHYLAX's too, so the Trezor checks are skipped.
+    private phylaxKey?: boolean;
 
     private readonly uniquePath;
 
@@ -592,7 +595,7 @@ export class Device extends TypedEmitter<DeviceEvents> implements IDevice {
 
         if (!options.skipFirmwareChecks) {
             await this.detectPhylax();
-            if (this.phylax) {
+            if (this.phylax || this.phylaxKey) {
                 this.authenticityChecks = {
                     firmwareHash: { success: false, error: 'phylax-firmware' },
                     firmwareRevision: { success: false, error: 'phylax-firmware' },
@@ -738,6 +741,12 @@ export class Device extends TypedEmitter<DeviceEvents> implements IDevice {
         } catch (error) {
             this.logger.debug('not a PHYLAX main block', error?.message);
             this.phylax = false;
+            // Only PHYLAX firmware knows the message; stock Trezor firmware says "Unknown message".
+            if (error?.message?.includes('Not a PHYLAX main block')) {
+                this.phylaxKey = true;
+                this._firmwareStatus = 'valid';
+                this.updateNameAndColor();
+            }
         }
     }
 
@@ -851,9 +860,10 @@ export class Device extends TypedEmitter<DeviceEvents> implements IDevice {
         if (!version || !versionUtils.isEqual(version, newVersion)) {
             this._unavailableCapabilities = getUnavailableCapabilities(feat, getAllNetworks());
             this._firmwareReleaseConfigInfo = getFirmwareReleaseConfigInfo(feat, firmwareType);
-            this._firmwareStatus = this.phylax
-                ? 'valid'
-                : getFirmwareStatus(feat, this._firmwareReleaseConfigInfo);
+            this._firmwareStatus =
+                this.phylax || this.phylaxKey
+                    ? 'valid'
+                    : getFirmwareStatus(feat, this._firmwareReleaseConfigInfo);
             // Bundled release JSONs are production assets, so only seed `currentRelease`
             // from them on production-like channels. On other channels the
             // channel-appropriate release is fetched from remote immediately after,
@@ -944,7 +954,9 @@ export class Device extends TypedEmitter<DeviceEvents> implements IDevice {
         };
 
         // PHYLAX Blocks (fork): a PHYLAX main block is named after its role, not its board
-        this.name = this.phylax ? 'PHYLAX main block' : deviceInfo.name;
+        this.name = deviceInfo.name;
+        if (this.phylax) this.name = 'PHYLAX main block';
+        if (this.phylaxKey) this.name = 'PHYLAX key block';
 
         if (unitColor) {
             const deviceUnitColor = unitColor.toString();
