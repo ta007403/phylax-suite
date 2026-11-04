@@ -88,8 +88,8 @@ export const PhylaxReceive = ({
                 text:
                     'Safety check failed: in this session the main block derives a different key ' +
                     `(${result.sessionKeyId}) than the one saved in this wallet (${result.savedKeyId}). ` +
-                    'Nothing was shown. Is another Trezor connected? Unplug it and try again. ' +
-                    'If this still appears, do not use this wallet.',
+                    'Nothing was shown. Unplug the main block, plug it back in and try again. ' +
+                    'If this still appears, do not use this wallet and update the main block firmware.',
             });
         } else if (result.address !== address) {
             // Never offer an address the two sides disagree on.
