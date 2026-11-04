@@ -28,6 +28,7 @@ type PhylaxWalletCardProps = {
     entry: PhylaxWalletEntry;
     network: PhylaxNetwork;
     presentFingerprints: number[];
+    mainFingerprint: number | undefined;
     runOnDevice: RunOnDevice;
     isDeviceBusy: boolean;
 };
@@ -42,6 +43,7 @@ export const PhylaxWalletCard = ({
     entry,
     network,
     presentFingerprints,
+    mainFingerprint,
     runOnDevice,
     isDeviceBusy,
 }: PhylaxWalletCardProps) => {
@@ -139,6 +141,7 @@ export const PhylaxWalletCard = ({
                             balance.status === 'loaded' ? balance.nextReceiveIndex : undefined
                         }
                         isUsageUnknown={balance.status === 'error'}
+                        mainFingerprint={mainFingerprint}
                         runOnDevice={runOnDevice}
                         isDeviceBusy={isDeviceBusy}
                     />

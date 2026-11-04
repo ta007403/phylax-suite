@@ -1,10 +1,13 @@
 import type { PROTO } from '@trezor/connect';
 
 import {
+    getPhylaxAccountPath,
     getPhylaxAddress,
     getPhylaxAddressPath,
     getPhylaxDescriptor,
+    getPhylaxKeyNode,
     getPhylaxMultisig,
+    getPublicKeyId,
 } from './phylaxWallet';
 
 const node = (fingerprint: number, chainCode: string, publicKey: string): PROTO.HDNodeType => ({
@@ -118,5 +121,18 @@ describe('PHYLAX wallet', () => {
         getPhylaxMultisig(decoded, 'mainnet', 0, 0).pubkeys.forEach(pubkey => {
             expect(pubkey.node).not.toHaveProperty('private_key');
         });
+    });
+
+    it('finds the key saved for a block, for the session safety check', () => {
+        expect(getPhylaxAccountPath('mainnet')).toBe("m/48'/0'/0'/2'");
+        expect(getPhylaxAccountPath('testnet')).toBe("m/48'/1'/0'/2'");
+        expect(getPhylaxKeyNode(WALLET, 'mainnet', 0x73c5da0a)).toBe(WALLET.keys[1]?.mainnet);
+        expect(getPhylaxKeyNode(WALLET, 'testnet', 0x5c9e228d)).toBe(WALLET.keys[0]?.testnet);
+        expect(getPhylaxKeyNode(WALLET, 'mainnet', 0x12345678)).toBeUndefined();
+        expect(getPhylaxKeyNode(WALLET, 'mainnet', undefined)).toBeUndefined();
+        // HASH160 of the key, first 4 bytes: a short id, not the key
+        const id = getPublicKeyId(WALLET.keys[0]!.mainnet.public_key);
+        expect(id).toMatch(/^[0-9a-f]{8}$/);
+        expect(WALLET.keys[0]!.mainnet.public_key).not.toContain(id);
     });
 });

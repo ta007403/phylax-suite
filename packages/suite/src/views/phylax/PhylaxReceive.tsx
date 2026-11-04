@@ -15,9 +15,12 @@ import { QrCode } from '@trezor/product-components';
 import {
     PHYLAX_COIN_SYMBOLS,
     type PhylaxNetwork,
+    getPhylaxAccountPath,
     getPhylaxAddress,
     getPhylaxAddressPath,
+    getPhylaxKeyNode,
     getPhylaxMultisig,
+    getPublicKeyId,
 } from './phylaxWallet';
 import type { PhylaxTarget } from './usePhylaxStack';
 
@@ -36,15 +39,23 @@ type PhylaxReceiveProps = {
     nextIndex: number | undefined;
     // the balance scan failed: start at #0 without knowing which addresses were used
     isUsageUnknown: boolean;
+    // seed fingerprint of the connected main block (from the stack)
+    mainFingerprint: number | undefined;
     runOnDevice: RunOnDevice;
     isDeviceBusy: boolean;
 };
+
+type ShowResult =
+    | { kind: 'failed'; text: string }
+    | { kind: 'session-mismatch'; sessionKeyId: string; savedKeyId: string }
+    | { kind: 'address'; address: string };
 
 export const PhylaxReceive = ({
     wallet,
     network,
     nextIndex,
     isUsageUnknown,
+    mainFingerprint,
     runOnDevice,
     isDeviceBusy,
 }: PhylaxReceiveProps) => {
@@ -70,21 +81,57 @@ export const PhylaxReceive = ({
 
     const handleShow = async () => {
         setState({ status: 'waiting' });
-        const result = await runOnDevice(target =>
-            TrezorConnect.getAddress({
-                device: { ...target.device, useEmptyPassphrase: true },
+        const savedKey = getPhylaxKeyNode(wallet, network, mainFingerprint);
+        const coin = PHYLAX_COIN_SYMBOLS[network];
+        const result = await runOnDevice(async (target): Promise<ShowResult> => {
+            const device = { ...target.device, useEmptyPassphrase: true };
+            // Safety check first: in this session the main block must derive exactly the key the
+            // wallet saved for it. If not, every address and signature in this session would be
+            // wrong, so nothing is shown.
+            const own = await TrezorConnect.getPublicKey({
+                device,
+                path: getPhylaxAccountPath(network),
+                coin,
+                showOnTrezor: false,
+            });
+            if (!own.success) return { kind: 'failed', text: own.error.message };
+            if (
+                own.payload.publicKey !== savedKey?.public_key ||
+                own.payload.chainCode !== savedKey.chain_code
+            ) {
+                return {
+                    kind: 'session-mismatch',
+                    sessionKeyId: getPublicKeyId(own.payload.publicKey),
+                    savedKeyId: savedKey ? getPublicKeyId(savedKey.public_key) : 'none',
+                };
+            }
+
+            const shown = await TrezorConnect.getAddress({
+                device,
                 path: getPhylaxAddressPath(network, 0, index),
-                coin: PHYLAX_COIN_SYMBOLS[network],
+                coin,
                 multisig: getPhylaxMultisig(wallet, network, 0, index),
                 scriptType: 'SPENDWITNESS',
                 showOnTrezor: true,
-            }),
-        );
+            });
+            if (!shown.success) return { kind: 'failed', text: shown.error.message };
+
+            return { kind: 'address', address: shown.payload.address };
+        });
+
         if (!result) {
             setState({ status: 'error', text: 'The main block is not connected.' });
-        } else if (!result.success) {
-            setState({ status: 'error', text: result.error.message });
-        } else if (result.payload.address !== address) {
+        } else if (result.kind === 'failed') {
+            setState({ status: 'error', text: result.text });
+        } else if (result.kind === 'session-mismatch') {
+            setState({
+                status: 'error',
+                text:
+                    'Safety check failed: in this session the main block derives a different key ' +
+                    `(${result.sessionKeyId}) than the one saved in this wallet (${result.savedKeyId}). ` +
+                    'Nothing was shown. Do not use this wallet; unplug the main block and contact support.',
+            });
+        } else if (result.address !== address) {
             // Never offer an address the two sides disagree on.
             setState({
                 status: 'error',

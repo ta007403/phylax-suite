@@ -3,7 +3,7 @@
 // (m/48'/coin'/0'/2') per block, as returned by PhylaxGetWallet.
 
 import type { PROTO } from '@trezor/connect';
-import { addDescriptorChecksum, bip32, networks, payments } from '@trezor/utxo-lib';
+import { addDescriptorChecksum, bip32, crypto, networks, payments } from '@trezor/utxo-lib';
 import type { BIP32Interface } from '@trezor/utxo-lib';
 
 export type PhylaxNetwork = 'mainnet' | 'testnet';
@@ -124,3 +124,23 @@ export const getPhylaxMultisig = (
     m: wallet.threshold,
     pubkeys_order: PUBKEYS_ORDER_LEXICOGRAPHIC,
 });
+
+/** BIP32 path of a block's account key for the wallet (the xpub saved in the wallet). */
+export const getPhylaxAccountPath = (network: PhylaxNetwork) =>
+    `m/48'/${COIN_TYPES[network]}'/0'/2'`;
+
+/** The account key the wallet saved for the block with this seed fingerprint. */
+export const getPhylaxKeyNode = (
+    wallet: PROTO.PhylaxWallet,
+    network: PhylaxNetwork,
+    fingerprint: number | undefined,
+) => {
+    const key = wallet.keys.find(k => k.fingerprint === fingerprint);
+    if (!key) return undefined;
+
+    return network === 'mainnet' ? key.mainnet : key.testnet;
+};
+
+/** Short id of a public key for messages (first 4 bytes of HASH160), not the key itself. */
+export const getPublicKeyId = (publicKeyHex: string) =>
+    crypto.hash160(Buffer.from(publicKeyHex, 'hex')).subarray(0, 4).toString('hex');

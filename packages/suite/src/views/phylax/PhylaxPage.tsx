@@ -67,6 +67,8 @@ export const PhylaxPage = () => {
         return <Text>Asking the main block…</Text>;
     }
 
+    const mainFingerprint =
+        blocks.find(block => block.address === PHYLAX_MAIN_BLOCK_ADDRESS)?.fingerprint ?? undefined;
     const presentFingerprints = blocks
         .map(block => block.fingerprint)
         .filter((fingerprint): fingerprint is number => typeof fingerprint === 'number');
@@ -99,6 +101,7 @@ export const PhylaxPage = () => {
                     entry={entry}
                     network={network}
                     presentFingerprints={presentFingerprints}
+                    mainFingerprint={mainFingerprint}
                     runOnDevice={runOnDevice}
                     isDeviceBusy={isPaused}
                 />
