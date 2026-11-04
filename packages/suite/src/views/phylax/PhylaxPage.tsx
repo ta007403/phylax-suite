@@ -69,9 +69,14 @@ export const PhylaxPage = () => {
 
     const mainFingerprint =
         blocks.find(block => block.address === PHYLAX_MAIN_BLOCK_ADDRESS)?.fingerprint ?? undefined;
-    const presentFingerprints = blocks
-        .map(block => block.fingerprint)
-        .filter((fingerprint): fingerprint is number => typeof fingerprint === 'number');
+    // Blocks that can sign now, and blocks that are attached but locked (a locked block still
+    // reports the fingerprint of its last unlock).
+    const fingerprintsOf = (list: PROTO.PhylaxBlockInfo[]) =>
+        list
+            .map(block => block.fingerprint)
+            .filter((fingerprint): fingerprint is number => typeof fingerprint === 'number');
+    const presentFingerprints = fingerprintsOf(blocks.filter(block => !block.locked));
+    const lockedFingerprints = fingerprintsOf(blocks.filter(block => block.locked));
 
     return (
         <Column gap={16} alignItems="stretch">
@@ -107,6 +112,7 @@ export const PhylaxPage = () => {
                     entry={entry}
                     network={network}
                     presentFingerprints={presentFingerprints}
+                    lockedFingerprints={lockedFingerprints}
                     mainFingerprint={mainFingerprint}
                     runOnDevice={runOnDevice}
                     isDeviceBusy={isPaused}

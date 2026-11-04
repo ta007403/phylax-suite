@@ -9,6 +9,7 @@ import { copyToClipboard } from '@trezor/dom-utils';
 import { QrCode } from '@trezor/product-components';
 
 import { PhylaxReceive } from './PhylaxReceive';
+import { PhylaxSend } from './PhylaxSend';
 import { type PhylaxNetwork, getFingerprintHex, getPhylaxDescriptor } from './phylaxWallet';
 import { usePhylaxBalance } from './usePhylaxBalance';
 import type { PhylaxTarget, PhylaxWalletEntry, RunOnDevice } from './usePhylaxStack';
@@ -25,7 +26,10 @@ const formatBtc = (satoshis: bigint) => {
 type PhylaxWalletCardProps = {
     entry: PhylaxWalletEntry;
     network: PhylaxNetwork;
+    // blocks that can sign now
     presentFingerprints: number[];
+    // blocks attached but locked
+    lockedFingerprints: number[];
     mainFingerprint: number | undefined;
     runOnDevice: RunOnDevice;
     isDeviceBusy: boolean;
@@ -41,12 +45,14 @@ export const PhylaxWalletCard = ({
     entry,
     network,
     presentFingerprints,
+    lockedFingerprints,
     mainFingerprint,
     runOnDevice,
     isDeviceBusy,
 }: PhylaxWalletCardProps) => {
     const { summary, details } = entry;
-    const balance = usePhylaxBalance(details, network);
+    const [balanceRefresh, setBalanceRefresh] = useState(0);
+    const balance = usePhylaxBalance(details, network, balanceRefresh);
     const [newName, setNewName] = useState('');
     const [isQrVisible, setIsQrVisible] = useState(false);
     const [action, setAction] = useState<ActionState>({ status: 'idle' });
@@ -55,8 +61,14 @@ export const PhylaxWalletCard = ({
         () => (details ? getPhylaxDescriptor(details, network) : undefined),
         [details, network],
     );
-    const missingFingerprints = summary.fingerprints.filter(
-        fingerprint => !presentFingerprints.includes(fingerprint),
+    // The main block counts as ready even when locked: Suite asks for its PIN as usual.
+    const notReady = summary.fingerprints.filter(
+        fingerprint =>
+            fingerprint !== mainFingerprint && !presentFingerprints.includes(fingerprint),
+    );
+    const lockedInWallet = notReady.filter(fingerprint => lockedFingerprints.includes(fingerprint));
+    const missingFingerprints = notReady.filter(
+        fingerprint => !lockedFingerprints.includes(fingerprint),
     );
 
     const runAction = async (
@@ -106,11 +118,15 @@ export const PhylaxWalletCard = ({
                     <Badge intent="neutral">
                         {summary.threshold}-of-{summary.fingerprints.length}
                     </Badge>
-                    {missingFingerprints.length === 0 ? (
-                        <Badge intent="brand">Ready</Badge>
-                    ) : (
+                    {notReady.length === 0 && <Badge intent="brand">Ready</Badge>}
+                    {missingFingerprints.length > 0 && (
                         <Badge intent="warning">
                             Attach key block {missingFingerprints.map(getFingerprintHex).join(', ')}
+                        </Badge>
+                    )}
+                    {lockedInWallet.length > 0 && (
+                        <Badge intent="warning">
+                            Key block {lockedInWallet.map(getFingerprintHex).join(', ')} locked
                         </Badge>
                     )}
                 </Row>
@@ -212,6 +228,25 @@ export const PhylaxWalletCard = ({
                         runOnDevice={runOnDevice}
                         isDeviceBusy={isDeviceBusy}
                     />
+                )}
+
+                {details && balance.status === 'loaded' && (
+                    <>
+                        <Divider margin={{ top: 4, bottom: 4 }} />
+                        <PhylaxSend
+                            wallet={details}
+                            network={network}
+                            utxos={balance.utxos}
+                            nextChangeIndex={balance.nextChangeIndex}
+                            mainFingerprint={mainFingerprint}
+                            missingFingerprints={missingFingerprints}
+                            lockedFingerprints={lockedInWallet}
+                            runOnDevice={runOnDevice}
+                            isDeviceBusy={isDeviceBusy}
+                            // a new scan picks up the spent coins and the new change
+                            onSent={() => setBalanceRefresh(value => value + 1)}
+                        />
+                    </>
                 )}
             </Column>
         </Card>
