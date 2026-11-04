@@ -11,7 +11,7 @@ import { QrCode } from '@trezor/product-components';
 import { PhylaxReceive } from './PhylaxReceive';
 import { type PhylaxNetwork, getFingerprintHex, getPhylaxDescriptor } from './phylaxWallet';
 import { usePhylaxBalance } from './usePhylaxBalance';
-import type { PhylaxTarget, PhylaxWalletEntry } from './usePhylaxStack';
+import type { PhylaxTarget, PhylaxWalletEntry, RunOnDevice } from './usePhylaxStack';
 
 const NAME_MAX_LENGTH = 15; // the main block's limit
 
@@ -21,8 +21,6 @@ const formatBtc = (satoshis: bigint) => {
 
     return `${whole}.${fraction}`;
 };
-
-type RunOnDevice = <T>(call: (target: PhylaxTarget) => Promise<T>) => Promise<T | undefined>;
 
 type PhylaxWalletCardProps = {
     entry: PhylaxWalletEntry;
@@ -67,13 +65,15 @@ export const PhylaxWalletCard = ({
         doneText: string,
     ) => {
         setAction({ status: 'waiting', text: waitingText });
-        const result = await runOnDevice(call);
-        if (!result) {
+        const result = await runOnDevice(call, summary.fingerprints);
+        if (result.kind === 'not-connected') {
             setAction({ status: 'error', text: 'The main block is not connected.' });
-        } else if (result.success) {
+        } else if (result.kind === 'wrong-device') {
+            setAction({ status: 'error', text: result.text });
+        } else if (result.value.success) {
             setAction({ status: 'done', text: doneText });
         } else {
-            setAction({ status: 'error', text: result.error.message });
+            setAction({ status: 'error', text: result.value.error.message });
         }
     };
 

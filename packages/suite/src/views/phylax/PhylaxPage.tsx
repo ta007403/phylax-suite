@@ -2,13 +2,14 @@
 
 import { useState } from 'react';
 
-import { selectIsPhylaxDevice } from '@suite-common/device';
+import { selectDevices, selectIsPhylaxDevice } from '@suite-common/device';
 import { Badge, Card, Column, H3, Row, SelectBar, Text } from '@trezor/components';
 import type { PROTO } from '@trezor/connect';
 
 import { useSelector } from 'src/hooks/suite';
 
 import { PhylaxWalletCard } from './PhylaxWalletCard';
+import { PHYLAX_MAIN_BLOCK_ADDRESS, countConnectedDevices } from './phylaxIdentity';
 import { type PhylaxNetwork, getFingerprintHex } from './phylaxWallet';
 import { usePhylaxStack } from './usePhylaxStack';
 
@@ -17,9 +18,7 @@ const NETWORK_OPTIONS: { label: string; value: PhylaxNetwork }[] = [
     { label: 'Testnet', value: 'testnet' },
 ];
 
-// The main block is always at bus address 1, key blocks at 0x10..0x1f.
-const PHYLAX_MAIN_BLOCK_ADDRESS = 1;
-
+// The main block is always at bus address 1 (PHYLAX_MAIN_BLOCK_ADDRESS), key blocks at 0x10..0x1f.
 const getBlockName = (block: PROTO.PhylaxBlockInfo) =>
     block.address === PHYLAX_MAIN_BLOCK_ADDRESS
         ? 'Main block'
@@ -56,6 +55,7 @@ const Stack = ({ blocks }: { blocks: PROTO.PhylaxBlockInfo[] }) => (
 
 export const PhylaxPage = () => {
     const isPhylaxDevice = useSelector(selectIsPhylaxDevice);
+    const devices = useSelector(selectDevices);
     const { blocks, wallets, isStoragePresent, error, isLoaded, isPaused, runOnDevice } =
         usePhylaxStack();
     const [network, setNetwork] = useState<PhylaxNetwork>('mainnet');
@@ -75,6 +75,12 @@ export const PhylaxPage = () => {
 
     return (
         <Column gap={16} alignItems="stretch">
+            {countConnectedDevices(devices ?? []) > 1 && (
+                <Text intent="warning" data-testid="@phylax/several-devices">
+                    More than one Trezor is connected. To be safe, unplug every Trezor except the
+                    PHYLAX main block while you use PHYLAX Snap.
+                </Text>
+            )}
             {error && <Text intent="critical">{error}</Text>}
             <Stack blocks={blocks} />
             <Row gap={12} alignItems="center" justifyContent="space-between">

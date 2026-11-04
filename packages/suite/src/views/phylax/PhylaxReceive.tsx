@@ -22,9 +22,7 @@ import {
     getPhylaxMultisig,
     getPublicKeyId,
 } from './phylaxWallet';
-import type { PhylaxTarget } from './usePhylaxStack';
-
-type RunOnDevice = <T>(call: (target: PhylaxTarget) => Promise<T>) => Promise<T | undefined>;
+import type { RunOnDevice } from './usePhylaxStack';
 
 type ReceiveState =
     | { status: 'idle' }
@@ -79,49 +77,10 @@ export const PhylaxReceive = ({
 
     const address = getPhylaxAddress(wallet, network, 0, index);
 
-    const handleShow = async () => {
-        setState({ status: 'waiting' });
-        const savedKey = getPhylaxKeyNode(wallet, network, mainFingerprint);
-        const coin = PHYLAX_COIN_SYMBOLS[network];
-        const result = await runOnDevice(async (target): Promise<ShowResult> => {
-            const device = { ...target.device, useEmptyPassphrase: true };
-            // Safety check first: in this session the main block must derive exactly the key the
-            // wallet saved for it. If not, every address and signature in this session would be
-            // wrong, so nothing is shown.
-            const own = await TrezorConnect.getPublicKey({
-                device,
-                path: getPhylaxAccountPath(network),
-                coin,
-                showOnTrezor: false,
-            });
-            if (!own.success) return { kind: 'failed', text: own.error.message };
-            if (
-                own.payload.publicKey !== savedKey?.public_key ||
-                own.payload.chainCode !== savedKey.chain_code
-            ) {
-                return {
-                    kind: 'session-mismatch',
-                    sessionKeyId: getPublicKeyId(own.payload.publicKey),
-                    savedKeyId: savedKey ? getPublicKeyId(savedKey.public_key) : 'none',
-                };
-            }
+    const walletFingerprints = wallet.keys.map(key => key.fingerprint);
 
-            const shown = await TrezorConnect.getAddress({
-                device,
-                path: getPhylaxAddressPath(network, 0, index),
-                coin,
-                multisig: getPhylaxMultisig(wallet, network, 0, index),
-                scriptType: 'SPENDWITNESS',
-                showOnTrezor: true,
-            });
-            if (!shown.success) return { kind: 'failed', text: shown.error.message };
-
-            return { kind: 'address', address: shown.payload.address };
-        });
-
-        if (!result) {
-            setState({ status: 'error', text: 'The main block is not connected.' });
-        } else if (result.kind === 'failed') {
+    const showResult = (result: ShowResult) => {
+        if (result.kind === 'failed') {
             setState({ status: 'error', text: result.text });
         } else if (result.kind === 'session-mismatch') {
             setState({
@@ -129,7 +88,8 @@ export const PhylaxReceive = ({
                 text:
                     'Safety check failed: in this session the main block derives a different key ' +
                     `(${result.sessionKeyId}) than the one saved in this wallet (${result.savedKeyId}). ` +
-                    'Nothing was shown. Do not use this wallet; unplug the main block and contact support.',
+                    'Nothing was shown. Is another Trezor connected? Unplug it and try again. ' +
+                    'If this still appears, do not use this wallet.',
             });
         } else if (result.address !== address) {
             // Never offer an address the two sides disagree on.
@@ -139,6 +99,63 @@ export const PhylaxReceive = ({
             });
         } else {
             setState({ status: 'verified', isCopied: false });
+        }
+    };
+
+    const handleShow = async () => {
+        setState({ status: 'waiting' });
+        const coin = PHYLAX_COIN_SYMBOLS[network];
+        const result = await runOnDevice(
+            async (target, checkedFingerprint): Promise<ShowResult> => {
+                // The fingerprint the device reported just now; the page's may be older.
+                const savedKey = getPhylaxKeyNode(
+                    wallet,
+                    network,
+                    checkedFingerprint ?? mainFingerprint,
+                );
+                const device = { ...target.device, useEmptyPassphrase: true };
+                // Safety check first: in this session the main block must derive exactly the key the
+                // wallet saved for it. If not, every address and signature in this session would be
+                // wrong, so nothing is shown.
+                const own = await TrezorConnect.getPublicKey({
+                    device,
+                    path: getPhylaxAccountPath(network),
+                    coin,
+                    showOnTrezor: false,
+                });
+                if (!own.success) return { kind: 'failed', text: own.error.message };
+                if (
+                    own.payload.publicKey !== savedKey?.public_key ||
+                    own.payload.chainCode !== savedKey.chain_code
+                ) {
+                    return {
+                        kind: 'session-mismatch',
+                        sessionKeyId: getPublicKeyId(own.payload.publicKey),
+                        savedKeyId: savedKey ? getPublicKeyId(savedKey.public_key) : 'none',
+                    };
+                }
+
+                const shown = await TrezorConnect.getAddress({
+                    device,
+                    path: getPhylaxAddressPath(network, 0, index),
+                    coin,
+                    multisig: getPhylaxMultisig(wallet, network, 0, index),
+                    scriptType: 'SPENDWITNESS',
+                    showOnTrezor: true,
+                });
+                if (!shown.success) return { kind: 'failed', text: shown.error.message };
+
+                return { kind: 'address', address: shown.payload.address };
+            },
+            walletFingerprints,
+        );
+
+        if (result.kind === 'not-connected') {
+            setState({ status: 'error', text: 'The main block is not connected.' });
+        } else if (result.kind === 'wrong-device') {
+            setState({ status: 'error', text: result.text });
+        } else {
+            showResult(result.value);
         }
     };
 
