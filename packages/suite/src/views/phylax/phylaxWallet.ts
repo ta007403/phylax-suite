@@ -67,6 +67,34 @@ export const getPhylaxDescriptor = (wallet: PROTO.PhylaxWallet, network: PhylaxN
     return addDescriptorChecksum(`wsh(sortedmulti(${wallet.threshold},${keys}))`);
 };
 
+const getPhylaxRedeem = (
+    wallet: PROTO.PhylaxWallet,
+    network: PhylaxNetwork,
+    chain: PhylaxChain,
+    index: number,
+) => {
+    const pubkeys = wallet.keys
+        .map(key => getAccountNode(key, network).derive(chain).derive(index).publicKey)
+        .sort(Buffer.compare);
+
+    return payments.p2ms({ m: wallet.threshold, pubkeys, network: UTXO_NETWORKS[network] });
+};
+
+/** The witness script (sortedmulti) of the wallet's address at `chain/index`. */
+export const getPhylaxWitnessScript = (
+    wallet: PROTO.PhylaxWallet,
+    network: PhylaxNetwork,
+    chain: PhylaxChain,
+    index: number,
+) => {
+    const { output } = getPhylaxRedeem(wallet, network, chain, index);
+    if (!output) {
+        throw new Error('PHYLAX: could not build the witness script');
+    }
+
+    return output;
+};
+
 /** The wallet's address at `chain/index`. */
 export const getPhylaxAddress = (
     wallet: PROTO.PhylaxWallet,
@@ -74,13 +102,9 @@ export const getPhylaxAddress = (
     chain: PhylaxChain,
     index: number,
 ) => {
-    const utxoNetwork = UTXO_NETWORKS[network];
-    const pubkeys = wallet.keys
-        .map(key => getAccountNode(key, network).derive(chain).derive(index).publicKey)
-        .sort(Buffer.compare);
     const { address } = payments.p2wsh({
-        redeem: payments.p2ms({ m: wallet.threshold, pubkeys, network: utxoNetwork }),
-        network: utxoNetwork,
+        redeem: getPhylaxRedeem(wallet, network, chain, index),
+        network: UTXO_NETWORKS[network],
     });
     if (!address) {
         throw new Error('PHYLAX: could not derive a wallet address');

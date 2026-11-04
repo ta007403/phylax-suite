@@ -239,6 +239,7 @@ import {
     PhylaxGetWallets,
     PhylaxSelectBlock,
     PhylaxSetWalletName,
+    PhylaxUnlockBlock,
     PhylaxWallet,
     PhylaxWallets,
 } from './messages-phylax';
@@ -577,6 +578,7 @@ export const MessageType = Type.Object(
         PhylaxSelectBlock,
         PhylaxSetWalletName,
         PhylaxDeleteWallet,
+        PhylaxUnlockBlock,
         RippleGetAddress,
         RippleAddress,
         RippleSignTx,
@@ -791,6 +793,7 @@ export type WireInMessage =
     | 'PhylaxSelectBlock'
     | 'PhylaxSetWalletName'
     | 'PhylaxDeleteWallet'
+    | 'PhylaxUnlockBlock'
     | 'RippleGetAddress'
     | 'RippleSignTx'
     | 'SolanaGetPublicKey'

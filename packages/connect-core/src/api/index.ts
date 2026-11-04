@@ -68,4 +68,5 @@ export {
     PhylaxGetWallet as phylaxGetWallet,
     PhylaxGetWallets as phylaxGetWallets,
     PhylaxSetWalletName as phylaxSetWalletName,
+    PhylaxUnlockBlock as phylaxUnlockBlock,
 } from './phylax';

@@ -3,7 +3,7 @@
 // for the main block, and the check of the signed transaction against the plan.
 
 import type { PROTO } from '@trezor/connect';
-import { Transaction, networks, address as utxoAddress } from '@trezor/utxo-lib';
+import { Transaction, crypto, networks, address as utxoAddress } from '@trezor/utxo-lib';
 
 import {
     type PhylaxChain,
@@ -274,6 +274,7 @@ export const getPhylaxSignParams = (
  * wallet's own change address). Returns an error text, or undefined if it matches.
  */
 export const checkSignedTx = (
+    wallet: PROTO.PhylaxWallet,
     network: PhylaxNetwork,
     plan: PhylaxSendPlan,
     serializedTx: string,
@@ -316,8 +317,30 @@ export const checkSignedTx = (
         ),
     );
     if (!matches) return 'The signed transaction pays other addresses or amounts than planned.';
-    if (tx.ins.some(input => input.witness.length === 0)) {
-        return 'The signed transaction is missing signatures.';
+    // Every input: [empty, m signatures, witness script], and the script must be the wallet's own
+    // for that input's address. A missing signature is what the network rejects with "Operation
+    // not valid with the current stack size".
+    const m = wallet.threshold;
+    const isComplete = plan.inputs.every(utxo => {
+        const input = tx.ins.find(
+            i =>
+                Buffer.from(i.hash).reverse().toString('hex') === utxo.txid &&
+                i.index === utxo.vout,
+        );
+        if (input?.witness.length !== m + 2 || input.witness[0]!.length !== 0) return false;
+        const signatures = input.witness.slice(1, m + 1);
+        if (signatures.some(sig => sig.length < 9 || sig[0] !== 0x30)) return false;
+        const witnessScript = input.witness[m + 1]!;
+        const expected = getOutputScript(
+            network,
+            getPhylaxAddress(wallet, network, utxo.chain, utxo.index),
+        );
+        const actual = Buffer.concat([Buffer.from([0x00, 0x20]), crypto.sha256(witnessScript)]);
+
+        return expected !== undefined && Buffer.compare(actual, expected) === 0;
+    });
+    if (!isComplete) {
+        return 'The signed transaction is missing signatures (a block did not sign).';
     }
 
     return undefined;

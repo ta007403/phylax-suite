@@ -21,7 +21,8 @@ export type PhylaxRunResult<T> =
 
 export type RunOnDevice = <T>(
     call: (target: PhylaxTarget, mainFingerprint: number | undefined) => Promise<T>,
-    walletFingerprints: number[],
+    // the wallet the call is for; omitted for the stack itself (any PHYLAX main block)
+    walletFingerprints?: number[],
 ) => Promise<PhylaxRunResult<T>>;
 
 export type PhylaxWalletEntry = {

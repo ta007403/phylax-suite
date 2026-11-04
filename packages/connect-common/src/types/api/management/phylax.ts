@@ -27,3 +27,11 @@ export declare function phylaxSetWalletName(
 export declare function phylaxDeleteWallet(
     params: Params<PROTO.PhylaxDeleteWallet>,
 ): Response<PROTO.Success>;
+
+/**
+ * Wake up (unlock) a locked key block at this bus address. Answered at once; the user enters the
+ * key block's PIN on its own buttons, and PhylaxGetBlocks shows it unlocked when done.
+ */
+export declare function phylaxUnlockBlock(
+    params: Params<PROTO.PhylaxUnlockBlock>,
+): Response<PROTO.Success>;

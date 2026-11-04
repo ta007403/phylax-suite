@@ -22,10 +22,11 @@ const ANOTHER_TREZOR_HINT =
  * - no answer: not a PHYLAX main block (a plain Trezor does not know the message);
  * - the main block's seed fingerprint is known and not one of the wallet's: another main block.
  * A locked main block reports no fingerprint; the key check after unlocking covers that case.
+ * Without walletFingerprints (a request for the stack, not a wallet) any PHYLAX main block will do.
  */
 export const getPhylaxIdentity = (
     response: BlocksResponse,
-    walletFingerprints: number[],
+    walletFingerprints?: number[],
 ): PhylaxIdentity => {
     if (!response.success) {
         return {
@@ -41,7 +42,11 @@ export const getPhylaxIdentity = (
         };
     }
     const mainFingerprint = main.fingerprint ?? undefined;
-    if (mainFingerprint !== undefined && !walletFingerprints.includes(mainFingerprint)) {
+    if (
+        walletFingerprints &&
+        mainFingerprint !== undefined &&
+        !walletFingerprints.includes(mainFingerprint)
+    ) {
         return {
             kind: 'wrong-device',
             text: `The connected main block (${getFingerprintHex(mainFingerprint)}) is not part of this wallet. Nothing was sent.`,

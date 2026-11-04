@@ -118,3 +118,28 @@ export class PhylaxDeleteWallet extends AbstractMethod<
         return response.message;
     }
 }
+
+export class PhylaxUnlockBlock extends AbstractMethod<
+    'phylaxUnlockBlock',
+    PROTO.PhylaxUnlockBlock
+> {
+    constructor(message: MethodMessage<'phylaxUnlockBlock'>) {
+        const { payload } = message;
+        Assert(PROTO.PhylaxUnlockBlock, payload);
+        super(message, { address: payload.address });
+        this.useDeviceState = false;
+        this.skipFinalReload = true;
+    }
+
+    get requiredPermissions() {
+        return PHYLAX_PERMISSIONS;
+    }
+
+    async run() {
+        const cmd = this.getDevice().getCommands();
+        // answered at once; the user then enters the PIN on the key block's own buttons
+        const response = await cmd.typedCall('PhylaxUnlockBlock', 'Success', this.params);
+
+        return response.message;
+    }
+}

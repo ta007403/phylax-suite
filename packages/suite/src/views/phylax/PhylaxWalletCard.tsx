@@ -5,11 +5,14 @@ import { useMemo, useState } from 'react';
 
 import { Badge, Button, Card, Column, Divider, H3, Input, Row, Text } from '@trezor/components';
 import TrezorConnect from '@trezor/connect';
+import type { PROTO } from '@trezor/connect';
 import { copyToClipboard } from '@trezor/dom-utils';
 import { QrCode } from '@trezor/product-components';
 
+import { PhylaxAddressHistory } from './PhylaxAddressHistory';
 import { PhylaxReceive } from './PhylaxReceive';
 import { PhylaxSend } from './PhylaxSend';
+import type { PhylaxWakeUp } from './PhylaxWakeUp';
 import { type PhylaxNetwork, getFingerprintHex, getPhylaxDescriptor } from './phylaxWallet';
 import { usePhylaxBalance } from './usePhylaxBalance';
 import type { PhylaxTarget, PhylaxWalletEntry, RunOnDevice } from './usePhylaxStack';
@@ -28,8 +31,9 @@ type PhylaxWalletCardProps = {
     network: PhylaxNetwork;
     // blocks that can sign now
     presentFingerprints: number[];
-    // blocks attached but locked
-    lockedFingerprints: number[];
+    // key blocks attached but locked
+    lockedKeyBlocks: PROTO.PhylaxBlockInfo[];
+    wakeUp: PhylaxWakeUp;
     mainFingerprint: number | undefined;
     runOnDevice: RunOnDevice;
     isDeviceBusy: boolean;
@@ -45,7 +49,8 @@ export const PhylaxWalletCard = ({
     entry,
     network,
     presentFingerprints,
-    lockedFingerprints,
+    lockedKeyBlocks,
+    wakeUp,
     mainFingerprint,
     runOnDevice,
     isDeviceBusy,
@@ -66,10 +71,24 @@ export const PhylaxWalletCard = ({
         fingerprint =>
             fingerprint !== mainFingerprint && !presentFingerprints.includes(fingerprint),
     );
-    const lockedInWallet = notReady.filter(fingerprint => lockedFingerprints.includes(fingerprint));
-    const missingFingerprints = notReady.filter(
-        fingerprint => !lockedFingerprints.includes(fingerprint),
+    // locked blocks of this wallet; one without a fingerprint (never unlocked with this firmware)
+    // may be any of the wallet's missing keys
+    const knownLocked = lockedKeyBlocks.filter(
+        block => typeof block.fingerprint === 'number' && notReady.includes(block.fingerprint),
     );
+    const unknownLocked = lockedKeyBlocks.filter(block => typeof block.fingerprint !== 'number');
+    const missingFingerprints = notReady.filter(
+        fingerprint => !knownLocked.some(block => block.fingerprint === fingerprint),
+    );
+    const isAttachNeeded = missingFingerprints.length > unknownLocked.length;
+    const lockedInWallet = [
+        ...knownLocked,
+        ...(missingFingerprints.length > 0 ? unknownLocked : []),
+    ];
+    const getLockedName = (block: PROTO.PhylaxBlockInfo) =>
+        typeof block.fingerprint === 'number'
+            ? getFingerprintHex(block.fingerprint)
+            : `0x${block.address.toString(16)}`;
 
     const runAction = async (
         waitingText: string,
@@ -119,14 +138,14 @@ export const PhylaxWalletCard = ({
                         {summary.threshold}-of-{summary.fingerprints.length}
                     </Badge>
                     {notReady.length === 0 && <Badge intent="brand">Ready</Badge>}
-                    {missingFingerprints.length > 0 && (
+                    {isAttachNeeded && (
                         <Badge intent="warning">
                             Attach key block {missingFingerprints.map(getFingerprintHex).join(', ')}
                         </Badge>
                     )}
                     {lockedInWallet.length > 0 && (
                         <Badge intent="warning">
-                            Key block {lockedInWallet.map(getFingerprintHex).join(', ')} locked
+                            Key block {lockedInWallet.map(getLockedName).join(', ')} locked
                         </Badge>
                     )}
                 </Row>
@@ -230,6 +249,13 @@ export const PhylaxWalletCard = ({
                     />
                 )}
 
+                {balance.status === 'loaded' && (
+                    <PhylaxAddressHistory
+                        addresses={balance.usedReceiveAddresses}
+                        unit={network === 'mainnet' ? 'BTC' : 'tBTC'}
+                    />
+                )}
+
                 {details && balance.status === 'loaded' && (
                     <>
                         <Divider margin={{ top: 4, bottom: 4 }} />
@@ -239,8 +265,9 @@ export const PhylaxWalletCard = ({
                             utxos={balance.utxos}
                             nextChangeIndex={balance.nextChangeIndex}
                             mainFingerprint={mainFingerprint}
-                            missingFingerprints={missingFingerprints}
-                            lockedFingerprints={lockedInWallet}
+                            missingFingerprints={isAttachNeeded ? missingFingerprints : []}
+                            lockedKeyBlocks={lockedInWallet}
+                            wakeUp={wakeUp}
                             runOnDevice={runOnDevice}
                             isDeviceBusy={isDeviceBusy}
                             // a new scan picks up the spent coins and the new change

@@ -10,7 +10,7 @@ import {
     parseBtc,
     planPhylaxSend,
 } from './phylaxSend';
-import { getPhylaxAddress } from './phylaxWallet';
+import { getPhylaxAddress, getPhylaxWitnessScript } from './phylaxWallet';
 import { WALLET } from './phylaxWallet.fixture';
 import type { PhylaxUtxo } from './usePhylaxBalance';
 
@@ -169,6 +169,12 @@ describe('checkSignedTx', () => {
         }),
     );
 
+    // DER-shaped placeholder signatures; the device's signatures are checked by the network
+    const sig = (fill: number) =>
+        Buffer.concat([Buffer.from([0x30, 0x44]), Buffer.alloc(70, fill)]);
+    const witnessScript = getPhylaxWitnessScript(WALLET, 'testnet', 0, 9);
+    const complete = [Buffer.alloc(0), sig(1), sig(2), witnessScript];
+
     const signed = (overrides: { amount?: bigint; witness?: Buffer[] } = {}) => {
         const tx = new Transaction({ network: networks.testnet });
         tx.version = 2;
@@ -177,7 +183,7 @@ describe('checkSignedTx', () => {
             index: p.inputs[0]!.vout,
             script: Buffer.alloc(0),
             sequence: 0xffffffff,
-            witness: overrides.witness ?? [Buffer.alloc(0), Buffer.alloc(72, 1), Buffer.alloc(71)],
+            witness: overrides.witness ?? complete,
         });
         tx.outs.push({
             script: getOutputScript('testnet', TESTNET_RECIPIENT)!,
@@ -192,18 +198,35 @@ describe('checkSignedTx', () => {
     };
 
     it('accepts the planned transaction', () => {
-        expect(checkSignedTx('testnet', p, signed())).toBeUndefined();
+        expect(checkSignedTx(WALLET, 'testnet', p, signed())).toBeUndefined();
     });
 
     it('refuses other amounts', () => {
-        expect(checkSignedTx('testnet', p, signed({ amount: 39_999n }))).toContain('amounts');
+        expect(checkSignedTx(WALLET, 'testnet', p, signed({ amount: 39_999n }))).toContain(
+            'amounts',
+        );
     });
 
     it('refuses a transaction without signatures', () => {
-        expect(checkSignedTx('testnet', p, signed({ witness: [] }))).toContain('signatures');
+        expect(checkSignedTx(WALLET, 'testnet', p, signed({ witness: [] }))).toContain(
+            'signatures',
+        );
+    });
+
+    it('refuses a 2-of-2 input signed by one block only (the network rejects it)', () => {
+        const oneSignature = [Buffer.alloc(0), sig(1), witnessScript];
+        expect(checkSignedTx(WALLET, 'testnet', p, signed({ witness: oneSignature }))).toContain(
+            'did not sign',
+        );
+    });
+
+    it("refuses a witness script that is not the wallet's", () => {
+        const otherScript = getPhylaxWitnessScript(WALLET, 'testnet', 0, 10);
+        const witness = [Buffer.alloc(0), sig(1), sig(2), otherScript];
+        expect(checkSignedTx(WALLET, 'testnet', p, signed({ witness }))).toContain('signatures');
     });
 
     it('refuses something that is not a transaction', () => {
-        expect(checkSignedTx('testnet', p, 'deadbeef')).toContain('could not be read');
+        expect(checkSignedTx(WALLET, 'testnet', p, 'deadbeef')).toContain('could not be read');
     });
 });

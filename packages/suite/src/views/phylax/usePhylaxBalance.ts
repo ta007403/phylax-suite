@@ -26,6 +26,15 @@ export type PhylaxUtxo = {
     confirmations: number;
 };
 
+/** A receive address that was used (it has transactions), for the address history. */
+export type PhylaxUsedAddress = {
+    index: number;
+    address: string;
+    transactions: number;
+    // satoshis, including unconfirmed
+    balance: bigint;
+};
+
 export type PhylaxBalance =
     | { status: 'loading' }
     | { status: 'error'; error: string }
@@ -40,6 +49,8 @@ export type PhylaxBalance =
           nextChangeIndex: number;
           // every coin on the wallet's addresses, confirmed or not
           utxos: PhylaxUtxo[];
+          // used receive addresses, newest first
+          usedReceiveAddresses: PhylaxUsedAddress[];
       };
 
 // Lookups at a time: one burst per address (about 40 for a new wallet) made the backend close
@@ -85,7 +96,7 @@ export const mapLimited = async <T, R>(items: T[], limit: number, fn: (item: T) 
     return results;
 };
 
-const scanChain = async (
+export const scanChain = async (
     wallet: PROTO.PhylaxWallet,
     network: PhylaxNetwork,
     chain: PhylaxChain,
@@ -96,6 +107,7 @@ const scanChain = async (
     let nextIndex = 0;
     // addresses holding something (confirmed or not): their coins are read afterwards
     const funded: { address: string; index: number }[] = [];
+    const used: PhylaxUsedAddress[] = [];
 
     while (nextIndex <= lastUsedIndex + GAP_LIMIT) {
         const from = nextIndex;
@@ -117,6 +129,12 @@ const scanChain = async (
             if (!isUsed) return;
             lastUsedIndex = from + offset;
             usedAddressCount++;
+            used.push({
+                index: from + offset,
+                address: addresses[offset]!,
+                transactions: info.history.total + info.history.unconfirmed,
+                balance: BigInt(info.availableBalance),
+            });
             // Blockbook: confirmed balance plus the pending (unconfirmed) change
             balance += BigInt(info.availableBalance);
             if (BigInt(info.balance) > 0n || BigInt(info.availableBalance) > 0n) {
@@ -138,7 +156,7 @@ const scanChain = async (
         }));
     });
 
-    return { balance, usedAddressCount, lastUsedIndex, utxos: coins.flat() };
+    return { balance, usedAddressCount, lastUsedIndex, utxos: coins.flat(), used };
 };
 
 export const usePhylaxBalance = (
@@ -176,6 +194,7 @@ export const usePhylaxBalance = (
                     nextReceiveIndex: (chains[0]?.lastUsedIndex ?? -1) + 1,
                     nextChangeIndex: (chains[1]?.lastUsedIndex ?? -1) + 1,
                     utxos: chains.flatMap(chain => chain.utxos),
+                    usedReceiveAddresses: [...(chains[0]?.used ?? [])].reverse(),
                 });
             })
             .catch((error: Error) => {

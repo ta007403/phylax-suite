@@ -12,6 +12,7 @@ import type { PROTO } from '@trezor/connect';
 import { copyToClipboard } from '@trezor/dom-utils';
 import { PaperPlaneTiltIcon } from '@trezor/icons';
 
+import { type PhylaxWakeUp, WakeUpButton } from './PhylaxWakeUp';
 import {
     type PhylaxSendPlan,
     checkSignedTx,
@@ -82,7 +83,8 @@ type PhylaxSendProps = {
     mainFingerprint: number | undefined;
     // key blocks of this wallet that are not attached, or attached but locked
     missingFingerprints: number[];
-    lockedFingerprints: number[];
+    lockedKeyBlocks: PROTO.PhylaxBlockInfo[];
+    wakeUp: PhylaxWakeUp;
     runOnDevice: RunOnDevice;
     isDeviceBusy: boolean;
     onSent: () => void;
@@ -95,7 +97,8 @@ export const PhylaxSend = ({
     nextChangeIndex,
     mainFingerprint,
     missingFingerprints,
-    lockedFingerprints,
+    lockedKeyBlocks,
+    wakeUp,
     runOnDevice,
     isDeviceBusy,
     onSent,
@@ -147,8 +150,10 @@ export const PhylaxSend = ({
         if (missingFingerprints.length > 0) {
             return `Attach key block ${missingFingerprints.map(getFingerprintHex).join(', ')} to send.`;
         }
-        if (lockedFingerprints.length > 0) {
-            return `Key block ${lockedFingerprints.map(getFingerprintHex).join(', ')} is locked. Press Unlock on the main block and enter its PIN on the key block's own buttons.`;
+        if (lockedKeyBlocks.length > 0) {
+            return lockedKeyBlocks.length === 1
+                ? 'A key block of this wallet is locked. Wake it up, then enter its PIN on its own buttons.'
+                : 'Key blocks of this wallet are locked. Wake them up, then enter each PIN on that block.';
         }
 
         return undefined;
@@ -189,7 +194,7 @@ export const PhylaxSend = ({
             return;
         }
         const { serializedTx } = result.value.payload;
-        const mismatch = checkSignedTx(network, plan, serializedTx);
+        const mismatch = checkSignedTx(wallet, network, plan, serializedTx);
         if (mismatch) {
             setState({ status: 'error', text: `${mismatch} Nothing was broadcast.` });
 
@@ -296,6 +301,15 @@ export const PhylaxSend = ({
                     {blocker}
                 </Text>
             )}
+            {missingFingerprints.length === 0 &&
+                lockedKeyBlocks.map(block => (
+                    <WakeUpButton
+                        key={block.address}
+                        address={block.address}
+                        wakeUp={wakeUp}
+                        isDeviceBusy={isDeviceBusy || isBusy}
+                    />
+                ))}
             {state.status === 'signing' && (
                 <Text data-testid="@phylax/send-steps">
                     {keyBlocks

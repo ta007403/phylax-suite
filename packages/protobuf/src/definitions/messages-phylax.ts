@@ -79,6 +79,14 @@ export const PhylaxSetWalletName = Type.Object(
     { $id: 'PhylaxSetWalletName' },
 );
 
+export type PhylaxUnlockBlock = Static<typeof PhylaxUnlockBlock>;
+export const PhylaxUnlockBlock = Type.Object(
+    {
+        address: Type.Number(),
+    },
+    { $id: 'PhylaxUnlockBlock' },
+);
+
 export type PhylaxWalletKey = Static<typeof PhylaxWalletKey>;
 export const PhylaxWalletKey = Type.Object(
     {
