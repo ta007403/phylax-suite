@@ -215,7 +215,7 @@ export const Navigation = ({ children }: NavigationProps) => {
                               nameId: 'TR_PHYLAX',
                               icon: StackIcon,
                               goToRoute: 'phylax-index',
-                              routes: ['phylax-index'],
+                              routes: ['phylax-index', 'phylax-account'],
                               'data-testid': '@suite/menu/phylax',
                           } as NavigationItemProps,
                       ]

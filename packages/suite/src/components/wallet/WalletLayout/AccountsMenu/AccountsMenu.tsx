@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 
 import { Translation } from '@suite/intl';
+import { selectRouterApp } from '@suite/router';
 import { selectIsPhylaxDevice, selectSelectedDevice } from '@suite-common/device';
 import { Column, useScrollShadow } from '@trezor/components';
 
@@ -17,8 +18,10 @@ import { AccountsMenuNotice } from './AccountsMenuNotice';
 export const AccountsMenu = () => {
     const device = useSelector(selectSelectedDevice);
     const discoveryStatus = useSelector(selectDiscoveryOverallStatus);
-    // PHYLAX Blocks (fork): a main block lists its multisig wallets, not its own single-key accounts
+    // PHYLAX Blocks (fork): on the PHYLAX pages a main block lists its multisig wallets; everywhere
+    // else (dashboard, single-key accounts) its own single-key accounts, as in Trezor Suite
     const isPhylaxDevice = useSelector(selectIsPhylaxDevice);
+    const routerApp = useSelector(selectRouterApp);
     const { scrollElementRef, ScrollSentinels, ShadowTop, ShadowBottom, ShadowContainer } =
         useScrollShadow({
             backgroundColor: 'surfaceFillSunken',
@@ -31,7 +34,7 @@ export const AccountsMenu = () => {
 
     const isDiscoveryEmpty = discoveryStatus?.type === 'discovery-empty';
 
-    if (device && isPhylaxDevice) {
+    if (device && isPhylaxDevice && routerApp === 'phylax') {
         return <PhylaxAccountsMenu />;
     }
 
