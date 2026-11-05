@@ -220,6 +220,9 @@ export const webComponents: Record<PageName, LazyExoticComponent<ComponentType>>
 
     // PHYLAX Blocks (fork)
     'phylax-index': lazy(() => import(/* webpackChunkName: "phylax" */ 'src/views/phylax')),
+    'phylax-account': lazy(
+        () => import(/* webpackChunkName: "phylax" */ 'src/views/phylax/account'),
+    ),
 
     // settings
     'settings-index': lazy(() =>

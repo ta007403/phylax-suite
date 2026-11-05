@@ -7,6 +7,7 @@ import { Modal } from '@trezor/components';
 import { GuideButton, GuideRouter } from 'src/components/guide';
 import { SuiteBanners } from 'src/components/suite/banners';
 import { DiscoveryProgress } from 'src/components/wallet';
+import { PhylaxSync } from 'src/views/phylax/PhylaxSync';
 
 import { AddPassphraseWalletFlow } from './AddPassphraseWalletFlow';
 import { AnchorHighlightHandler } from './AnchorHighlightHandler';
@@ -105,6 +106,8 @@ export const SuiteLayout = memo(({ children, 'data-testid': dataTest }: SuiteLay
                             <PowerMonitorManager />
 
                             <DiscoveryProgress />
+                            {/* PHYLAX Blocks (fork) */}
+                            <PhylaxSync />
 
                             <Body data-testid="@suite-layout/body">
                                 <Columns>

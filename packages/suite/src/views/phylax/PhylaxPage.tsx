@@ -9,8 +9,9 @@ import type { PROTO } from '@trezor/connect';
 import { useSelector } from 'src/hooks/suite';
 
 import { type PhylaxWakeUp, WakeUpButton, usePhylaxWakeUp } from './PhylaxWakeUp';
-import { PhylaxWalletCard } from './PhylaxWalletCard';
+import { PhylaxWalletRow } from './PhylaxWalletRow';
 import { PHYLAX_MAIN_BLOCK_ADDRESS, countConnectedDevices } from './phylaxIdentity';
+import { getLockedKeyBlocks } from './phylaxReadiness';
 import { type PhylaxNetwork, getFingerprintHex } from './phylaxWallet';
 import { usePhylaxStack } from './usePhylaxStack';
 
@@ -31,12 +32,6 @@ const BlockState = ({ block }: { block: PROTO.PhylaxBlockInfo }) => {
 
     return <Badge intent="brand">Ready</Badge>;
 };
-
-/** Key blocks with a seed that are attached but locked. */
-const getLockedKeyBlocks = (blocks: PROTO.PhylaxBlockInfo[]) =>
-    blocks.filter(
-        block => block.address !== PHYLAX_MAIN_BLOCK_ADDRESS && block.initialized && block.locked,
-    );
 
 type StackProps = {
     blocks: PROTO.PhylaxBlockInfo[];
@@ -94,16 +89,6 @@ export const PhylaxPage = () => {
         return <Text>Asking the main block…</Text>;
     }
 
-    const mainFingerprint =
-        blocks.find(block => block.address === PHYLAX_MAIN_BLOCK_ADDRESS)?.fingerprint ?? undefined;
-    // Blocks that can sign now (locked ones are passed on separately: a locked block reports
-    // the fingerprint of its last unlock, or none if it never was unlocked with this firmware).
-    const fingerprintsOf = (list: PROTO.PhylaxBlockInfo[]) =>
-        list
-            .map(block => block.fingerprint)
-            .filter((fingerprint): fingerprint is number => typeof fingerprint === 'number');
-    const presentFingerprints = fingerprintsOf(blocks.filter(block => !block.locked));
-
     return (
         <Column gap={16} alignItems="stretch">
             {countConnectedDevices(devices ?? []) > 1 && (
@@ -133,16 +118,11 @@ export const PhylaxPage = () => {
                 </Text>
             )}
             {wallets.map(entry => (
-                <PhylaxWalletCard
+                <PhylaxWalletRow
                     key={entry.summary.slot}
                     entry={entry}
                     network={network}
-                    presentFingerprints={presentFingerprints}
-                    lockedKeyBlocks={lockedKeyBlocks}
-                    wakeUp={wakeUp}
-                    mainFingerprint={mainFingerprint}
-                    runOnDevice={runOnDevice}
-                    isDeviceBusy={isPaused}
+                    blocks={blocks}
                 />
             ))}
         </Column>

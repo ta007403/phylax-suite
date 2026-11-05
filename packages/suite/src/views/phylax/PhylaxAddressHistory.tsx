@@ -6,8 +6,8 @@ import { useState } from 'react';
 import { Address } from '@suite/address';
 import { Button, Column, Row, Text } from '@trezor/components';
 
+import type { PhylaxUsedAddress } from './phylaxAccountScan';
 import { formatBtc } from './phylaxSend';
-import type { PhylaxUsedAddress } from './usePhylaxBalance';
 
 type PhylaxAddressHistoryProps = {
     addresses: PhylaxUsedAddress[];

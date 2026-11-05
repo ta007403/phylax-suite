@@ -5,6 +5,7 @@
 import type { PROTO } from '@trezor/connect';
 import { Transaction, crypto, networks, address as utxoAddress } from '@trezor/utxo-lib';
 
+import type { PhylaxUtxo } from './phylaxAccountScan';
 import {
     type PhylaxChain,
     type PhylaxNetwork,
@@ -12,7 +13,6 @@ import {
     getPhylaxAddressPath,
     getPhylaxMultisig,
 } from './phylaxWallet';
-import type { PhylaxUtxo } from './usePhylaxBalance';
 
 const UTXO_NETWORKS = { mainnet: networks.bitcoin, testnet: networks.testnet } as const;
 

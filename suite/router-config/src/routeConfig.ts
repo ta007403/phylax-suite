@@ -193,6 +193,12 @@ export const routes = [
         app: 'phylax',
     },
     {
+        // PHYLAX Blocks (fork): the account page of the wallet selected in the sidebar
+        name: 'phylax-account',
+        pattern: '/phylax/account',
+        app: 'phylax',
+    },
+    {
         name: 'settings-index',
         pattern: '/settings',
         app: 'settings',

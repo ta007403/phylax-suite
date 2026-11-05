@@ -1,5 +1,6 @@
 import { Transaction, networks } from '@trezor/utxo-lib';
 
+import type { PhylaxUtxo } from './phylaxAccountScan';
 import {
     PHYLAX_MAX_INPUTS,
     type PhylaxSendPlan,
@@ -12,7 +13,6 @@ import {
 } from './phylaxSend';
 import { getPhylaxAddress, getPhylaxWitnessScript } from './phylaxWallet';
 import { WALLET } from './phylaxWallet.fixture';
-import type { PhylaxUtxo } from './usePhylaxBalance';
 
 // A Testnet P2WPKH address (BIP84 test vector), and a mainnet one.
 const TESTNET_RECIPIENT = 'tb1q6rz28mcfaxtmd6v789l9rrlrusdprr9pqcpvkl';

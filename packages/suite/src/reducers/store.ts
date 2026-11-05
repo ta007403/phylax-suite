@@ -45,6 +45,7 @@ import {
     type GlobalSendReceiveFiltersState,
     globalSendReceiveFiltersReducer,
 } from 'src/slices/wallet/globalSendReceiveFilters';
+import { type PhylaxState, phylaxReducer } from 'src/views/phylax/state/phylaxReducer';
 
 import { type BioAuthState, prepareBioAuthReducer } from './bioAuth';
 import { type DesktopState, desktopReducer } from './desktop';
@@ -78,6 +79,8 @@ export type AppState = SuiteReducersState & {
     geolocation: GeolocationState;
     globalSendReceiveFilters: GlobalSendReceiveFiltersState;
     persistentDeviceData: PersistentDeviceDataState;
+    // PHYLAX Blocks (fork)
+    phylax: PhylaxState;
 };
 
 export type SuiteRootReducer = Reducer<AppState, UnknownAction, Partial<AppState>>;
@@ -102,6 +105,7 @@ export const rootReducer: SuiteRootReducer = combineReducers({
     geolocation: geolocationReducer,
     globalSendReceiveFilters: globalSendReceiveFiltersReducer,
     persistentDeviceData: persistentDeviceDataReducer,
+    phylax: phylaxReducer,
 } satisfies ReducersMapObject<AppState, never, Record<keyof AppState, never>>);
 
 const loggerExcludedActions = [addLog.type];

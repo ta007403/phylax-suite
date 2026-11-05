@@ -27,6 +27,9 @@ export const PHYLAX_COIN_SYMBOLS: Record<PhylaxNetwork, 'btc' | 'test'> = {
     testnet: 'test',
 };
 
+/** The unit shown with amounts. */
+export const getPhylaxUnit = (network: PhylaxNetwork) => (network === 'mainnet' ? 'BTC' : 'tBTC');
+
 export const getFingerprintHex = (fingerprint: number) =>
     (fingerprint >>> 0).toString(16).padStart(8, '0');
 
@@ -50,17 +53,22 @@ const getAccountNode = (key: PROTO.PhylaxWalletKey, network: PhylaxNetwork): BIP
     return node;
 };
 
+/** One key's account xpub (m/48'/coin'/0'/2') and its key origin, as in the descriptor. */
+export const getPhylaxKeyXpub = (key: PROTO.PhylaxWalletKey, network: PhylaxNetwork) => ({
+    origin: `${getFingerprintHex(key.fingerprint)}/48h/${COIN_TYPES[network]}h/0h/2h`,
+    xpub: getAccountNode(key, network).toBase58(),
+});
+
 /**
  * The wallet's output descriptor with both chains (BIP389 `<0;1>`) and its BIP380 checksum,
  * e.g. for importing the wallet into Sparrow.
  */
 export const getPhylaxDescriptor = (wallet: PROTO.PhylaxWallet, network: PhylaxNetwork) => {
-    const coinType = COIN_TYPES[network];
     const keys = wallet.keys
         .map(key => {
-            const origin = `${getFingerprintHex(key.fingerprint)}/48h/${coinType}h/0h/2h`;
+            const { origin, xpub } = getPhylaxKeyXpub(key, network);
 
-            return `[${origin}]${getAccountNode(key, network).toBase58()}/<0;1>/*`;
+            return `[${origin}]${xpub}/<0;1>/*`;
         })
         .join(',');
 

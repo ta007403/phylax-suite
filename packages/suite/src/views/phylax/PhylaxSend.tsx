@@ -13,6 +13,7 @@ import { copyToClipboard } from '@trezor/dom-utils';
 import { PaperPlaneTiltIcon } from '@trezor/icons';
 
 import { type PhylaxWakeUp, WakeUpButton } from './PhylaxWakeUp';
+import type { PhylaxUtxo } from './phylaxAccountScan';
 import {
     type PhylaxSendPlan,
     checkSignedTx,
@@ -22,7 +23,6 @@ import {
     planPhylaxSend,
 } from './phylaxSend';
 import { PHYLAX_COIN_SYMBOLS, type PhylaxNetwork, getFingerprintHex } from './phylaxWallet';
-import type { PhylaxUtxo } from './usePhylaxBalance';
 import type { RunOnDevice } from './usePhylaxStack';
 
 type FeeChoice = 'low' | 'normal' | 'high';

@@ -1,13 +1,14 @@
 import { useMemo } from 'react';
 
 import { Translation } from '@suite/intl';
-import { selectSelectedDevice } from '@suite-common/device';
+import { selectIsPhylaxDevice, selectSelectedDevice } from '@suite-common/device';
 import { Column, useScrollShadow } from '@trezor/components';
 
 import { useSelector } from 'src/hooks/suite';
 import { ReduxAccountSearchProvider } from 'src/hooks/suite/useAccountSearch';
 import { useResponsiveContext } from 'src/support/suite/ResponsiveContext';
 import { selectDiscoveryOverallStatus } from 'src/utils/wallet/selectDiscoveryOverallStatus';
+import { PhylaxAccountsMenu } from 'src/views/phylax/sidebar/PhylaxAccountsMenu';
 
 import { AccountsList } from './AccountsList';
 import { AccountsMenuHeader } from './AccountsMenuHeader';
@@ -16,6 +17,8 @@ import { AccountsMenuNotice } from './AccountsMenuNotice';
 export const AccountsMenu = () => {
     const device = useSelector(selectSelectedDevice);
     const discoveryStatus = useSelector(selectDiscoveryOverallStatus);
+    // PHYLAX Blocks (fork): a main block lists its multisig wallets, not its own single-key accounts
+    const isPhylaxDevice = useSelector(selectIsPhylaxDevice);
     const { scrollElementRef, ScrollSentinels, ShadowTop, ShadowBottom, ShadowContainer } =
         useScrollShadow({
             backgroundColor: 'surfaceFillSunken',
@@ -27,6 +30,10 @@ export const AccountsMenu = () => {
     const scrollSentinels = useMemo(() => <ScrollSentinels />, [ScrollSentinels]);
 
     const isDiscoveryEmpty = discoveryStatus?.type === 'discovery-empty';
+
+    if (device && isPhylaxDevice) {
+        return <PhylaxAccountsMenu />;
+    }
 
     if (isDiscoveryEmpty) {
         return null;
