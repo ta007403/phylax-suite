@@ -58,7 +58,7 @@ const KEY = getPhylaxAccountKey(SUMMARY, 'mainnet');
 
 const setUp = () => {
     const getState = () => state;
-    const { actions, dispatch } = createMockDispatch({ getState });
+    const { actions, dispatch } = createMockDispatch({ getState, extra: {} });
 
     return { actions, dispatch, getState };
 };

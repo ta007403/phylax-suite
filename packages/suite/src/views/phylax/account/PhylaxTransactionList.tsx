@@ -7,7 +7,7 @@ import { useSelector } from 'src/hooks/suite';
 
 import { PhylaxTransactionRow } from './PhylaxTransactionRow';
 import { type PhylaxTransaction, TRANSACTIONS_PER_ADDRESS } from '../phylaxAccountScan';
-import { PHYLAX_COIN_SYMBOLS, type PhylaxNetwork } from '../phylaxWallet';
+import { type PhylaxNetwork, getPhylaxNetworkSymbol } from '../phylaxWallet';
 
 type PhylaxTransactionListProps = {
     transactions: PhylaxTransaction[];
@@ -16,7 +16,7 @@ type PhylaxTransactionListProps = {
 
 export const PhylaxTransactionList = ({ transactions, network }: PhylaxTransactionListProps) => {
     const tipHeight = useSelector(state =>
-        selectBlockchainHeightBySymbol(state, PHYLAX_COIN_SYMBOLS[network]),
+        selectBlockchainHeightBySymbol(state, getPhylaxNetworkSymbol(network)),
     );
 
     return (

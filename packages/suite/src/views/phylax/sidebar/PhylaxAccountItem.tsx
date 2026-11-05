@@ -9,7 +9,7 @@ import { TokenIcon } from '@trezor/product-components';
 import { useResponsiveContext } from 'src/support/suite/ResponsiveContext';
 
 import { formatBtc } from '../phylaxSend';
-import { PHYLAX_COIN_SYMBOLS, type PhylaxNetwork, getPhylaxUnit } from '../phylaxWallet';
+import { type PhylaxNetwork, getPhylaxNetworkSymbol, getPhylaxUnit } from '../phylaxWallet';
 import { useOpenPhylaxAccount } from '../useOpenPhylaxAccount';
 import { usePhylaxAccount } from '../usePhylaxAccount';
 import type { PhylaxWalletEntry } from '../usePhylaxStack';
@@ -71,14 +71,14 @@ export const PhylaxAccountItem = ({ entry, network, isSelected }: PhylaxAccountI
             data-testid={`@phylax/sidebar/${network}/${summary.slot}`}
         >
             <Row gap={16} width="100%">
-                <TokenIcon size={24} symbol={PHYLAX_COIN_SYMBOLS[network]} />
+                <TokenIcon size={24} symbol={getPhylaxNetworkSymbol(network)} />
                 {!isSidebarCollapsed && (
                     <Column flex="1" gap={2} alignItems="flex-start" overflow="hidden">
                         <Row gap={8} alignItems="center" width="100%">
                             <Text typographyStyle="body-sm" ellipsisLineCount={1}>
                                 {summary.name}
                             </Text>
-                            <Badge size="tiny" intent="neutral">
+                            <Badge size="small" intent="neutral">
                                 {summary.threshold}-of-{summary.fingerprints.length}
                             </Badge>
                         </Row>

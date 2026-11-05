@@ -2,6 +2,7 @@
 // A PHYLAX wallet is wsh(sortedmulti(n, ...)) n-of-n, one BIP48 P2WSH account key
 // (m/48'/coin'/0'/2') per block, as returned by PhylaxGetWallet.
 
+import { getNetwork } from '@suite-common/wallet-config';
 import type { PROTO } from '@trezor/connect';
 import { addDescriptorChecksum, bip32, crypto, networks, payments } from '@trezor/utxo-lib';
 import type { BIP32Interface } from '@trezor/utxo-lib';
@@ -26,6 +27,10 @@ export const PHYLAX_COIN_SYMBOLS: Record<PhylaxNetwork, 'btc' | 'test'> = {
     mainnet: 'btc',
     testnet: 'test',
 };
+
+/** Suite's network symbol (for its selectors and coin icons). */
+export const getPhylaxNetworkSymbol = (network: PhylaxNetwork) =>
+    getNetwork(PHYLAX_COIN_SYMBOLS[network]).symbol;
 
 /** The unit shown with amounts. */
 export const getPhylaxUnit = (network: PhylaxNetwork) => (network === 'mainnet' ? 'BTC' : 'tBTC');

@@ -86,7 +86,7 @@ export const PhylaxTransactionRow = ({
                 <Text
                     typographyStyle="body-md-strong"
                     isTabular
-                    intent={net > 0n ? 'success' : undefined}
+                    intent={net > 0n ? 'brand' : undefined}
                 >
                     {formatSigned(net)} {unit}
                 </Text>

@@ -9,7 +9,7 @@ import { ExpandedSidebarOnly } from 'src/components/suite/layouts/SuiteLayout/Si
 import { useSelector } from 'src/hooks/suite';
 
 import { PhylaxAccountItem } from './PhylaxAccountItem';
-import { PHYLAX_COIN_SYMBOLS, type PhylaxNetwork } from '../phylaxWallet';
+import { type PhylaxNetwork, getPhylaxNetworkSymbol } from '../phylaxWallet';
 import {
     selectPhylaxIsLoaded,
     selectPhylaxSelectedAccount,
@@ -26,7 +26,7 @@ export const PhylaxAccountsMenu = () => {
     const routeName = useSelector(selectRouteName);
 
     const networks = NETWORKS.filter(network =>
-        enabledNetworks.includes(PHYLAX_COIN_SYMBOLS[network]),
+        enabledNetworks.includes(getPhylaxNetworkSymbol(network)),
     );
     const isAccountPageOpen = routeName === 'phylax-account';
 

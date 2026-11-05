@@ -22,6 +22,7 @@ import { type AppState } from 'src/reducers/store';
 import { type ProtocolState } from 'src/reducers/suite/protocolReducer';
 import { suiteInitialState } from 'src/reducers/suite/suiteReducer';
 import { walletReducers } from 'src/reducers/wallet';
+import { phylaxInitialState } from 'src/views/phylax/state/phylaxReducer';
 
 export const mockInitialAppState: AppState = {
     networks: null,
@@ -130,4 +131,5 @@ export const mockInitialAppState: AppState = {
         networkSymbol: undefined,
     },
     featureFeedback: featureFeedbackInitialState,
+    phylax: phylaxInitialState,
 };

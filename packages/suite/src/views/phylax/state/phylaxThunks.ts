@@ -1,7 +1,7 @@
 // PHYLAX Blocks (fork): reading the stack from the main block, and the account data of each saved
 // wallet from Suite's backend.
 
-import TrezorConnect, { type PROTO } from '@trezor/connect';
+import TrezorConnect, { type DeviceUniquePath, type PROTO } from '@trezor/connect';
 import { createThunk } from '@trezor/redux-utils';
 
 import {
@@ -34,7 +34,7 @@ export const waitForPhylaxStackRefresh = async () => {
 };
 
 const readStack = async (devicePath: string, knownWallets: PhylaxWalletEntry[]) => {
-    const target = { device: { path: devicePath } };
+    const target = { device: { path: devicePath as DeviceUniquePath } };
     const blocks = await TrezorConnect.phylaxGetBlocks(target);
     if (!blocks.success) return { kind: 'error' as const, error: blocks.error.message };
     const wallets = await TrezorConnect.phylaxGetWallets(target);
