@@ -22,7 +22,7 @@ export const PHYLAX_MAX_INPUTS = 16;
 /** Smallest output the network relays for any address type (P2PKH dust limit). */
 export const DUST_LIMIT = 546n;
 
-/** Coins that are not confirmed yet are not spent (v1). */
+/** Coins that are not confirmed yet are not spent (owner's choice, also with coin control). */
 export const MIN_CONFIRMATIONS = 1;
 
 const SATS_PER_BTC = 100_000_000n;
@@ -97,18 +97,37 @@ export const estimateVsize = (
     return Math.ceil(weight / 4);
 };
 
-export type PhylaxSendRequest = {
+/** Lowest fee rate the network relays. */
+export const MIN_FEE_RATE = 1;
+
+/**
+ * nSequence of every input: replaceable (BIP125), so the fee can be raised later, as Suite does;
+ * also allows a locktime.
+ */
+export const RBF_SEQUENCE = 0xfffffffd;
+
+/** One coin's id: "txid:vout". */
+export const getCoinId = (utxo: { txid: string; vout: number }) => `${utxo.txid}:${utxo.vout}`;
+
+export type PhylaxRecipientRequest = {
     address: string;
-    // satoshis; ignored with sendAll
+    // satoshis; ignored for the send-max recipient
     amount: bigint;
-    sendAll: boolean;
+    // gets everything the coins hold after the other recipients and the fee (at most one)
+    isSendMax: boolean;
+};
+
+export type PhylaxSendRequest = {
+    recipients: PhylaxRecipientRequest[];
     // satoshis per virtual byte
     feeRate: number;
+    // coin control: spend exactly these coins (getCoinId); undefined picks them automatically
+    coinIds?: string[];
 };
 
 export type PhylaxSendPlan = {
     inputs: PhylaxUtxo[];
-    recipient: { address: string; amount: bigint };
+    recipients: { address: string; amount: bigint }[];
     change?: { chain: PhylaxChain; index: number; address: string; amount: bigint };
     fee: bigint;
     vsize: number;
@@ -119,9 +138,19 @@ export type PhylaxPlanResult =
 
 const feeFor = (vsize: number, feeRate: number) => BigInt(Math.ceil(vsize * feeRate));
 
+const sum = (values: bigint[]) => values.reduce((total, value) => total + value, 0n);
+
+/** "Recipient 2: " when there are several, so an error says which one. */
+const recipientPrefix = (index: number, count: number) =>
+    count > 1 ? `Recipient ${index + 1}: ` : '';
+
 /**
- * Picks the coins (largest first, at most PHYLAX_MAX_INPUTS) for one payment, with change to the
- * wallet's change address `changeIndex` when it is worth an output, otherwise to the fee.
+ * Plans a payment to one or more recipients:
+ * - coins: the ones chosen (coin control, all of them are spent) or else the confirmed coins,
+ *   largest first, at most PHYLAX_MAX_INPUTS;
+ * - a send-max recipient gets what is left after the others and the fee (no change);
+ * - otherwise change goes to the wallet's change address `changeIndex` when it is worth an output,
+ *   else to the fee.
  */
 export const planPhylaxSend = (
     wallet: PROTO.PhylaxWallet,
@@ -130,17 +159,110 @@ export const planPhylaxSend = (
     changeIndex: number,
     request: PhylaxSendRequest,
 ): PhylaxPlanResult => {
-    const recipientScript = getOutputScript(network, request.address);
-    if (!recipientScript) {
-        return {
-            kind: 'error',
-            text: `This is not a ${network === 'mainnet' ? 'Bitcoin' : 'Testnet'} address.`,
-        };
+    const { recipients, feeRate, coinIds } = request;
+    if (recipients.length === 0) return { kind: 'error', text: 'Add a recipient.' };
+    if (recipients.filter(recipient => recipient.isSendMax).length > 1) {
+        return { kind: 'error', text: 'Only one recipient can get the maximum.' };
     }
-    if (!(request.feeRate > 0)) return { kind: 'error', text: 'No fee rate.' };
+    const scripts: Buffer[] = [];
+    for (const [index, recipient] of recipients.entries()) {
+        const script = getOutputScript(network, recipient.address);
+        if (!script) {
+            return {
+                kind: 'error',
+                text: `${recipientPrefix(index, recipients.length)}This is not a ${network === 'mainnet' ? 'Bitcoin' : 'Testnet'} address.`,
+            };
+        }
+        if (!recipient.isSendMax && recipient.amount < DUST_LIMIT) {
+            return {
+                kind: 'error',
+                text: `${recipientPrefix(index, recipients.length)}The amount must be at least ${formatBtc(DUST_LIMIT)}.`,
+            };
+        }
+        scripts.push(script);
+    }
+    if (!(feeRate >= MIN_FEE_RATE)) {
+        return { kind: 'error', text: `The fee must be at least ${MIN_FEE_RATE} sat/vB.` };
+    }
 
     const m = wallet.threshold;
     const n = wallet.keys.length;
+    const recipientScriptLengths = scripts.map(script => script.length);
+    const fixed = sum(recipients.filter(r => !r.isSendMax).map(r => r.amount));
+    const maxIndex = recipients.findIndex(recipient => recipient.isSendMax);
+    const toRecipients = (maxAmount: bigint) =>
+        recipients.map((recipient, index) => ({
+            address: recipient.address.trim(),
+            amount: index === maxIndex ? maxAmount : recipient.amount,
+        }));
+    const changeAddress = getPhylaxAddress(wallet, network, 1, changeIndex);
+
+    /** The plan for exactly these coins, or undefined if they do not cover it. */
+    const planFor = (inputs: PhylaxUtxo[]): PhylaxSendPlan | undefined => {
+        const total = sum(inputs.map(utxo => utxo.value));
+        const withoutChange = estimateVsize(inputs.length, recipientScriptLengths, m, n);
+        if (maxIndex >= 0) {
+            const fee = feeFor(withoutChange, feeRate);
+            const maxAmount = total - fixed - fee;
+            if (maxAmount < DUST_LIMIT) return undefined;
+
+            return { inputs, recipients: toRecipients(maxAmount), fee, vsize: withoutChange };
+        }
+        const withChange = estimateVsize(
+            inputs.length,
+            [...recipientScriptLengths, P2WSH_SCRIPT_LENGTH],
+            m,
+            n,
+        );
+        const changeAmount = total - fixed - feeFor(withChange, feeRate);
+        if (changeAmount >= DUST_LIMIT) {
+            return {
+                inputs,
+                recipients: toRecipients(0n),
+                change: {
+                    chain: 1,
+                    index: changeIndex,
+                    address: changeAddress,
+                    amount: changeAmount,
+                },
+                fee: feeFor(withChange, feeRate),
+                vsize: withChange,
+            };
+        }
+        if (total - fixed >= feeFor(withoutChange, feeRate)) {
+            // what is left is too small for a change output: it goes to the fee
+            return {
+                inputs,
+                recipients: toRecipients(0n),
+                fee: total - fixed,
+                vsize: withoutChange,
+            };
+        }
+
+        return undefined;
+    };
+
+    if (coinIds) {
+        const chosen = utxos.filter(utxo => coinIds.includes(getCoinId(utxo)));
+        if (chosen.length === 0) return { kind: 'error', text: 'Choose at least one coin.' };
+        if (chosen.some(utxo => utxo.confirmations < MIN_CONFIRMATIONS)) {
+            return { kind: 'error', text: 'Unconfirmed coins cannot be spent yet.' };
+        }
+        if (chosen.length > PHYLAX_MAX_INPUTS) {
+            return {
+                kind: 'error',
+                text: `Choose at most ${PHYLAX_MAX_INPUTS} coins, the most the main block signs at once.`,
+            };
+        }
+        const chosenPlan = planFor(chosen);
+        if (chosenPlan) return { kind: 'plan', plan: chosenPlan };
+
+        return {
+            kind: 'error',
+            text: `The chosen coins (${formatBtc(sum(chosen.map(utxo => utxo.value)))}) do not cover the amount and the fee.`,
+        };
+    }
+
     const spendable = utxos
         .filter(utxo => utxo.confirmations >= MIN_CONFIRMATIONS)
         // largest first
@@ -148,74 +270,20 @@ export const planPhylaxSend = (
     if (spendable.length === 0) {
         return { kind: 'error', text: 'No confirmed coins to send yet.' };
     }
-    const changeAddress = getPhylaxAddress(wallet, network, 1, changeIndex);
-    const recipient = { address: request.address.trim() };
+    const usable = spendable.slice(0, PHYLAX_MAX_INPUTS);
 
-    if (request.sendAll) {
-        const inputs = spendable.slice(0, PHYLAX_MAX_INPUTS);
-        const total = inputs.reduce((sum, utxo) => sum + utxo.value, 0n);
-        const vsize = estimateVsize(inputs.length, [recipientScript.length], m, n);
-        const fee = feeFor(vsize, request.feeRate);
-        const amount = total - fee;
-        if (amount < DUST_LIMIT) {
-            return { kind: 'error', text: 'The coins do not cover the fee.' };
-        }
+    if (maxIndex >= 0) {
+        const maxPlan = planFor(usable);
+        if (maxPlan) return { kind: 'plan', plan: maxPlan };
 
-        return {
-            kind: 'plan',
-            plan: { inputs, recipient: { ...recipient, amount }, fee, vsize },
-        };
+        return { kind: 'error', text: 'The coins do not cover the other amounts and the fee.' };
+    }
+    for (let count = 1; count <= usable.length; count++) {
+        const autoPlan = planFor(usable.slice(0, count));
+        if (autoPlan) return { kind: 'plan', plan: autoPlan };
     }
 
-    if (request.amount < DUST_LIMIT) {
-        return { kind: 'error', text: `The amount must be at least ${formatBtc(DUST_LIMIT)}.` };
-    }
-    let total = 0n;
-    for (let count = 1; count <= Math.min(spendable.length, PHYLAX_MAX_INPUTS); count++) {
-        total += spendable[count - 1]!.value;
-        const inputs = spendable.slice(0, count);
-        const withChange = estimateVsize(
-            count,
-            [recipientScript.length, P2WSH_SCRIPT_LENGTH],
-            m,
-            n,
-        );
-        const changeAmount = total - request.amount - feeFor(withChange, request.feeRate);
-        if (changeAmount >= DUST_LIMIT) {
-            return {
-                kind: 'plan',
-                plan: {
-                    inputs,
-                    recipient: { ...recipient, amount: request.amount },
-                    change: {
-                        chain: 1,
-                        index: changeIndex,
-                        address: changeAddress,
-                        amount: changeAmount,
-                    },
-                    fee: feeFor(withChange, request.feeRate),
-                    vsize: withChange,
-                },
-            };
-        }
-        const withoutChange = estimateVsize(count, [recipientScript.length], m, n);
-        if (total - request.amount >= feeFor(withoutChange, request.feeRate)) {
-            // what is left is too small for a change output: it goes to the fee
-            return {
-                kind: 'plan',
-                plan: {
-                    inputs,
-                    recipient: { ...recipient, amount: request.amount },
-                    fee: total - request.amount,
-                    vsize: withoutChange,
-                },
-            };
-        }
-    }
-
-    const available = spendable
-        .slice(0, PHYLAX_MAX_INPUTS)
-        .reduce((sum, utxo) => sum + utxo.value, 0n);
+    const available = sum(usable.map(utxo => utxo.value));
 
     return {
         kind: 'error',
@@ -238,14 +306,15 @@ export const getPhylaxSignParams = (
         prev_index: utxo.vout,
         amount: utxo.value.toString(),
         script_type: 'SPENDWITNESS' as const,
+        sequence: RBF_SEQUENCE,
         multisig: getPhylaxMultisig(wallet, network, utxo.chain, utxo.index),
     })),
     outputs: [
-        {
-            address: plan.recipient.address,
-            amount: plan.recipient.amount.toString(),
+        ...plan.recipients.map(recipient => ({
+            address: recipient.address,
+            amount: recipient.amount.toString(),
             script_type: 'PAYTOADDRESS' as const,
-        },
+        })),
         ...(plan.change
             ? [
                   {
@@ -295,7 +364,10 @@ export const checkSignedTx = (
     }
 
     const expected = [
-        { script: getOutputScript(network, plan.recipient.address), amount: plan.recipient.amount },
+        ...plan.recipients.map(recipient => ({
+            script: getOutputScript(network, recipient.address),
+            amount: recipient.amount,
+        })),
         ...(plan.change
             ? [
                   {
@@ -308,14 +380,20 @@ export const checkSignedTx = (
     if (tx.outs.length !== expected.length) {
         return 'The signed transaction has other outputs than planned.';
     }
-    const matches = expected.every(want =>
-        tx.outs.some(
+    // each planned output matches its own output of the transaction
+    const unmatched = [...tx.outs];
+    const matches = expected.every(want => {
+        const at = unmatched.findIndex(
             out =>
                 want.script !== undefined &&
                 Buffer.compare(out.script, want.script) === 0 &&
                 BigInt(out.value) === want.amount,
-        ),
-    );
+        );
+        if (at < 0) return false;
+        unmatched.splice(at, 1);
+
+        return true;
+    });
     if (!matches) return 'The signed transaction pays other addresses or amounts than planned.';
     // Every input: [empty, m signatures, witness script], and the script must be the wallet's own
     // for that input's address. A missing signature is what the network rejects with "Operation

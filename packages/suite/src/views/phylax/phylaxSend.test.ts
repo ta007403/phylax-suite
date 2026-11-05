@@ -4,8 +4,11 @@ import type { PhylaxUtxo } from './phylaxAccountScan';
 import {
     PHYLAX_MAX_INPUTS,
     type PhylaxSendPlan,
+    type PhylaxSendRequest,
+    RBF_SEQUENCE,
     checkSignedTx,
     estimateVsize,
+    getCoinId,
     getOutputScript,
     getPhylaxSignParams,
     parseBtc,
@@ -25,6 +28,17 @@ const utxo = (value: number, n: number, confirmations = 3): PhylaxUtxo => ({
     chain: 0,
     index: n,
     confirmations,
+});
+
+/** One recipient paid `amount`, or the maximum. */
+const pay = (
+    address: string,
+    amount: bigint,
+    options: { isSendMax?: boolean; feeRate?: number; coinIds?: string[] } = {},
+): PhylaxSendRequest => ({
+    recipients: [{ address, amount, isSendMax: options.isSendMax ?? false }],
+    feeRate: options.feeRate ?? 2,
+    coinIds: options.coinIds,
 });
 
 const plan = (result: ReturnType<typeof planPhylaxSend>) => {
@@ -60,12 +74,12 @@ describe('estimateVsize', () => {
 
 describe('planPhylaxSend', () => {
     const coins = [utxo(100_000, 1), utxo(50_000, 2), utxo(999_999, 3, 0)];
-    const request = { address: TESTNET_RECIPIENT, amount: 60_000n, sendAll: false, feeRate: 2 };
+    const request = pay(TESTNET_RECIPIENT, 60_000n);
 
     it('pays from the largest confirmed coin, change to the next change address', () => {
         const p = plan(planPhylaxSend(WALLET, 'testnet', coins, 3, request));
         expect(p.inputs.map(input => input.value)).toEqual([100_000n]);
-        expect(p.recipient).toEqual({ address: TESTNET_RECIPIENT, amount: 60_000n });
+        expect(p.recipients).toEqual([{ address: TESTNET_RECIPIENT, amount: 60_000n }]);
         expect(p.fee).toBe(362n);
         expect(p.change).toEqual({
             chain: 1,
@@ -76,55 +90,191 @@ describe('planPhylaxSend', () => {
     });
 
     it('never spends unconfirmed coins', () => {
-        const result = planPhylaxSend(WALLET, 'testnet', coins, 0, {
-            ...request,
-            amount: 500_000n,
-        });
+        const result = planPhylaxSend(
+            WALLET,
+            'testnet',
+            coins,
+            0,
+            pay(TESTNET_RECIPIENT, 500_000n),
+        );
         expect(result.kind).toBe('error');
     });
 
     it('adds coins until the payment and the fee are covered', () => {
         const p = plan(
-            planPhylaxSend(WALLET, 'testnet', coins, 0, { ...request, amount: 120_000n }),
+            planPhylaxSend(WALLET, 'testnet', coins, 0, pay(TESTNET_RECIPIENT, 120_000n)),
         );
         expect(p.inputs).toHaveLength(2);
-        expect(p.recipient.amount + p.fee + (p.change?.amount ?? 0n)).toBe(150_000n);
+        expect(p.recipients[0]!.amount + p.fee + (p.change?.amount ?? 0n)).toBe(150_000n);
     });
 
     it('gives a leftover too small for change to the fee', () => {
         const p = plan(
-            planPhylaxSend(WALLET, 'testnet', [utxo(10_000, 1)], 0, {
-                ...request,
-                amount: 9_500n,
-            }),
+            planPhylaxSend(WALLET, 'testnet', [utxo(10_000, 1)], 0, pay(TESTNET_RECIPIENT, 9_500n)),
         );
         expect(p.change).toBeUndefined();
         expect(p.fee).toBe(500n);
     });
 
-    it('sends everything confirmed with "send all"', () => {
-        const p = plan(planPhylaxSend(WALLET, 'testnet', coins, 0, { ...request, sendAll: true }));
+    it('sends everything confirmed to a send-max recipient', () => {
+        const p = plan(
+            planPhylaxSend(
+                WALLET,
+                'testnet',
+                coins,
+                0,
+                pay(TESTNET_RECIPIENT, 0n, { isSendMax: true }),
+            ),
+        );
         expect(p.inputs).toHaveLength(2);
         expect(p.change).toBeUndefined();
-        expect(p.recipient.amount + p.fee).toBe(150_000n);
+        expect(p.recipients[0]!.amount + p.fee).toBe(150_000n);
+    });
+
+    it('pays several recipients, the send-max one gets the rest', () => {
+        const p = plan(
+            planPhylaxSend(WALLET, 'testnet', coins, 0, {
+                recipients: [
+                    { address: TESTNET_RECIPIENT, amount: 20_000n, isSendMax: false },
+                    { address: TESTNET_RECIPIENT, amount: 0n, isSendMax: true },
+                ],
+                feeRate: 2,
+            }),
+        );
+        expect(p.recipients[0]!.amount).toBe(20_000n);
+        expect(p.recipients[0]!.amount + p.recipients[1]!.amount + p.fee).toBe(150_000n);
+        // two payments, no change: the fee covers both outputs
+        expect(p.vsize).toBe(estimateVsize(2, [22, 22], 2, 2));
+    });
+
+    it('pays several fixed amounts with one change', () => {
+        const p = plan(
+            planPhylaxSend(WALLET, 'testnet', coins, 4, {
+                recipients: [
+                    { address: TESTNET_RECIPIENT, amount: 30_000n, isSendMax: false },
+                    { address: TESTNET_RECIPIENT, amount: 40_000n, isSendMax: false },
+                ],
+                feeRate: 1,
+            }),
+        );
+        expect(p.inputs).toHaveLength(1);
+        expect(p.change?.amount).toBe(100_000n - 70_000n - p.fee);
+    });
+
+    it('says which recipient is wrong, and allows one send-max only', () => {
+        const wrong = planPhylaxSend(WALLET, 'testnet', coins, 0, {
+            recipients: [
+                { address: TESTNET_RECIPIENT, amount: 30_000n, isSendMax: false },
+                { address: MAINNET_RECIPIENT, amount: 30_000n, isSendMax: false },
+            ],
+            feeRate: 1,
+        });
+        expect(wrong).toEqual({
+            kind: 'error',
+            text: 'Recipient 2: This is not a Testnet address.',
+        });
+        const twoMax = planPhylaxSend(WALLET, 'testnet', coins, 0, {
+            recipients: [
+                { address: TESTNET_RECIPIENT, amount: 0n, isSendMax: true },
+                { address: TESTNET_RECIPIENT, amount: 0n, isSendMax: true },
+            ],
+            feeRate: 1,
+        });
+        expect(twoMax.kind).toBe('error');
+    });
+
+    it('spends exactly the chosen coins (coin control)', () => {
+        const chosen = [getCoinId(coins[1]!)];
+        const p = plan(
+            planPhylaxSend(
+                WALLET,
+                'testnet',
+                coins,
+                0,
+                pay(TESTNET_RECIPIENT, 10_000n, { coinIds: chosen }),
+            ),
+        );
+        // the 50 000 coin, although the 100 000 one is larger
+        expect(p.inputs.map(getCoinId)).toEqual(chosen);
+        expect(p.change?.amount).toBe(50_000n - 10_000n - p.fee);
+
+        const short = planPhylaxSend(
+            WALLET,
+            'testnet',
+            coins,
+            0,
+            pay(TESTNET_RECIPIENT, 60_000n, { coinIds: chosen }),
+        );
+        expect(short.kind === 'error' && short.text).toContain('chosen coins');
+    });
+
+    it('refuses chosen coins that are unconfirmed, or none', () => {
+        const unconfirmed = planPhylaxSend(
+            WALLET,
+            'testnet',
+            coins,
+            0,
+            pay(TESTNET_RECIPIENT, 10_000n, { coinIds: [getCoinId(coins[2]!)] }),
+        );
+        expect(unconfirmed).toEqual({
+            kind: 'error',
+            text: 'Unconfirmed coins cannot be spent yet.',
+        });
+        const none = planPhylaxSend(
+            WALLET,
+            'testnet',
+            coins,
+            0,
+            pay(TESTNET_RECIPIENT, 10_000n, { coinIds: [] }),
+        );
+        expect(none).toEqual({ kind: 'error', text: 'Choose at least one coin.' });
+    });
+
+    it('takes a custom fee rate, not below 1 sat/vB', () => {
+        const custom = plan(
+            planPhylaxSend(
+                WALLET,
+                'testnet',
+                coins,
+                0,
+                pay(TESTNET_RECIPIENT, 60_000n, { feeRate: 1.5 }),
+            ),
+        );
+        expect(custom.fee).toBe(BigInt(Math.ceil(custom.vsize * 1.5)));
+        const tooLow = planPhylaxSend(
+            WALLET,
+            'testnet',
+            coins,
+            0,
+            pay(TESTNET_RECIPIENT, 60_000n, { feeRate: 0.5 }),
+        );
+        expect(tooLow).toEqual({ kind: 'error', text: 'The fee must be at least 1 sat/vB.' });
     });
 
     it('refuses an address of the other network', () => {
-        const result = planPhylaxSend(WALLET, 'testnet', coins, 0, {
-            ...request,
-            address: MAINNET_RECIPIENT,
-        });
+        const result = planPhylaxSend(WALLET, 'testnet', coins, 0, pay(MAINNET_RECIPIENT, 60_000n));
         expect(result).toEqual({ kind: 'error', text: 'This is not a Testnet address.' });
     });
 
     it('uses at most the inputs the main block can sign', () => {
         const many = Array.from({ length: PHYLAX_MAX_INPUTS + 4 }, (_, i) => utxo(10_000, i + 1));
-        const all = plan(planPhylaxSend(WALLET, 'testnet', many, 0, { ...request, sendAll: true }));
+        const all = plan(
+            planPhylaxSend(
+                WALLET,
+                'testnet',
+                many,
+                0,
+                pay(TESTNET_RECIPIENT, 0n, { isSendMax: true }),
+            ),
+        );
         expect(all.inputs).toHaveLength(PHYLAX_MAX_INPUTS);
-        const tooMuch = planPhylaxSend(WALLET, 'testnet', many, 0, {
-            ...request,
-            amount: 170_000n,
-        });
+        const tooMuch = planPhylaxSend(
+            WALLET,
+            'testnet',
+            many,
+            0,
+            pay(TESTNET_RECIPIENT, 170_000n),
+        );
         expect(tooMuch.kind === 'error' && tooMuch.text).toContain('largest coins');
     });
 });
@@ -133,12 +283,13 @@ describe('getPhylaxSignParams', () => {
     it('puts the wallet multisig on every input and on the change', () => {
         const coins = [utxo(100_000, 5)];
         const p = plan(
-            planPhylaxSend(WALLET, 'testnet', coins, 7, {
-                address: TESTNET_RECIPIENT,
-                amount: 30_000n,
-                sendAll: false,
-                feeRate: 1,
-            }),
+            planPhylaxSend(
+                WALLET,
+                'testnet',
+                coins,
+                7,
+                pay(TESTNET_RECIPIENT, 30_000n, { feeRate: 1 }),
+            ),
         );
         const params = getPhylaxSignParams(WALLET, 'testnet', p);
         expect(params.inputs[0]).toMatchObject({
@@ -146,6 +297,8 @@ describe('getPhylaxSignParams', () => {
             prev_hash: coins[0]!.txid,
             amount: '100000',
             script_type: 'SPENDWITNESS',
+            // replaceable (RBF)
+            sequence: RBF_SEQUENCE,
         });
         expect(params.inputs[0]!.multisig.pubkeys.map(key => key.address_n)).toEqual([
             [0, 5],
@@ -155,18 +308,20 @@ describe('getPhylaxSignParams', () => {
             address_n: "m/48'/1'/0'/2'/1/7",
             script_type: 'PAYTOWITNESS',
         });
-        expect(params.outputs[1]!.multisig!.pubkeys[0]!.address_n).toEqual([1, 7]);
+        const change = params.outputs[1]!;
+        expect('multisig' in change && change.multisig.pubkeys[0]!.address_n).toEqual([1, 7]);
     });
 });
 
 describe('checkSignedTx', () => {
     const p: PhylaxSendPlan = plan(
-        planPhylaxSend(WALLET, 'testnet', [utxo(100_000, 9)], 2, {
-            address: TESTNET_RECIPIENT,
-            amount: 40_000n,
-            sendAll: false,
-            feeRate: 1,
-        }),
+        planPhylaxSend(
+            WALLET,
+            'testnet',
+            [utxo(100_000, 9)],
+            2,
+            pay(TESTNET_RECIPIENT, 40_000n, { feeRate: 1 }),
+        ),
     );
 
     // DER-shaped placeholder signatures; the device's signatures are checked by the network
@@ -187,7 +342,7 @@ describe('checkSignedTx', () => {
         });
         tx.outs.push({
             script: getOutputScript('testnet', TESTNET_RECIPIENT)!,
-            value: (overrides.amount ?? p.recipient.amount).toString(),
+            value: (overrides.amount ?? p.recipients[0]!.amount).toString(),
         });
         tx.outs.push({
             script: getOutputScript('testnet', p.change!.address)!,

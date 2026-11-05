@@ -11,10 +11,10 @@ import { PhylaxDetails } from './PhylaxDetails';
 import { PhylaxOverview } from './PhylaxOverview';
 import { PhylaxAddressHistory } from '../PhylaxAddressHistory';
 import { PhylaxReceive } from '../PhylaxReceive';
-import { PhylaxSend } from '../PhylaxSend';
 import { usePhylaxWakeUp } from '../PhylaxWakeUp';
 import { getLockedKeyBlocks, getMainFingerprint, getPhylaxReadiness } from '../phylaxReadiness';
 import { type PhylaxNetwork, getPhylaxUnit } from '../phylaxWallet';
+import { PhylaxSendPage } from '../send/PhylaxSendPage';
 import { usePhylaxAccount } from '../usePhylaxAccount';
 import type { PhylaxWalletEntry, RunOnDevice } from '../usePhylaxStack';
 
@@ -104,30 +104,28 @@ export const PhylaxAccount = ({
                 </Card>
             )}
 
-            {tab === 'send' && details && (
-                <Card>
-                    {account.status === 'loaded' ? (
-                        <PhylaxSend
-                            wallet={details}
-                            network={network}
-                            utxos={account.data.utxos}
-                            nextChangeIndex={account.data.nextChangeIndex}
-                            mainFingerprint={mainFingerprint}
-                            missingFingerprints={
-                                readiness.isAttachNeeded ? readiness.missingFingerprints : []
-                            }
-                            lockedKeyBlocks={readiness.lockedInWallet}
-                            wakeUp={wakeUp}
-                            runOnDevice={runOnDevice}
-                            isDeviceBusy={isDeviceBusy}
-                            // the spent coins and the new change, now and again a little later
-                            onSent={account.refreshAfterSend}
-                        />
-                    ) : (
-                        <Text>Checking the blockchain for the wallet&apos;s coins…</Text>
-                    )}
-                </Card>
-            )}
+            {tab === 'send' &&
+                details &&
+                (account.status === 'loaded' ? (
+                    <PhylaxSendPage
+                        wallet={details}
+                        network={network}
+                        utxos={account.data.utxos}
+                        nextChangeIndex={account.data.nextChangeIndex}
+                        mainFingerprint={mainFingerprint}
+                        missingFingerprints={
+                            readiness.isAttachNeeded ? readiness.missingFingerprints : []
+                        }
+                        lockedKeyBlocks={readiness.lockedInWallet}
+                        wakeUp={wakeUp}
+                        runOnDevice={runOnDevice}
+                        isDeviceBusy={isDeviceBusy}
+                        // the spent coins and the new change, now and again a little later
+                        onSent={account.refreshAfterSend}
+                    />
+                ) : (
+                    <Text>Checking the blockchain for the wallet&apos;s coins…</Text>
+                ))}
 
             {tab === 'details' && (
                 <PhylaxDetails
