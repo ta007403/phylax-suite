@@ -49,6 +49,7 @@ import { DeviceCommands } from './DeviceCommands';
 import type { TypedCallProvider } from './DeviceCurrentSession';
 import { DeviceCurrentSession } from './DeviceCurrentSession';
 import { checkFirmwareRevision } from './checkFirmwareRevision';
+import { classifyPhylaxProbe, isPhylaxBootloader } from './phylax';
 import { abortThpWorkflow, getThpChannel } from './thp';
 import { getAllNetworks } from '../data/coinInfo';
 import {
@@ -595,7 +596,8 @@ export class Device extends TypedEmitter<DeviceEvents> implements IDevice {
 
         if (!options.skipFirmwareChecks) {
             await this.detectPhylax();
-            if (this.phylax || this.phylaxKey) {
+            // a PHYLAX bootloader means PHYLAX firmware, even before the probe has answered
+            if (this.phylax || this.phylaxKey || isPhylaxBootloader(this.features)) {
                 this.authenticityChecks = {
                     firmwareHash: { success: false, error: 'phylax-firmware' },
                     firmwareRevision: { success: false, error: 'phylax-firmware' },
@@ -732,22 +734,42 @@ export class Device extends TypedEmitter<DeviceEvents> implements IDevice {
         ) {
             return;
         }
-        try {
-            await this.getCurrentSession().typedCall('PhylaxGetBlocks', 'PhylaxBlocks', {});
-            this.phylax = true;
-            // PHYLAX firmware is not a Trezor release: never offer to replace it from here
-            this._firmwareStatus = 'valid';
-            this.updateNameAndColor();
-        } catch (error) {
-            this.logger.debug('not a PHYLAX main block', error?.message);
-            this.phylax = false;
-            // Only PHYLAX firmware knows the message; stock Trezor firmware says "Unknown message".
-            if (error?.message?.includes('Not a PHYLAX main block')) {
+        // Only a definite answer decides; a busy device or a USB hiccup right after connecting
+        // once made a main block look like a plain Trezor One for the whole session (Trezor's
+        // firmware update offered, "firmware compromised" from Trezor's checks).
+        for (let attempt = 1; attempt <= 3; attempt++) {
+            let probe: ReturnType<typeof classifyPhylaxProbe>;
+            try {
+                await this.getCurrentSession().typedCall('PhylaxGetBlocks', 'PhylaxBlocks', {});
+                probe = classifyPhylaxProbe();
+            } catch (error) {
+                probe = classifyPhylaxProbe(error);
+                this.logger.debug('PHYLAX probe', probe, error?.message);
+            }
+            if (probe === 'main') {
+                this.phylax = true;
+                // PHYLAX firmware is not a Trezor release: never offer to replace it from here
+                this._firmwareStatus = 'valid';
+                this.updateNameAndColor();
+
+                return;
+            }
+            if (probe === 'key') {
+                this.phylax = false;
                 this.phylaxKey = true;
                 this._firmwareStatus = 'valid';
                 this.updateNameAndColor();
+
+                return;
             }
+            if (probe === 'stock') {
+                this.phylax = false;
+
+                return;
+            }
+            await new Promise(resolve => setTimeout(resolve, 300 * attempt));
         }
+        // still unknown: left undefined, so the next connection asks again
     }
 
     getAuthenticityChecks() {
@@ -861,7 +883,7 @@ export class Device extends TypedEmitter<DeviceEvents> implements IDevice {
             this._unavailableCapabilities = getUnavailableCapabilities(feat, getAllNetworks());
             this._firmwareReleaseConfigInfo = getFirmwareReleaseConfigInfo(feat, firmwareType);
             this._firmwareStatus =
-                this.phylax || this.phylaxKey
+                this.phylax || this.phylaxKey || isPhylaxBootloader(feat)
                     ? 'valid'
                     : getFirmwareStatus(feat, this._firmwareReleaseConfigInfo);
             // Bundled release JSONs are production assets, so only seed `currentRelease`
