@@ -42,6 +42,15 @@ export const PhylaxAccountsMenu = () => {
                         Asking the main block…
                     </Text>
                 )}
+                {isLoaded && wallets.length > 0 && networks.length === 0 && (
+                    <Text
+                        typographyStyle="body-sm"
+                        priority="secondary"
+                        margin={{ left: 8, top: 8 }}
+                    >
+                        Turn on Bitcoin in Settings › Coins to see your multisig wallets here.
+                    </Text>
+                )}
                 {isLoaded && wallets.length === 0 && (
                     <Text
                         typographyStyle="body-sm"
