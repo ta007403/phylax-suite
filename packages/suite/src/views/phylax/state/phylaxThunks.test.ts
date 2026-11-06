@@ -32,6 +32,7 @@ const DATA: PhylaxAccountData = {
     usedAddressCount: 2,
     nextReceiveIndex: 1,
     nextChangeIndex: 1,
+    usedAddresses: ['bc1q'],
     utxos: [{ txid: 'bb', vout: 1, value: 3_700n, chain: 1, index: 0, confirmations: 0 }],
     usedReceiveAddresses: [{ index: 0, address: 'bc1q', transactions: 2, balance: 0n }],
     transactions: [

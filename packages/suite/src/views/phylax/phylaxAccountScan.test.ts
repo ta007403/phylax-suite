@@ -97,6 +97,27 @@ describe('PHYLAX chain scan', () => {
         // 20 unused addresses after #2, and one detail lookup per used address
         expect(jest.mocked(TrezorConnect.getAccountInfo)).toHaveBeenCalledTimes(23 + 2);
     });
+
+    it('asks for the details of addresses used at the last scan at once (one lookup each)', async () => {
+        jest.mocked(TrezorConnect.getAccountInfo).mockClear();
+        const known = new Set([getPhylaxAddress(WALLET, 'testnet', 0, 0)]);
+        const result = await scanChain(WALLET, 'testnet', 0, known);
+        expect(result.utxos).toHaveLength(1);
+        // 23 lookups as before; only #2 (not known as used) needs a second one
+        expect(jest.mocked(TrezorConnect.getAccountInfo)).toHaveBeenCalledTimes(23 + 1);
+        const detailsOf = (index: number) =>
+            jest
+                .mocked(TrezorConnect.getAccountInfo)
+                .mock.calls.map(
+                    ([params]) => params as unknown as { descriptor: string; details: string },
+                )
+                .filter(
+                    params => params.descriptor === getPhylaxAddress(WALLET, 'testnet', 0, index),
+                )
+                .map(params => params.details);
+        expect(detailsOf(0)).toEqual(['txs']);
+        expect(detailsOf(2)).toEqual(['basic', 'txs']);
+    });
 });
 
 describe('PHYLAX transactions', () => {

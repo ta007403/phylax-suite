@@ -107,13 +107,18 @@ export type PhylaxAccountData = {
     usedReceiveAddresses: PhylaxUsedAddress[];
     // newest first, pending ones on top
     transactions: PhylaxTransaction[];
+    // every used address (both chains): the next scan asks for their details at once
+    usedAddresses: string[];
 };
 
-// Lookups at a time: one burst per address (about 40 for a new wallet) made the backend close
-// the connection ("Websocket closed unexpectedly").
-const CONCURRENT_LOOKUPS = 4;
+// Lookups at a time, with a pause after each: bursts of lookups (about 45 per wallet) made Trezor's
+// backend close the connection ("Websocket closed unexpectedly", "Backend disconnected"), which
+// also cut Suite's own accounts off.
+const CONCURRENT_LOOKUPS = 2;
+const LOOKUP_PAUSE_MS = 100;
 const LOOKUP_ATTEMPTS = 3;
-const RETRY_DELAY_MS = 1500;
+// after a failure (e.g. the backend closed the connection): give it time before asking again
+const RETRY_DELAYS_MS = [2000, 5000];
 
 const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -131,12 +136,18 @@ const lookUpAddress = async (
             details,
             ...(details === 'txs' ? { pageSize: TRANSACTIONS_PER_ADDRESS } : {}),
         });
-        if (result.success) return result.payload;
+        if (result.success) {
+            await wait(LOOKUP_PAUSE_MS);
+
+            return result.payload;
+        }
         lastError = result.error.message;
-        if (attempt < LOOKUP_ATTEMPTS) await wait(RETRY_DELAY_MS * attempt);
+        if (attempt < LOOKUP_ATTEMPTS) await wait(RETRY_DELAYS_MS[attempt - 1] ?? 5000);
     }
     throw new Error(lastError);
 };
+
+type AddressInfo = Awaited<ReturnType<typeof lookUpAddress>>;
 
 type AddressTransactions = NonNullable<
     Awaited<ReturnType<typeof lookUpAddress>>['history']['transactions']
@@ -237,6 +248,8 @@ export const scanChain = async (
     wallet: PROTO.PhylaxWallet,
     network: PhylaxNetwork,
     chain: PhylaxChain,
+    // addresses used at the last scan: their details are asked for at once (one lookup each)
+    knownUsed: ReadonlySet<string> = new Set(),
 ) => {
     let balance = 0n;
     let usedAddressCount = 0;
@@ -244,7 +257,8 @@ export const scanChain = async (
     let nextIndex = 0;
     // every scanned address: the wallet's own addresses for the transaction amounts
     const scanned: [string, PhylaxOwnAddress][] = [];
-    const usedAt: { address: string; index: number }[] = [];
+    // every used address with its details lookup, if it was made already
+    const usedAt: { address: string; index: number; info?: AddressInfo }[] = [];
     const used: PhylaxUsedAddress[] = [];
 
     while (nextIndex <= lastUsedIndex + GAP_LIMIT) {
@@ -264,11 +278,14 @@ export const scanChain = async (
 
         // One request per address: connect's bundled getAccountInfo needs a device for its progress
         // events, and these lookups need none.
-        const results = await mapLimited(addresses, CONCURRENT_LOOKUPS, address =>
-            lookUpAddress(network, address),
-        );
+        const results = await mapLimited(addresses, CONCURRENT_LOOKUPS, async address => {
+            const isKnownUsed = knownUsed.has(address);
+            const info = await lookUpAddress(network, address, isKnownUsed ? 'txs' : 'basic');
 
-        results.forEach((info, offset) => {
+            return { info, hasDetails: isKnownUsed };
+        });
+
+        results.forEach(({ info, hasDetails }, offset) => {
             const isUsed = info.history.total > 0 || info.history.unconfirmed > 0;
             if (!isUsed) return;
             lastUsedIndex = from + offset;
@@ -281,13 +298,19 @@ export const scanChain = async (
             });
             // Blockbook: confirmed balance plus the pending (unconfirmed) change
             balance += BigInt(info.availableBalance);
-            usedAt.push({ address: addresses[offset]!, index: from + offset });
+            usedAt.push({
+                address: addresses[offset]!,
+                index: from + offset,
+                info: hasDetails ? info : undefined,
+            });
         });
     }
 
     // the coins and the transactions of every used address
-    const details = await mapLimited(usedAt, CONCURRENT_LOOKUPS, async ({ address, index }) => {
-        const info = await lookUpAddress(network, address, 'txs');
+    // (newly used addresses only: the others came with their details already)
+    const details = await mapLimited(usedAt, CONCURRENT_LOOKUPS, async used => {
+        const { address, index } = used;
+        const info = used.info ?? (await lookUpAddress(network, address, 'txs'));
 
         return {
             utxos: (info.utxo ?? []).map((utxo): PhylaxUtxo => ({
@@ -317,11 +340,14 @@ export const scanChain = async (
 export const scanPhylaxAccount = async (
     wallet: PROTO.PhylaxWallet,
     network: PhylaxNetwork,
+    // the last scan's used addresses: fewer lookups this time
+    knownUsed: readonly string[] = [],
 ): Promise<PhylaxAccountData> => {
+    const knownUsedSet = new Set(knownUsed);
     // one chain after the other, not both at once (see CONCURRENT_LOOKUPS)
     const chains = [];
     for (const chain of CHAINS) {
-        chains.push(await scanChain(wallet, network, chain));
+        chains.push(await scanChain(wallet, network, chain, knownUsedSet));
     }
     const ownAddresses = new Map(chains.flatMap(chain => chain.scanned));
 
@@ -337,5 +363,6 @@ export const scanPhylaxAccount = async (
             chains.flatMap(chain => chain.transactions),
             ownAddresses,
         ),
+        usedAddresses: chains.flatMap(chain => chain.used.map(used => used.address)),
     };
 };

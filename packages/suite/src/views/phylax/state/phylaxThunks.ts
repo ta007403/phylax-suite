@@ -123,7 +123,12 @@ export const refreshPhylaxAccountThunk = createThunk<
             scan.isRerunRequested = false;
             dispatch(phylaxActions.accountRefreshStarted({ key }));
             try {
-                const data = await scanPhylaxAccount(entry.details, network);
+                const previous = selectPhylaxAccountByKey(getState(), key)?.data;
+                const data = await scanPhylaxAccount(
+                    entry.details,
+                    network,
+                    previous?.usedAddresses,
+                );
                 dispatch(
                     phylaxActions.accountLoaded({
                         key,
@@ -147,18 +152,25 @@ export const refreshPhylaxAccountThunk = createThunk<
 
 type RefreshPhylaxAccountsThunkState = RefreshPhylaxAccountThunkState;
 
-/** Scans every wallet on the network that has no data yet (or all of them with `isForced`). */
+/**
+ * Scans the wallets on the network: `missing` those without data yet, `pending` those with a
+ * pending transaction (a new block may confirm it), `all` every one.
+ */
 export const refreshPhylaxAccountsThunk = createThunk<
     void,
-    { network: PhylaxNetwork; isForced?: boolean },
+    { network: PhylaxNetwork; which: 'missing' | 'pending' | 'all' },
     { state: RefreshPhylaxAccountsThunkState }
->(`${PHYLAX_PREFIX}/refreshAccounts`, async ({ network, isForced }, { dispatch, getState }) => {
+>(`${PHYLAX_PREFIX}/refreshAccounts`, async ({ network, which }, { dispatch, getState }) => {
     const wallets = selectPhylaxWallets(getState()).filter(entry => {
         if (!entry.details) return false;
-        if (isForced) return true;
-        const key = getPhylaxAccountKey(entry.summary, network);
+        const account = selectPhylaxAccountByKey(
+            getState(),
+            getPhylaxAccountKey(entry.summary, network),
+        );
+        if (which === 'all') return true;
+        if (which === 'missing') return account === undefined;
 
-        return selectPhylaxAccountByKey(getState(), key) === undefined;
+        return !!account?.data?.transactions.some(tx => tx.blockHeight === undefined);
     });
     // one wallet after the other, the backend limits parallel lookups
     for (const entry of wallets) {

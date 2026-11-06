@@ -26,6 +26,7 @@ export type StoredPhylaxAccountData = {
     usedAddressCount: number;
     nextReceiveIndex: number;
     nextChangeIndex: number;
+    usedAddresses: string[];
     utxos: (Omit<PhylaxAccountData['utxos'][number], 'value'> & { value: string })[];
     usedReceiveAddresses: (Omit<PhylaxAccountData['usedReceiveAddresses'][number], 'balance'> & {
         balance: string;
