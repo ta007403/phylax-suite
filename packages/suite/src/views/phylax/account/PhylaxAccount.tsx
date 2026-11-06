@@ -13,7 +13,7 @@ import { PhylaxAddressHistory } from '../PhylaxAddressHistory';
 import { PhylaxReceive } from '../PhylaxReceive';
 import { usePhylaxWakeUp } from '../PhylaxWakeUp';
 import { getLockedKeyBlocks, getMainFingerprint, getPhylaxReadiness } from '../phylaxReadiness';
-import { type PhylaxNetwork, getPhylaxUnit } from '../phylaxWallet';
+import type { PhylaxNetwork } from '../phylaxWallet';
 import { PhylaxSendPage } from '../send/PhylaxSendPage';
 import { usePhylaxAccount } from '../usePhylaxAccount';
 import type { PhylaxWalletEntry, RunOnDevice } from '../usePhylaxStack';
@@ -52,7 +52,6 @@ export const PhylaxAccount = ({
 
     const readiness = getPhylaxReadiness(summary.fingerprints, blocks);
     const mainFingerprint = getMainFingerprint(blocks);
-    const unit = getPhylaxUnit(network);
 
     return (
         <Column gap={16} alignItems="stretch" data-testid={`@phylax/account/${summary.slot}`}>
@@ -97,7 +96,7 @@ export const PhylaxAccount = ({
                         {account.status === 'loaded' && (
                             <PhylaxAddressHistory
                                 addresses={account.data.usedReceiveAddresses}
-                                unit={unit}
+                                network={network}
                             />
                         )}
                     </Column>

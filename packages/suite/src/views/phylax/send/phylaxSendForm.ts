@@ -69,6 +69,8 @@ export const getSendRequest = (
     recipients: PhylaxRecipientDraft[],
     feeRate: number | undefined,
     coinIds: string[] | undefined,
+    // the amount as typed, in the unit of Settings › Bitcoin units
+    parseAmount: (text: string) => bigint | undefined = parseBtc,
 ): PhylaxSendRequest | { error: string } | undefined => {
     if (feeRate === undefined) return undefined;
     const parsed = [];
@@ -80,7 +82,7 @@ export const getSendRequest = (
             continue;
         }
         if (!recipient.amountText.trim()) return undefined;
-        const amount = parseBtc(recipient.amountText);
+        const amount = parseAmount(recipient.amountText);
         if (amount === undefined) return { error: `${prefix}Invalid amount.` };
         parsed.push({ address: recipient.address, amount, isSendMax: false });
     }

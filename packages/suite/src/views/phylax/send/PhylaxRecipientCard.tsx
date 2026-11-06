@@ -6,13 +6,13 @@ import { TrashIcon } from '@trezor/icons';
 
 import type { PhylaxRecipientDraft } from './phylaxSendForm';
 import type { PhylaxFiat } from './usePhylaxFiat';
-import { formatBtc, parseBtc } from '../phylaxSend';
+import type { PhylaxAmountFormat } from '../phylaxAmount';
 
 type PhylaxRecipientCardProps = {
     recipient: PhylaxRecipientDraft;
     index: number;
     count: number;
-    unit: string;
+    amountFormat: PhylaxAmountFormat;
     fiat: PhylaxFiat;
     // the amount the plan gives a send-max recipient
     sendMaxAmount: bigint | undefined;
@@ -26,7 +26,7 @@ export const PhylaxRecipientCard = ({
     recipient,
     index,
     count,
-    unit,
+    amountFormat,
     fiat,
     sendMaxAmount,
     isSendMaxTaken,
@@ -34,11 +34,11 @@ export const PhylaxRecipientCard = ({
     onRemove,
 }: PhylaxRecipientCardProps) => {
     const testId = `@phylax/send/recipient/${index}`;
-    const maxText = sendMaxAmount !== undefined ? formatBtc(sendMaxAmount) : '';
+    const maxText = sendMaxAmount !== undefined ? amountFormat.formatValue(sendMaxAmount) : '';
     const maxFiatText = sendMaxAmount !== undefined ? fiat.toFiatText(sendMaxAmount) : '';
 
     const handleAmountChange = (amountText: string) => {
-        const amount = parseBtc(amountText);
+        const amount = amountFormat.parse(amountText);
         onChange({
             ...recipient,
             amountText,
@@ -51,7 +51,7 @@ export const PhylaxRecipientCard = ({
         onChange({
             ...recipient,
             fiatText,
-            amountText: amount !== undefined ? formatBtc(amount) : '',
+            amountText: amount !== undefined ? amountFormat.formatValue(amount) : '',
         });
     };
 
@@ -83,7 +83,7 @@ export const PhylaxRecipientCard = ({
                 <Row gap={12} alignItems="flex-start" flexWrap="wrap">
                     <Column flex="1 1 200px" alignItems="stretch">
                         <Input
-                            label={`Amount (${unit})`}
+                            label={`Amount (${amountFormat.unit})`}
                             value={recipient.isSendMax ? maxText : recipient.amountText}
                             onChange={event => handleAmountChange(event.target.value)}
                             isDisabled={recipient.isSendMax}

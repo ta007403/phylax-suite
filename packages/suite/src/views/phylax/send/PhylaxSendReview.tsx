@@ -11,7 +11,8 @@ import { copyToClipboard } from '@trezor/dom-utils';
 import { ArrowLeftIcon, PaperPlaneTiltIcon } from '@trezor/icons';
 
 import { PhylaxTotalLine } from './PhylaxTotalLine';
-import { type PhylaxSendPlan, checkSignedTx, formatBtc, getPhylaxSignParams } from '../phylaxSend';
+import type { PhylaxAmountFormat } from '../phylaxAmount';
+import { type PhylaxSendPlan, checkSignedTx, getPhylaxSignParams } from '../phylaxSend';
 import { PHYLAX_COIN_SYMBOLS, type PhylaxNetwork, getFingerprintHex } from '../phylaxWallet';
 import type { RunOnDevice } from '../usePhylaxStack';
 
@@ -27,7 +28,7 @@ type PhylaxSendReviewProps = {
     network: PhylaxNetwork;
     plan: PhylaxSendPlan;
     feeRate: number;
-    unit: string;
+    amountFormat: PhylaxAmountFormat;
     formatFiat: (satoshis: bigint) => string;
     mainFingerprint: number | undefined;
     runOnDevice: RunOnDevice;
@@ -43,7 +44,7 @@ export const PhylaxSendReview = ({
     network,
     plan,
     feeRate,
-    unit,
+    amountFormat,
     formatFiat,
     mainFingerprint,
     runOnDevice,
@@ -122,9 +123,7 @@ export const PhylaxSendReview = ({
             <Card data-testid="@phylax/send/done">
                 <Column gap={12} alignItems="flex-start">
                     <H3>Sent</H3>
-                    <Text>
-                        {formatBtc(amount)} {unit} is on its way. Transaction id:
-                    </Text>
+                    <Text>{amountFormat.format(amount)} is on its way. Transaction id:</Text>
                     <Text isMonospaced typographyStyle="body-sm">
                         <span style={{ wordBreak: 'break-all' }}>{state.txid}</span>
                     </Text>
@@ -159,7 +158,7 @@ export const PhylaxSendReview = ({
                             <span style={{ wordBreak: 'break-all' }}>{recipient.address}</span>
                         </Text>
                         <Text typographyStyle="body-md-strong" isTabular>
-                            {formatBtc(recipient.amount)} {unit}
+                            {amountFormat.format(recipient.amount)}
                             {formatFiat(recipient.amount) && ` · ${formatFiat(recipient.amount)}`}
                         </Text>
                     </Column>
@@ -167,8 +166,8 @@ export const PhylaxSendReview = ({
                 <Divider margin={{ top: 0, bottom: 0 }} />
                 {plan.change && (
                     <Text typographyStyle="body-sm" priority="secondary">
-                        Change: {formatBtc(plan.change.amount)} {unit} back to this wallet (change
-                        address #{plan.change.index}).
+                        Change: {amountFormat.format(plan.change.amount)} back to this wallet
+                        (change address #{plan.change.index}).
                     </Text>
                 )}
                 <Text typographyStyle="body-sm" priority="secondary">
@@ -178,13 +177,13 @@ export const PhylaxSendReview = ({
                 <PhylaxTotalLine
                     label="Fee"
                     satoshis={plan.fee}
-                    unit={unit}
+                    amountFormat={amountFormat}
                     formatFiat={formatFiat}
                 />
                 <PhylaxTotalLine
                     label="Total spent"
                     satoshis={amount + plan.fee}
-                    unit={unit}
+                    amountFormat={amountFormat}
                     formatFiat={formatFiat}
                     isStrong
                 />

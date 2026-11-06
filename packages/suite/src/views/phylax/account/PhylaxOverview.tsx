@@ -4,9 +4,9 @@ import { Button, Card, Column, Row, Text } from '@trezor/components';
 import { ArrowsClockwiseIcon } from '@trezor/icons';
 
 import { PhylaxTransactionList } from './PhylaxTransactionList';
-import { formatBtc } from '../phylaxSend';
-import { type PhylaxNetwork, getPhylaxUnit } from '../phylaxWallet';
+import type { PhylaxNetwork } from '../phylaxWallet';
 import type { PhylaxAccount } from '../usePhylaxAccount';
+import { usePhylaxAmountFormat } from '../usePhylaxAmountFormat';
 
 type PhylaxOverviewProps = {
     account: PhylaxAccount;
@@ -14,7 +14,7 @@ type PhylaxOverviewProps = {
 };
 
 export const PhylaxOverview = ({ account, network }: PhylaxOverviewProps) => {
-    const unit = getPhylaxUnit(network);
+    const amountFormat = usePhylaxAmountFormat(network);
 
     if (account.status === 'loading') {
         return <Text>Checking the blockchain…</Text>;
@@ -46,7 +46,7 @@ export const PhylaxOverview = ({ account, network }: PhylaxOverviewProps) => {
                             isTabular
                             data-testid="@phylax/account/balance"
                         >
-                            {formatBtc(data.balance)} {unit}
+                            {amountFormat.format(data.balance)}
                         </Text>
                         <Text typographyStyle="body-sm" priority="secondary">
                             {data.utxos.length} coins on {data.usedAddressCount} used addresses

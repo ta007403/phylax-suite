@@ -5,7 +5,7 @@ import { Card, Column, Input, Row, SelectBar, Text } from '@trezor/components';
 
 import type { PhylaxFeeChoice } from './phylaxSendForm';
 import type { PhylaxFeeRatesState } from './usePhylaxFeeRates';
-import { formatBtc } from '../phylaxSend';
+import type { PhylaxAmountFormat } from '../phylaxAmount';
 
 const FEE_OPTIONS: { label: string; value: PhylaxFeeChoice }[] = [
     { label: 'Low', value: 'low' },
@@ -23,7 +23,7 @@ type PhylaxFeeCardProps = {
     // the fee of the current plan
     fee: bigint | undefined;
     vsize: number | undefined;
-    unit: string;
+    amountFormat: PhylaxAmountFormat;
     formatFiat: (satoshis: bigint) => string;
     warnings: string[];
     onFeeChoiceChange: (choice: PhylaxFeeChoice) => void;
@@ -37,7 +37,7 @@ export const PhylaxFeeCard = ({
     feeRate,
     fee,
     vsize,
-    unit,
+    amountFormat,
     formatFiat,
     warnings,
     onFeeChoiceChange,
@@ -87,7 +87,7 @@ export const PhylaxFeeCard = ({
                         </Text>
                         {fee !== undefined && (
                             <Text typographyStyle="body-sm" isTabular>
-                                {formatBtc(fee)} {unit}
+                                {amountFormat.format(fee)}
                                 {formatFiat(fee) && ` · ${formatFiat(fee)}`}
                             </Text>
                         )}

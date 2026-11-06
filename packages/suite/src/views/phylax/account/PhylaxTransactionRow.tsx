@@ -8,8 +8,9 @@ import { copyToClipboard } from '@trezor/dom-utils';
 import { ArrowDownLeftIcon, ArrowUpRightIcon, ArrowsLeftRightIcon, CopyIcon } from '@trezor/icons';
 
 import type { PhylaxTransaction, PhylaxTransactionType } from '../phylaxAccountScan';
-import { formatBtc } from '../phylaxSend';
-import { type PhylaxNetwork, getPhylaxUnit } from '../phylaxWallet';
+import type { PhylaxAmountFormat } from '../phylaxAmount';
+import type { PhylaxNetwork } from '../phylaxWallet';
+import { usePhylaxAmountFormat } from '../usePhylaxAmountFormat';
 
 const LABELS: Record<PhylaxTransactionType, string> = {
     received: 'Received',
@@ -23,8 +24,8 @@ const ICONS = {
     self: ArrowsLeftRightIcon,
 } as const;
 
-const formatSigned = (satoshis: bigint) =>
-    satoshis < 0n ? `−${formatBtc(-satoshis)}` : `+${formatBtc(satoshis)}`;
+const formatSigned = (satoshis: bigint, amountFormat: PhylaxAmountFormat) =>
+    satoshis < 0n ? `−${amountFormat.format(-satoshis)}` : `+${amountFormat.format(satoshis)}`;
 
 /** "Pending", or the confirmations once the backend's block height is known. */
 const getConfirmationText = (blockHeight: number | undefined, tipHeight: number | null) => {
@@ -48,7 +49,7 @@ export const PhylaxTransactionRow = ({
 }: PhylaxTransactionRowProps) => {
     const [isCopied, setIsCopied] = useState(false);
     const { txid, type, net, fee, blockHeight, blockTime } = transaction;
-    const unit = getPhylaxUnit(network);
+    const amountFormat = usePhylaxAmountFormat(network);
     const isPending = blockHeight === undefined;
 
     const handleCopy = async () => {
@@ -88,11 +89,11 @@ export const PhylaxTransactionRow = ({
                     isTabular
                     intent={net > 0n ? 'brand' : undefined}
                 >
-                    {formatSigned(net)} {unit}
+                    {formatSigned(net, amountFormat)}
                 </Text>
                 {fee > 0n && (
                     <Text typographyStyle="body-xs" priority="secondary" isTabular>
-                        fee {formatBtc(fee)} {unit}
+                        fee {amountFormat.format(fee)}
                     </Text>
                 )}
             </Column>

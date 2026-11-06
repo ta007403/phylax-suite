@@ -4,7 +4,8 @@
 import { Card, Checkbox, Column, Row, Switch, Text } from '@trezor/components';
 
 import { type PhylaxUtxo } from '../phylaxAccountScan';
-import { MIN_CONFIRMATIONS, PHYLAX_MAX_INPUTS, formatBtc, getCoinId } from '../phylaxSend';
+import type { PhylaxAmountFormat } from '../phylaxAmount';
+import { MIN_CONFIRMATIONS, PHYLAX_MAX_INPUTS, getCoinId } from '../phylaxSend';
 
 type PhylaxCoinControlProps = {
     utxos: PhylaxUtxo[];
@@ -12,7 +13,7 @@ type PhylaxCoinControlProps = {
     coinIds: string[];
     // coins the current plan spends (shown when coin control is off)
     plannedCoinIds: string[];
-    unit: string;
+    amountFormat: PhylaxAmountFormat;
     formatFiat: (satoshis: bigint) => string;
     onToggle: () => void;
     onCoinIdsChange: (coinIds: string[]) => void;
@@ -23,7 +24,7 @@ export const PhylaxCoinControl = ({
     isEnabled,
     coinIds,
     plannedCoinIds,
-    unit,
+    amountFormat,
     formatFiat,
     onToggle,
     onCoinIdsChange,
@@ -46,7 +47,7 @@ export const PhylaxCoinControl = ({
                         <Text typographyStyle="body-md-strong">Coin control</Text>
                         <Text typographyStyle="body-sm" priority="secondary">
                             {isEnabled
-                                ? `${coinIds.length} chosen: ${formatBtc(selectedTotal)} ${unit}. All of them are spent.`
+                                ? `${coinIds.length} chosen: ${amountFormat.format(selectedTotal)}. All of them are spent.`
                                 : 'Off: the largest confirmed coins are used.'}
                         </Text>
                     </Column>
@@ -73,7 +74,7 @@ export const PhylaxCoinControl = ({
                             >
                                 <Column gap={2} alignItems="flex-start">
                                     <Text typographyStyle="body-sm" isTabular>
-                                        {formatBtc(utxo.value)} {unit}
+                                        {amountFormat.format(utxo.value)}
                                         {formatFiat(utxo.value) && ` · ${formatFiat(utxo.value)}`}
                                     </Text>
                                     <Text typographyStyle="body-xs" priority="secondary">

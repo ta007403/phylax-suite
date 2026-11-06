@@ -3,15 +3,15 @@
 import { Button, Card, Column, Divider, Text } from '@trezor/components';
 
 import { PhylaxTotalLine } from './PhylaxTotalLine';
+import type { PhylaxAmountFormat } from '../phylaxAmount';
 import type { PhylaxSendPlan } from '../phylaxSend';
-import { formatBtc } from '../phylaxSend';
 
 type PhylaxSendTotalProps = {
     plan: PhylaxSendPlan | undefined;
     planError: string | undefined;
     // why signing is not possible right now (a key block missing or locked)
     blocker: string | undefined;
-    unit: string;
+    amountFormat: PhylaxAmountFormat;
     formatFiat: (satoshis: bigint) => string;
     isDisabled: boolean;
     onReview: () => void;
@@ -21,7 +21,7 @@ export const PhylaxSendTotal = ({
     plan,
     planError,
     blocker,
-    unit,
+    amountFormat,
     formatFiat,
     isDisabled,
     onReview,
@@ -37,27 +37,27 @@ export const PhylaxSendTotal = ({
                         <PhylaxTotalLine
                             label="Amount"
                             satoshis={amount}
-                            unit={unit}
+                            amountFormat={amountFormat}
                             formatFiat={formatFiat}
                         />
                         <PhylaxTotalLine
                             label="Fee"
                             satoshis={plan.fee}
-                            unit={unit}
+                            amountFormat={amountFormat}
                             formatFiat={formatFiat}
                         />
                         <Divider margin={{ top: 0, bottom: 0 }} />
                         <PhylaxTotalLine
                             label="Total spent"
                             satoshis={amount + plan.fee}
-                            unit={unit}
+                            amountFormat={amountFormat}
                             formatFiat={formatFiat}
                             isStrong
                         />
                         <Text typographyStyle="body-xs" priority="secondary">
                             {plan.inputs.length} {plan.inputs.length === 1 ? 'coin' : 'coins'}
                             {plan.change
-                                ? `, ${formatBtc(plan.change.amount)} ${unit} change back to this wallet`
+                                ? `, ${amountFormat.format(plan.change.amount)} change back to this wallet`
                                 : ', no change'}
                         </Text>
                     </>

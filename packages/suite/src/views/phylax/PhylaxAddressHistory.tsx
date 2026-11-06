@@ -7,15 +7,17 @@ import { Address } from '@suite/address';
 import { Button, Column, Row, Text } from '@trezor/components';
 
 import type { PhylaxUsedAddress } from './phylaxAccountScan';
-import { formatBtc } from './phylaxSend';
+import type { PhylaxNetwork } from './phylaxWallet';
+import { usePhylaxAmountFormat } from './usePhylaxAmountFormat';
 
 type PhylaxAddressHistoryProps = {
     addresses: PhylaxUsedAddress[];
-    unit: string;
+    network: PhylaxNetwork;
 };
 
-export const PhylaxAddressHistory = ({ addresses, unit }: PhylaxAddressHistoryProps) => {
+export const PhylaxAddressHistory = ({ addresses, network }: PhylaxAddressHistoryProps) => {
     const [isOpen, setIsOpen] = useState(false);
+    const amountFormat = usePhylaxAmountFormat(network);
     if (addresses.length === 0) return null;
 
     return (
@@ -48,7 +50,7 @@ export const PhylaxAddressHistory = ({ addresses, unit }: PhylaxAddressHistoryPr
                         <Text typographyStyle="body-sm" priority="secondary" isTabular>
                             {used.transactions}{' '}
                             {used.transactions === 1 ? 'transaction' : 'transactions'} · balance{' '}
-                            {formatBtc(used.balance)} {unit}
+                            {amountFormat.format(used.balance)}
                         </Text>
                     </Row>
                 ))}

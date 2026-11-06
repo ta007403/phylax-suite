@@ -5,10 +5,10 @@ import { Badge, Button, Card, Row, Text } from '@trezor/components';
 import type { PROTO } from '@trezor/connect';
 
 import { getLockedBlockName, getPhylaxReadiness } from './phylaxReadiness';
-import { formatBtc } from './phylaxSend';
-import { type PhylaxNetwork, getFingerprintHex, getPhylaxUnit } from './phylaxWallet';
+import { type PhylaxNetwork, getFingerprintHex } from './phylaxWallet';
 import { useOpenPhylaxAccount } from './useOpenPhylaxAccount';
 import { usePhylaxAccount } from './usePhylaxAccount';
+import { usePhylaxAmountFormat } from './usePhylaxAmountFormat';
 import type { PhylaxWalletEntry } from './usePhylaxStack';
 
 type PhylaxWalletRowProps = {
@@ -21,6 +21,7 @@ export const PhylaxWalletRow = ({ entry, network, blocks }: PhylaxWalletRowProps
     const { summary, details } = entry;
     const account = usePhylaxAccount(summary, details !== undefined, network);
     const openAccount = useOpenPhylaxAccount();
+    const amountFormat = usePhylaxAmountFormat(network);
     const readiness = getPhylaxReadiness(summary.fingerprints, blocks);
 
     return (
@@ -48,7 +49,7 @@ export const PhylaxWalletRow = ({ entry, network, blocks }: PhylaxWalletRowProps
                 <Row gap={12} alignItems="center">
                     <Text isTabular priority="secondary">
                         {account.status === 'loaded'
-                            ? `${formatBtc(account.data.balance)} ${getPhylaxUnit(network)}`
+                            ? amountFormat.format(account.data.balance)
                             : '…'}
                     </Text>
                     <Button

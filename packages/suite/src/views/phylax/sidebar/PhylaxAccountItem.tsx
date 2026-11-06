@@ -8,10 +8,10 @@ import { TokenIcon } from '@trezor/product-components';
 
 import { useResponsiveContext } from 'src/support/suite/ResponsiveContext';
 
-import { formatBtc } from '../phylaxSend';
-import { type PhylaxNetwork, getPhylaxNetworkSymbol, getPhylaxUnit } from '../phylaxWallet';
+import { type PhylaxNetwork, getPhylaxNetworkSymbol } from '../phylaxWallet';
 import { useOpenPhylaxAccount } from '../useOpenPhylaxAccount';
 import { usePhylaxAccount } from '../usePhylaxAccount';
+import { usePhylaxAmountFormat } from '../usePhylaxAmountFormat';
 import type { PhylaxWalletEntry } from '../usePhylaxStack';
 
 // the look of Suite's own account rows (AccountRow)
@@ -54,11 +54,12 @@ export const PhylaxAccountItem = ({ entry, network, isSelected }: PhylaxAccountI
     const { summary, details } = entry;
     const account = usePhylaxAccount(summary, details !== undefined, network);
     const openAccount = useOpenPhylaxAccount();
+    const amountFormat = usePhylaxAmountFormat(network);
     const { isSidebarCollapsed } = useResponsiveContext();
 
     let balance = '…';
     if (account.status === 'loaded') {
-        balance = `${formatBtc(account.data.balance)} ${getPhylaxUnit(network)}`;
+        balance = amountFormat.format(account.data.balance);
     } else if (account.status === 'error') {
         balance = 'Offline';
     }

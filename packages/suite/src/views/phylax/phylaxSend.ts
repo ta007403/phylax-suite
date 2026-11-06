@@ -158,6 +158,8 @@ export const planPhylaxSend = (
     utxos: PhylaxUtxo[],
     changeIndex: number,
     request: PhylaxSendRequest,
+    // amounts in error texts, in the unit of Settings › Bitcoin units
+    formatAmount: (satoshis: bigint) => string = satoshis => `${formatBtc(satoshis)} BTC`,
 ): PhylaxPlanResult => {
     const { recipients, feeRate, coinIds } = request;
     if (recipients.length === 0) return { kind: 'error', text: 'Add a recipient.' };
@@ -176,7 +178,7 @@ export const planPhylaxSend = (
         if (!recipient.isSendMax && recipient.amount < DUST_LIMIT) {
             return {
                 kind: 'error',
-                text: `${recipientPrefix(index, recipients.length)}The amount must be at least ${formatBtc(DUST_LIMIT)}.`,
+                text: `${recipientPrefix(index, recipients.length)}The amount must be at least ${formatAmount(DUST_LIMIT)}.`,
             };
         }
         scripts.push(script);
@@ -259,7 +261,7 @@ export const planPhylaxSend = (
 
         return {
             kind: 'error',
-            text: `The chosen coins (${formatBtc(sum(chosen.map(utxo => utxo.value)))}) do not cover the amount and the fee.`,
+            text: `The chosen coins (${formatAmount(sum(chosen.map(utxo => utxo.value)))}) do not cover the amount and the fee.`,
         };
     }
 
@@ -289,8 +291,8 @@ export const planPhylaxSend = (
         kind: 'error',
         text:
             spendable.length > PHYLAX_MAX_INPUTS
-                ? `Not enough in the ${PHYLAX_MAX_INPUTS} largest coins (${formatBtc(available)}), the most the main block signs at once.`
-                : `Not enough coins: ${formatBtc(available)} available, plus the fee.`,
+                ? `Not enough in the ${PHYLAX_MAX_INPUTS} largest coins (${formatAmount(available)}), the most the main block signs at once.`
+                : `Not enough coins: ${formatAmount(available)} available, plus the fee.`,
     };
 };
 

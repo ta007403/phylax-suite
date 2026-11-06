@@ -2,12 +2,12 @@
 
 import { Column, Row, Text } from '@trezor/components';
 
-import { formatBtc } from '../phylaxSend';
+import type { PhylaxAmountFormat } from '../phylaxAmount';
 
 export type PhylaxTotalLineProps = {
     label: string;
     satoshis: bigint;
-    unit: string;
+    amountFormat: PhylaxAmountFormat;
     formatFiat: (satoshis: bigint) => string;
     isStrong?: boolean;
 };
@@ -15,7 +15,7 @@ export type PhylaxTotalLineProps = {
 export const PhylaxTotalLine = ({
     label,
     satoshis,
-    unit,
+    amountFormat,
     formatFiat,
     isStrong,
 }: PhylaxTotalLineProps) => (
@@ -25,7 +25,7 @@ export const PhylaxTotalLine = ({
         </Text>
         <Column alignItems="flex-end" gap={2}>
             <Text typographyStyle={isStrong ? 'body-md-strong' : 'body-sm'} isTabular>
-                {formatBtc(satoshis)} {unit}
+                {amountFormat.format(satoshis)}
             </Text>
             {formatFiat(satoshis) && (
                 <Text typographyStyle="body-xs" priority="secondary" isTabular>

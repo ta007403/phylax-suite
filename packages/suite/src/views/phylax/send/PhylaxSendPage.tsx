@@ -26,7 +26,8 @@ import { usePhylaxFiat } from './usePhylaxFiat';
 import { type PhylaxWakeUp, WakeUpButton } from '../PhylaxWakeUp';
 import type { PhylaxUtxo } from '../phylaxAccountScan';
 import { type PhylaxSendPlan, getCoinId, planPhylaxSend } from '../phylaxSend';
-import { type PhylaxNetwork, getFingerprintHex, getPhylaxUnit } from '../phylaxWallet';
+import { type PhylaxNetwork, getFingerprintHex } from '../phylaxWallet';
+import { usePhylaxAmountFormat } from '../usePhylaxAmountFormat';
 import type { RunOnDevice } from '../usePhylaxStack';
 
 const TOTAL_PANEL_WIDTH = 340;
@@ -84,20 +85,33 @@ export const PhylaxSendPage = ({
     const feeRates = usePhylaxFeeRates(network);
     const fiat = usePhylaxFiat(network);
 
-    const unit = getPhylaxUnit(network);
+    const amountFormat = usePhylaxAmountFormat(network);
     const rates = feeRates && !('error' in feeRates) ? feeRates : undefined;
     const feeRate = feeChoice === 'custom' ? parseFeeRate(customFeeText) : rates?.[feeChoice];
 
     const request = useMemo(
-        () => getSendRequest(recipients, feeRate, isCoinControl ? coinIds : undefined),
-        [recipients, feeRate, isCoinControl, coinIds],
+        () =>
+            getSendRequest(
+                recipients,
+                feeRate,
+                isCoinControl ? coinIds : undefined,
+                amountFormat.parse,
+            ),
+        [recipients, feeRate, isCoinControl, coinIds, amountFormat],
     );
     const planned = useMemo(
         () =>
             request && !('error' in request)
-                ? planPhylaxSend(wallet, network, utxos, nextChangeIndex, request)
+                ? planPhylaxSend(
+                      wallet,
+                      network,
+                      utxos,
+                      nextChangeIndex,
+                      request,
+                      amountFormat.format,
+                  )
                 : undefined,
-        [wallet, network, utxos, nextChangeIndex, request],
+        [wallet, network, utxos, nextChangeIndex, request, amountFormat],
     );
     const plan = planned?.kind === 'plan' ? planned.plan : undefined;
 
@@ -145,7 +159,7 @@ export const PhylaxSendPage = ({
                 network={network}
                 plan={review.plan}
                 feeRate={review.feeRate}
-                unit={unit}
+                amountFormat={amountFormat}
                 formatFiat={fiat.format}
                 mainFingerprint={mainFingerprint}
                 runOnDevice={runOnDevice}
@@ -166,7 +180,7 @@ export const PhylaxSendPage = ({
                         recipient={recipient}
                         index={index}
                         count={recipients.length}
-                        unit={unit}
+                        amountFormat={amountFormat}
                         fiat={fiat}
                         sendMaxAmount={
                             recipient.isSendMax ? plan?.recipients[index]?.amount : undefined
@@ -194,7 +208,7 @@ export const PhylaxSendPage = ({
                     feeRate={feeRate}
                     fee={plan?.fee}
                     vsize={plan?.vsize}
-                    unit={unit}
+                    amountFormat={amountFormat}
                     formatFiat={fiat.format}
                     warnings={feeWarnings}
                     onFeeChoiceChange={choice => {
@@ -211,7 +225,7 @@ export const PhylaxSendPage = ({
                     isEnabled={isCoinControl}
                     coinIds={coinIds}
                     plannedCoinIds={plan ? plan.inputs.map(getCoinId) : []}
-                    unit={unit}
+                    amountFormat={amountFormat}
                     formatFiat={fiat.format}
                     onToggle={toggleCoinControl}
                     onCoinIdsChange={setCoinIds}
@@ -222,7 +236,7 @@ export const PhylaxSendPage = ({
                     plan={plan}
                     planError={planError}
                     blocker={blocker}
-                    unit={unit}
+                    amountFormat={amountFormat}
                     formatFiat={fiat.format}
                     isDisabled={isDeviceBusy}
                     onReview={() => {
