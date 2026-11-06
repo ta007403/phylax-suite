@@ -11,9 +11,10 @@ import { usePhylaxAmountFormat } from '../usePhylaxAmountFormat';
 type PhylaxOverviewProps = {
     account: PhylaxAccount;
     network: PhylaxNetwork;
+    onSpeedUp: (txid: string) => void;
 };
 
-export const PhylaxOverview = ({ account, network }: PhylaxOverviewProps) => {
+export const PhylaxOverview = ({ account, network, onSpeedUp }: PhylaxOverviewProps) => {
     const amountFormat = usePhylaxAmountFormat(network);
 
     if (account.status === 'loading') {
@@ -77,7 +78,11 @@ export const PhylaxOverview = ({ account, network }: PhylaxOverviewProps) => {
                     </Column>
                 </Row>
             </Card>
-            <PhylaxTransactionList transactions={data.transactions} network={network} />
+            <PhylaxTransactionList
+                transactions={data.transactions}
+                network={network}
+                onSpeedUp={onSpeedUp}
+            />
         </Column>
     );
 };

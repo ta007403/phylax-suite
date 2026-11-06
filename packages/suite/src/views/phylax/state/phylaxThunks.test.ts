@@ -42,6 +42,23 @@ const DATA: PhylaxAccountData = {
             fee: 300n,
             blockHeight: undefined,
             blockTime: undefined,
+            rbf: true,
+            pending: {
+                inputs: [
+                    {
+                        txid: 'aa',
+                        vout: 0,
+                        value: 10_000n,
+                        address: 'bc1q',
+                        own: { chain: 0, index: 0 },
+                    },
+                ],
+                outputs: [
+                    { address: 'bc1qoutside', value: 6_000n },
+                    { address: 'bc1qchange', value: 3_700n, own: { chain: 1, index: 0 } },
+                ],
+                vsize: 180,
+            },
         },
     ],
 };
@@ -71,6 +88,7 @@ describe('PHYLAX account store', () => {
         const stored = serializePhylaxAccountData(DATA);
         expect(stored.balance).toBe('3700');
         expect(stored.transactions[0]?.net).toBe('-6300');
+        expect(stored.transactions[0]?.pending?.outputs[1]?.value).toBe('3700');
         expect(JSON.parse(JSON.stringify(stored))).toEqual(stored);
         expect(deserializePhylaxAccountData(stored)).toEqual(DATA);
     });

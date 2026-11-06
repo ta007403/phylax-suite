@@ -15,6 +15,7 @@ import { usePhylaxWakeUp } from '../PhylaxWakeUp';
 import { getLockedKeyBlocks, getMainFingerprint, getPhylaxReadiness } from '../phylaxReadiness';
 import type { PhylaxNetwork } from '../phylaxWallet';
 import { PhylaxSendPage } from '../send/PhylaxSendPage';
+import { PhylaxSpeedUp } from '../send/PhylaxSpeedUp';
 import { usePhylaxAccount } from '../usePhylaxAccount';
 import type { PhylaxWalletEntry, RunOnDevice } from '../usePhylaxStack';
 
@@ -44,6 +45,8 @@ export const PhylaxAccount = ({
 }: PhylaxAccountProps) => {
     const { summary, details } = entry;
     const [tab, setTab] = useState<PhylaxAccountTab>('overview');
+    // the pending payment being sped up (Overview)
+    const [speedUpTxid, setSpeedUpTxid] = useState<string>();
     const account = usePhylaxAccount(summary, details !== undefined, network);
     const wakeUp = usePhylaxWakeUp(
         runOnDevice,
@@ -75,7 +78,31 @@ export const PhylaxAccount = ({
                 ))}
             </Tabs>
 
-            {tab === 'overview' && <PhylaxOverview account={account} network={network} />}
+            {tab === 'overview' && !speedUpTxid && (
+                <PhylaxOverview account={account} network={network} onSpeedUp={setSpeedUpTxid} />
+            )}
+
+            {tab === 'overview' && speedUpTxid && details && account.status === 'loaded' && (
+                <PhylaxSpeedUp
+                    wallet={details}
+                    network={network}
+                    transaction={account.data.transactions.find(
+                        tx => tx.txid === speedUpTxid && tx.pending,
+                    )}
+                    utxos={account.data.utxos}
+                    nextChangeIndex={account.data.nextChangeIndex}
+                    mainFingerprint={mainFingerprint}
+                    missingFingerprints={
+                        readiness.isAttachNeeded ? readiness.missingFingerprints : []
+                    }
+                    lockedKeyBlocks={readiness.lockedInWallet}
+                    wakeUp={wakeUp}
+                    runOnDevice={runOnDevice}
+                    isDeviceBusy={isDeviceBusy}
+                    onClose={() => setSpeedUpTxid(undefined)}
+                    onSent={account.refreshAfterSend}
+                />
+            )}
 
             {tab === 'receive' && details && (
                 <Card>

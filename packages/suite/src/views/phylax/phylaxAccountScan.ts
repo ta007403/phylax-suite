@@ -47,6 +47,34 @@ export type PhylaxUsedAddress = {
 
 export type PhylaxTransactionType = 'sent' | 'received' | 'self';
 
+/** Where one of the wallet's own addresses sits: chain 0 receive, 1 change. */
+export type PhylaxOwnAddress = { chain: PhylaxChain; index: number };
+
+export type PhylaxTxInput = {
+    txid: string;
+    vout: number;
+    // satoshis
+    value: bigint;
+    address: string;
+    // set when the coin is the wallet's
+    own?: PhylaxOwnAddress;
+};
+
+export type PhylaxTxOutput = {
+    // empty for an output without an address (OP_RETURN)
+    address: string;
+    // satoshis
+    value: bigint;
+    own?: PhylaxOwnAddress;
+};
+
+export type PhylaxPendingDetails = {
+    inputs: PhylaxTxInput[];
+    outputs: PhylaxTxOutput[];
+    // virtual size from the backend, if it tells
+    vsize: number | undefined;
+};
+
 /** A transaction of the wallet, seen as a whole (all of its addresses together). */
 export type PhylaxTransaction = {
     txid: string;
@@ -59,6 +87,10 @@ export type PhylaxTransaction = {
     blockHeight: number | undefined;
     // unix seconds; undefined while in the mempool
     blockTime: number | undefined;
+    // the inputs signal replace-by-fee (BIP125)
+    rbf: boolean;
+    // a pending transaction's inputs and outputs (for Speed up); undefined once confirmed
+    pending?: PhylaxPendingDetails;
 };
 
 export type PhylaxAccountData = {
@@ -129,7 +161,7 @@ const isPending = (blockHeight: number | undefined) => !blockHeight || blockHeig
 
 const sumOwned = (
     items: { addresses?: string[]; value?: string }[],
-    ownAddresses: ReadonlySet<string>,
+    ownAddresses: ReadonlyMap<string, PhylaxOwnAddress>,
 ) =>
     items.reduce(
         (sum, item) =>
@@ -145,8 +177,11 @@ const sumOwned = (
  */
 export const aggregateTransactions = (
     transactions: AddressTransactions,
-    ownAddresses: ReadonlySet<string>,
+    // every scanned address of the wallet and where it sits
+    ownAddresses: ReadonlyMap<string, PhylaxOwnAddress>,
 ): PhylaxTransaction[] => {
+    const ownOf = (addresses: string[] | undefined) =>
+        addresses?.map(address => ownAddresses.get(address)).find(own => own !== undefined);
     const byTxid = new Map<string, PhylaxTransaction>();
     for (const tx of transactions) {
         if (byTxid.has(tx.txid)) continue;
@@ -168,6 +203,24 @@ export const aggregateTransactions = (
             fee: spent > 0n ? BigInt(tx.fee || '0') : 0n,
             blockHeight: pending ? undefined : tx.blockHeight,
             blockTime: pending ? undefined : tx.blockTime,
+            rbf: !!tx.rbf,
+            pending: pending
+                ? {
+                      inputs: tx.details.vin.map(input => ({
+                          txid: input.txid ?? '',
+                          vout: input.vout ?? 0,
+                          value: BigInt(input.value ?? '0'),
+                          address: input.addresses?.[0] ?? '',
+                          own: ownOf(input.addresses),
+                      })),
+                      outputs: tx.details.vout.map(output => ({
+                          address: output.isAddress ? (output.addresses?.[0] ?? '') : '',
+                          value: BigInt(output.value ?? '0'),
+                          own: ownOf(output.addresses),
+                      })),
+                      vsize: tx.vsize,
+                  }
+                : undefined,
         });
     }
 
@@ -190,7 +243,7 @@ export const scanChain = async (
     let lastUsedIndex = -1;
     let nextIndex = 0;
     // every scanned address: the wallet's own addresses for the transaction amounts
-    const scanned: string[] = [];
+    const scanned: [string, PhylaxOwnAddress][] = [];
     const usedAt: { address: string; index: number }[] = [];
     const used: PhylaxUsedAddress[] = [];
 
@@ -201,7 +254,12 @@ export const scanChain = async (
         for (let index = from; index <= to; index++) {
             addresses.push(getPhylaxAddress(wallet, network, chain, index));
         }
-        scanned.push(...addresses);
+        scanned.push(
+            ...addresses.map((address, offset): [string, PhylaxOwnAddress] => [
+                address,
+                { chain, index: from + offset },
+            ]),
+        );
         nextIndex = to + 1;
 
         // One request per address: connect's bundled getAccountInfo needs a device for its progress
@@ -265,7 +323,7 @@ export const scanPhylaxAccount = async (
     for (const chain of CHAINS) {
         chains.push(await scanChain(wallet, network, chain));
     }
-    const ownAddresses = new Set(chains.flatMap(chain => chain.scanned));
+    const ownAddresses = new Map(chains.flatMap(chain => chain.scanned));
 
     return {
         balance: chains.reduce((sum, chain) => sum + chain.balance, 0n),

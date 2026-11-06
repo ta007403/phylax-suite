@@ -13,6 +13,7 @@ import { PhylaxFeeCard } from './PhylaxFeeCard';
 import { PhylaxRecipientCard } from './PhylaxRecipientCard';
 import { PhylaxSendReview } from './PhylaxSendReview';
 import { PhylaxSendTotal } from './PhylaxSendTotal';
+import { getPhylaxSignBlocker } from './getPhylaxSignBlocker';
 import {
     type PhylaxFeeChoice,
     type PhylaxRecipientDraft,
@@ -26,7 +27,7 @@ import { usePhylaxFiat } from './usePhylaxFiat';
 import { type PhylaxWakeUp, WakeUpButton } from '../PhylaxWakeUp';
 import type { PhylaxUtxo } from '../phylaxAccountScan';
 import { type PhylaxSendPlan, getCoinId, planPhylaxSend } from '../phylaxSend';
-import { type PhylaxNetwork, getFingerprintHex } from '../phylaxWallet';
+import type { PhylaxNetwork } from '../phylaxWallet';
 import { usePhylaxAmountFormat } from '../usePhylaxAmountFormat';
 import type { RunOnDevice } from '../usePhylaxStack';
 
@@ -45,20 +46,6 @@ type PhylaxSendPageProps = {
     runOnDevice: RunOnDevice;
     isDeviceBusy: boolean;
     onSent: () => void;
-};
-
-const getBlocker = (missingFingerprints: number[], lockedCount: number) => {
-    if (missingFingerprints.length > 0) {
-        return `Attach key block ${missingFingerprints.map(getFingerprintHex).join(', ')} to send.`;
-    }
-    if (lockedCount === 1) {
-        return 'A key block of this wallet is locked. Wake it up, then enter its PIN on its own buttons.';
-    }
-    if (lockedCount > 1) {
-        return 'Key blocks of this wallet are locked. Wake them up, then enter each PIN on that block.';
-    }
-
-    return undefined;
 };
 
 export const PhylaxSendPage = ({
@@ -127,7 +114,7 @@ export const PhylaxSendPage = ({
     else if (feeChoice === 'custom' && customFeeText.trim() && feeRate === undefined) {
         planError = 'Enter the fee rate as a number of sat/vB, for example 2 or 1.5.';
     }
-    const blocker = getBlocker(missingFingerprints, lockedKeyBlocks.length);
+    const blocker = getPhylaxSignBlocker(missingFingerprints, lockedKeyBlocks.length);
 
     const updateRecipient = (updated: PhylaxRecipientDraft) =>
         setRecipients(previous =>

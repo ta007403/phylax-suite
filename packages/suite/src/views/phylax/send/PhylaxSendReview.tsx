@@ -33,6 +33,8 @@ type PhylaxSendReviewProps = {
     mainFingerprint: number | undefined;
     runOnDevice: RunOnDevice;
     isDeviceBusy: boolean;
+    // heading of the review (a payment, or its faster replacement)
+    title?: string;
     onBack: () => void;
     // broadcast done
     onSent: () => void;
@@ -49,6 +51,7 @@ export const PhylaxSendReview = ({
     mainFingerprint,
     runOnDevice,
     isDeviceBusy,
+    title = 'Review the payment',
     onBack,
     onSent,
     onNewPayment,
@@ -143,7 +146,7 @@ export const PhylaxSendReview = ({
     return (
         <Card data-testid="@phylax/send/review-card">
             <Column gap={12} alignItems="stretch">
-                <H3>Review the payment</H3>
+                <H3>{title}</H3>
                 {plan.recipients.map((recipient, index) => (
                     <Column
                         key={`${recipient.address}:${index}`}

@@ -64,7 +64,7 @@ export const getOutputScript = (network: PhylaxNetwork, address: string) => {
 const outputSize = (scriptLength: number) => 8 + varIntSize(scriptLength) + scriptLength;
 
 /** P2WSH output script: OP_0 <32 bytes>. */
-const P2WSH_SCRIPT_LENGTH = 34;
+export const P2WSH_SCRIPT_LENGTH = 34;
 
 /**
  * Virtual size of a transaction spending `inputCount` P2WSH m-of-n inputs to outputs with these

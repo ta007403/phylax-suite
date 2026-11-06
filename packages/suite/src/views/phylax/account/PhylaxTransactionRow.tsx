@@ -5,7 +5,13 @@ import { useState } from 'react';
 
 import { Button, Column, Icon, Row, Text } from '@trezor/components';
 import { copyToClipboard } from '@trezor/dom-utils';
-import { ArrowDownLeftIcon, ArrowUpRightIcon, ArrowsLeftRightIcon, CopyIcon } from '@trezor/icons';
+import {
+    ArrowDownLeftIcon,
+    ArrowUpRightIcon,
+    ArrowsLeftRightIcon,
+    CopyIcon,
+    GaugeIcon,
+} from '@trezor/icons';
 
 import type { PhylaxTransaction, PhylaxTransactionType } from '../phylaxAccountScan';
 import type { PhylaxAmountFormat } from '../phylaxAmount';
@@ -40,12 +46,15 @@ type PhylaxTransactionRowProps = {
     transaction: PhylaxTransaction;
     network: PhylaxNetwork;
     tipHeight: number | null;
+    // a pending, replaceable payment of the wallet: offer Speed up
+    onSpeedUp?: () => void;
 };
 
 export const PhylaxTransactionRow = ({
     transaction,
     network,
     tipHeight,
+    onSpeedUp,
 }: PhylaxTransactionRowProps) => {
     const [isCopied, setIsCopied] = useState(false);
     const { txid, type, net, fee, blockHeight, blockTime } = transaction;
@@ -95,6 +104,17 @@ export const PhylaxTransactionRow = ({
                     <Text typographyStyle="body-xs" priority="secondary" isTabular>
                         fee {amountFormat.format(fee)}
                     </Text>
+                )}
+                {onSpeedUp && isPending && type !== 'received' && transaction.rbf && (
+                    <Button
+                        size="small"
+                        priority="secondary"
+                        iconLeft={GaugeIcon}
+                        onClick={onSpeedUp}
+                        data-testid={`@phylax/transaction/${txid}/speed-up`}
+                    >
+                        Speed up
+                    </Button>
                 )}
             </Column>
         </Row>

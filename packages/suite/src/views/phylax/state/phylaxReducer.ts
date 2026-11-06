@@ -5,7 +5,13 @@ import { type PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 import type { PROTO } from '@trezor/connect';
 
-import type { PhylaxAccountData } from '../phylaxAccountScan';
+import type {
+    PhylaxAccountData,
+    PhylaxPendingDetails,
+    PhylaxTransaction,
+    PhylaxTxInput,
+    PhylaxTxOutput,
+} from '../phylaxAccountScan';
 import type { PhylaxNetwork } from '../phylaxWallet';
 
 export type PhylaxWalletEntry = {
@@ -24,9 +30,13 @@ export type StoredPhylaxAccountData = {
     usedReceiveAddresses: (Omit<PhylaxAccountData['usedReceiveAddresses'][number], 'balance'> & {
         balance: string;
     })[];
-    transactions: (Omit<PhylaxAccountData['transactions'][number], 'net' | 'fee'> & {
+    transactions: (Omit<PhylaxTransaction, 'net' | 'fee' | 'pending'> & {
         net: string;
         fee: string;
+        pending?: Omit<PhylaxPendingDetails, 'inputs' | 'outputs'> & {
+            inputs: (Omit<PhylaxTxInput, 'value'> & { value: string })[];
+            outputs: (Omit<PhylaxTxOutput, 'value'> & { value: string })[];
+        };
     })[];
 };
 
@@ -84,6 +94,14 @@ export const serializePhylaxAccountData = (data: PhylaxAccountData): StoredPhyla
         ...tx,
         net: tx.net.toString(),
         fee: tx.fee.toString(),
+        pending: tx.pending && {
+            ...tx.pending,
+            inputs: tx.pending.inputs.map(input => ({ ...input, value: input.value.toString() })),
+            outputs: tx.pending.outputs.map(output => ({
+                ...output,
+                value: output.value.toString(),
+            })),
+        },
     })),
 });
 
@@ -99,6 +117,14 @@ export const deserializePhylaxAccountData = (data: StoredPhylaxAccountData): Phy
         ...tx,
         net: BigInt(tx.net),
         fee: BigInt(tx.fee),
+        pending: tx.pending && {
+            ...tx.pending,
+            inputs: tx.pending.inputs.map(input => ({ ...input, value: BigInt(input.value) })),
+            outputs: tx.pending.outputs.map(output => ({
+                ...output,
+                value: BigInt(output.value),
+            })),
+        },
     })),
 });
 

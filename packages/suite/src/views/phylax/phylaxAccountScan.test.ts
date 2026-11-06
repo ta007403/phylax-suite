@@ -101,7 +101,12 @@ describe('PHYLAX chain scan', () => {
 
 describe('PHYLAX transactions', () => {
     const OWN = ['own-receive-0', 'own-receive-1', 'own-change-0'];
-    const own = new Set(OWN);
+    const own = new Map(
+        OWN.map((address, index) => [
+            address,
+            { chain: address.includes('change') ? (1 as const) : (0 as const), index },
+        ]),
+    );
     const io = (address: string, value: number) => ({
         n: 0,
         isAddress: true,
@@ -155,6 +160,22 @@ describe('PHYLAX transactions', () => {
             ['cc', 'self', -200n, 200n, 101],
             ['aa', 'received', 10_000n, 0n, 100],
         ]);
+        // a pending transaction keeps its inputs and outputs (for Speed up)
+        const pending = result.find(t => t.txid === 'bb')!.pending!;
+        expect(pending.inputs).toEqual([
+            {
+                txid: '',
+                vout: 0,
+                value: 10_000n,
+                address: 'own-receive-0',
+                own: { chain: 0, index: 0 },
+            },
+        ]);
+        expect(pending.outputs.map(o => [o.address, o.value, o.own?.chain])).toEqual([
+            ['outside-2', 6_000n, undefined],
+            ['own-change-0', 3_700n, 1],
+        ]);
+        expect(result.find(t => t.txid === 'aa')!.pending).toBeUndefined();
     });
 
     it('treats a missing or non-positive block height as pending', () => {

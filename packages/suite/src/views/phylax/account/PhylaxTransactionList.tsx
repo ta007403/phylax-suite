@@ -12,9 +12,14 @@ import { type PhylaxNetwork, getPhylaxNetworkSymbol } from '../phylaxWallet';
 type PhylaxTransactionListProps = {
     transactions: PhylaxTransaction[];
     network: PhylaxNetwork;
+    onSpeedUp: (txid: string) => void;
 };
 
-export const PhylaxTransactionList = ({ transactions, network }: PhylaxTransactionListProps) => {
+export const PhylaxTransactionList = ({
+    transactions,
+    network,
+    onSpeedUp,
+}: PhylaxTransactionListProps) => {
     const tipHeight = useSelector(state =>
         selectBlockchainHeightBySymbol(state, getPhylaxNetworkSymbol(network)),
     );
@@ -35,6 +40,7 @@ export const PhylaxTransactionList = ({ transactions, network }: PhylaxTransacti
                             transaction={transaction}
                             network={network}
                             tipHeight={tipHeight}
+                            onSpeedUp={() => onSpeedUp(transaction.txid)}
                         />
                     </Column>
                 ))}
