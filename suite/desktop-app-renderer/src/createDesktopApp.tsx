@@ -9,6 +9,7 @@ import { ServicesProvider } from '@trezor/dependency-injection';
 
 import * as STORAGE from 'src/actions/suite/constants/storageConstants';
 import { desktopHandshake } from 'src/actions/suite/suiteActions';
+import { PHYLAX_IS_BLUETOOTH_ENABLED } from 'src/constants/suite/phylax';
 import { type HydrateReduxStoreDep } from 'src/reducers/createHydrateReduxStore';
 import { type SuiteReduxStoreDep } from 'src/reducers/createReduxStore';
 import { type SuiteServices } from 'src/support/createSuiteCompositionRoot';
@@ -98,7 +99,10 @@ export const createDesktopApp =
 
         // init bluetooth module
         // TODO should it really be here instead of initAction.ts?
-        await deps.services.bluetooth.init();
+        // PHYLAX Blocks (fork): USB only, the Bluetooth service is never started
+        if (PHYLAX_IS_BLUETOOTH_ENABLED) {
+            await deps.services.bluetooth.init();
+        }
 
         // finally render whole app
         root.render(

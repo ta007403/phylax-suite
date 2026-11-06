@@ -44,6 +44,10 @@ Everything added for PHYLAX is marked `PHYLAX Blocks (fork)` in the code (the ol
   desktop app's main process, and the Help menu has no "Trezor website". Switch:
   `PHYLAX_ARE_EXTERNAL_LINKS_ALLOWED` in `@suite/external-links` and in
   `suite/desktop-app-main/src/modules/external-links.ts`.
+- **USB only, no Bluetooth**: no "Via Bluetooth" choice or Bluetooth screens when connecting, and
+  the desktop app never starts its Bluetooth service (no Bluetooth process, no Bluetooth
+  permission prompt). Switch: `PHYLAX_IS_BLUETOOTH_ENABLED`; the desktop main process leaves the
+  `bluetooth` module out of `suite/desktop-app-main/src/modules/index.ts`.
 - **PHYLAX logo** in the sidebar instead of Trezor's; no MEV protection, network reserve, device
   wallpaper or "Install custom firmware" settings (PHYLAX firmware is installed with trezorctl).
   Device and firmware authenticity checks are shown only for devices they apply to (real

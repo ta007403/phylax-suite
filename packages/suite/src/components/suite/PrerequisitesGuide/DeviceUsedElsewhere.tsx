@@ -10,6 +10,7 @@ import {
     TROUBLESHOOTING_TIP_CLOSE_ALL_TABS,
     TROUBLESHOOTING_TIP_RECONNECT,
 } from 'src/components/suite/troubleshooting/tips';
+import { PHYLAX_IS_BLUETOOTH_ENABLED } from 'src/constants/suite/phylax';
 
 import { AcquireDeviceButton } from '../AcquireDeviceButton';
 import { type TroubleshootingTipsItem } from '../troubleshooting/TroubleshootingTipsItem';
@@ -46,7 +47,10 @@ export const DeviceUsedElsewhere = () => {
             items={tips}
             intent="info"
             toggleText={
-                isDesktop() ? <Translation id="TR_TROUBLE_SHOOTING_BLUETOOTH" /> : undefined
+                // PHYLAX Blocks (fork): no Bluetooth
+                PHYLAX_IS_BLUETOOTH_ENABLED && isDesktop() ? (
+                    <Translation id="TR_TROUBLE_SHOOTING_BLUETOOTH" />
+                ) : undefined
             }
         />
     );

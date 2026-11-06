@@ -27,6 +27,7 @@ import { isDesktop } from '@trezor/env-utils';
 import { BluetoothIcon, CableUsbCIcon, QuestionIcon } from '@trezor/icons';
 import { getLargeModelImagePath } from '@trezor/product-components';
 
+import { PHYLAX_IS_BLUETOOTH_ENABLED } from 'src/constants/suite/phylax';
 import { useSelector } from 'src/hooks/suite';
 
 import { BluetoothAdapterStatusModal } from './BluetoothAdapterStatusModal';
@@ -308,7 +309,8 @@ export const ConnectDeviceGlobalModal = ({ onCancel }: ConnectDeviceGlobalModalP
         );
     }
 
-    if (isDesktop() && !isModeSelected) {
+    // PHYLAX Blocks (fork): USB only, no "Via Bluetooth or via cable" choice
+    if (PHYLAX_IS_BLUETOOTH_ENABLED && isDesktop() && !isModeSelected) {
         return (
             <Modal data-testid="@suite/connection-modal" width={400} onCancel={onCancel}>
                 <Column gap={16}>
@@ -344,7 +346,11 @@ export const ConnectDeviceGlobalModal = ({ onCancel }: ConnectDeviceGlobalModalP
                 data-testid="@suite/connection-modal"
                 width={400}
                 onCancel={onCancel}
-                onBackClick={isDesktop() ? () => setIsModeSelected(false) : undefined}
+                onBackClick={
+                    PHYLAX_IS_BLUETOOTH_ENABLED && isDesktop()
+                        ? () => setIsModeSelected(false)
+                        : undefined
+                }
             >
                 <ConnectModalContent isBluetoothMode={false}>
                     {isWebUsbTransport && <WebUsbButton intent="brand" size="medium" />}

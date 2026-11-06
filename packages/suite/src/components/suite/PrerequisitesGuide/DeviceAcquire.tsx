@@ -12,6 +12,7 @@ import {
     TROUBLESHOOTING_TIP_CLOSE_ALL_TABS,
     TROUBLESHOOTING_TIP_RECONNECT,
 } from 'src/components/suite/troubleshooting/tips';
+import { PHYLAX_IS_BLUETOOTH_ENABLED } from 'src/constants/suite/phylax';
 
 export const DeviceAcquire = () => {
     const { isLocked } = useDevice();
@@ -39,7 +40,16 @@ export const DeviceAcquire = () => {
 
     return (
         <TroubleshootingTips
-            label={<Translation id="TR_NEEDS_ATTENTION_CONNECT_USB_OR_BLUETOOTH" />}
+            label={
+                // PHYLAX Blocks (fork): USB only
+                <Translation
+                    id={
+                        PHYLAX_IS_BLUETOOTH_ENABLED
+                            ? 'TR_NEEDS_ATTENTION_CONNECT_USB_OR_BLUETOOTH'
+                            : 'TR_NEEDS_ATTENTION_CONNECT_USB'
+                    }
+                />
+            }
             cta={ctaButton}
             items={tips}
         />

@@ -19,5 +19,11 @@ export const PHYLAX_ARE_EXTRA_SETTINGS_SHOWN: boolean = false;
 /** Trezor's guide: help articles, "Learn" buttons and the support chat. */
 export const PHYLAX_IS_GUIDE_ENABLED: boolean = false;
 
+/**
+ * Bluetooth connection (Trezor Safe 7): PHYLAX blocks connect by USB only. Off: no "Via Bluetooth"
+ * choice or Bluetooth screens, and the desktop app does not start its Bluetooth service.
+ */
+export const PHYLAX_IS_BLUETOOTH_ENABLED: boolean = false;
+
 /** Coinjoin accounts (SLIP-25). */
 export const PHYLAX_IS_COINJOIN_ENABLED: boolean = false;

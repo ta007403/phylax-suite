@@ -2524,6 +2524,10 @@ export const messages = defineMessages({
         defaultMessage: "We can't connect to your device",
         id: 'TR_NEEDS_ATTENTION_UNABLE_TO_CONNECT',
     },
+    TR_NEEDS_ATTENTION_CONNECT_USB: {
+        id: 'TR_NEEDS_ATTENTION_CONNECT_USB',
+        defaultMessage: 'Make sure your device is connected via USB and unlocked.',
+    },
     TR_NEEDS_ATTENTION_CONNECT_USB_OR_BLUETOOTH: {
         id: 'TR_NEEDS_ATTENTION_CONNECT_USB_OR_BLUETOOTH',
         defaultMessage: 'Make sure your device is connected via USB or Bluetooth and unlocked.',

@@ -20,12 +20,7 @@ type CreateMainWindowParams = {
     logger: ILogger;
 };
 
-export const createMainWindow = ({
-    winBounds,
-    cspNonce,
-    store,
-    logger,
-}: CreateMainWindowParams) => {
+export const createMainWindow = ({ winBounds, cspNonce, logger }: CreateMainWindowParams) => {
     // PHYLAX Blocks (fork): PHYLAX Suite is always dark (PHYLAX colours).
     const darkTheme = true;
 
