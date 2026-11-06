@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { useExternalLink } from '@suite/external-links';
+import { PHYLAX_ARE_EXTERNAL_LINKS_ALLOWED, useExternalLink } from '@suite/external-links';
 import { Translation } from '@suite/intl';
 import { notificationsActions } from '@suite-common/toast-notifications';
 import { type Network } from '@suite-common/wallet-config';
@@ -352,13 +352,20 @@ export const BasicTxDetails = ({
                             </Row>
                         }
                     >
-                        <Link
-                            href={explorerLink}
-                            data-testid="@tx-detail/txid-value"
-                            overflowWrap="anywhere"
-                        >
-                            {tx.txid}
-                        </Link>
+                        {/* PHYLAX Blocks (fork): no explorer link, the txid stays (copy in the tooltip) */}
+                        {PHYLAX_ARE_EXTERNAL_LINKS_ALLOWED ? (
+                            <Link
+                                href={explorerLink}
+                                data-testid="@tx-detail/txid-value"
+                                overflowWrap="anywhere"
+                            >
+                                {tx.txid}
+                            </Link>
+                        ) : (
+                            <Text data-testid="@tx-detail/txid-value" overflowWrap="anywhere">
+                                {tx.txid}
+                            </Text>
+                        )}
                     </Tooltip>
                 </Item>
 

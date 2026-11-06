@@ -1,7 +1,7 @@
 import { type ReactNode } from 'react';
 
 import { Address } from '@suite/address';
-import { useExternalLink } from '@suite/external-links';
+import { PHYLAX_ARE_EXTERNAL_LINKS_ALLOWED, useExternalLink } from '@suite/external-links';
 import { Translation } from '@suite/intl';
 import {
     type NetworkSymbol,
@@ -62,14 +62,24 @@ export const IOItem = ({
                     <>
                         {value && (
                             <Row gap={6} alignItems="center">
-                                <Link href={explorerLink}>
+                                {/* PHYLAX Blocks (fork): no explorer link, the address stays (with copy) */}
+                                {PHYLAX_ARE_EXTERNAL_LINKS_ALLOWED ? (
+                                    <Link href={explorerLink}>
+                                        <Address
+                                            value={value}
+                                            isTruncated
+                                            data-testid="@tx-detail/txid-value"
+                                            isCopyAllowed={!isPhishingTransaction}
+                                        />
+                                    </Link>
+                                ) : (
                                     <Address
                                         value={value}
                                         isTruncated
                                         data-testid="@tx-detail/txid-value"
                                         isCopyAllowed={!isPhishingTransaction}
                                     />
-                                </Link>
+                                )}
                                 {ownership && (
                                     <Tooltip
                                         content={

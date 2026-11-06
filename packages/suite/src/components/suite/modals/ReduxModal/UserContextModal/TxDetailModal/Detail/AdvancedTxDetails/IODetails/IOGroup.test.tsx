@@ -2,6 +2,7 @@ import '@suite-common/test-utils/globalOverrides';
 
 import { screen } from '@testing-library/react';
 
+import { PHYLAX_ARE_EXTERNAL_LINKS_ALLOWED } from '@suite/external-links';
 import { createTestCompositionRoot } from '@suite-common/test-utils';
 import { asNetworkSymbol, getNetwork } from '@suite-common/wallet-config';
 import { getExplorerUrl } from '@suite-common/wallet-config/src/getExplorerUrls';
@@ -50,7 +51,27 @@ const getInitialState = (): AppState => ({
     },
 });
 
-describe('IOGroup', () => {
+// PHYLAX Blocks (fork): explorer links only when external links are allowed.
+const describeWithLinks = PHYLAX_ARE_EXTERNAL_LINKS_ALLOWED ? describe : describe.skip;
+const describeWithoutLinks = PHYLAX_ARE_EXTERNAL_LINKS_ALLOWED ? describe.skip : describe;
+
+describeWithoutLinks('IOGroup without external links', () => {
+    it('shows the address without an explorer link (PHYLAX)', () => {
+        const { services } = createTestCompositionRoot<void, AppState>({
+            preloadedState: getInitialState(),
+        });
+
+        renderWithProviders(
+            services,
+            <IOGroup tx={bitcoinTransaction} inputs={inputs} outputs={[]} />,
+        );
+
+        expect(screen.queryByRole('link')).toBeNull();
+        expect(screen.getByTestId('@tx-detail/txid-value')).toBeInTheDocument();
+    });
+});
+
+describeWithLinks('IOGroup', () => {
     it('opens an address in the explorer of the transaction network, not of the selected account', () => {
         const { services } = createTestCompositionRoot<void, AppState>({
             preloadedState: getInitialState(),
