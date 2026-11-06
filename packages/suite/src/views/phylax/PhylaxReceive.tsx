@@ -16,6 +16,7 @@ import { copyToClipboard } from '@trezor/dom-utils';
 import { CopyIcon, PlusIcon, ShieldCheckIcon } from '@trezor/icons';
 import { belowBreakpoint, breakpoints } from '@trezor/theme';
 
+import { GAP_LIMIT, getLastShownReceiveIndex } from './phylaxAccountScan';
 import {
     PHYLAX_COIN_SYMBOLS,
     type PhylaxNetwork,
@@ -173,7 +174,11 @@ export const PhylaxReceive = ({
         setState({ ...state, isCopied: true });
     };
 
+    // As in Suite: at most GAP_LIMIT unused addresses ahead, or a payment would not be found.
+    const isAtGapLimit = index >= getLastShownReceiveIndex(startIndex ?? 0);
+
     const handleNext = () => {
+        if (isAtGapLimit) return;
         setIndex(index + 1);
         setState({ status: 'idle' });
     };
@@ -247,12 +252,23 @@ export const PhylaxReceive = ({
                             priority="secondary"
                             iconLeft={PlusIcon}
                             onClick={handleNext}
-                            isDisabled={state.status === 'waiting'}
+                            isDisabled={state.status === 'waiting' || isAtGapLimit}
                             data-testid="@phylax/receive-next"
                         >
                             Next address
                         </Button>
                     </Row>
+                    {isAtGapLimit && (
+                        <Text
+                            typographyStyle="body-sm"
+                            priority="secondary"
+                            data-testid="@phylax/receive-gap-limit"
+                        >
+                            You have reached the limit of {GAP_LIMIT} unused addresses. Wallets stop
+                            looking after {GAP_LIMIT} unused addresses in a row, so coins sent
+                            further ahead would not show. Use one of these addresses first.
+                        </Text>
+                    )}
                     {state.status === 'error' && (
                         <Text intent="critical" data-testid="@phylax/receive-error">
                             {state.text}

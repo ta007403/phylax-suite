@@ -12,7 +12,15 @@ import {
     getPhylaxAddress,
 } from './phylaxWallet';
 
-const GAP_LIMIT = 20;
+// Unused addresses in a row after which a scan stops, as in Suite and Sparrow.
+export const GAP_LIMIT = 20;
+
+/**
+ * The highest receive address Next address may show: GAP_LIMIT unused addresses from the first
+ * unused one (`firstUnusedIndex`). A payment to an address beyond would not be found by the scan.
+ */
+export const getLastShownReceiveIndex = (firstUnusedIndex: number) =>
+    firstUnusedIndex + GAP_LIMIT - 1;
 const CHAINS: PhylaxChain[] = [0, 1];
 // Transactions read per used address (newest first).
 export const TRANSACTIONS_PER_ADDRESS = 50;

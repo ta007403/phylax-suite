@@ -1,6 +1,12 @@
 import TrezorConnect from '@trezor/connect';
 
-import { aggregateTransactions, mapLimited, scanChain } from './phylaxAccountScan';
+import {
+    GAP_LIMIT,
+    aggregateTransactions,
+    getLastShownReceiveIndex,
+    mapLimited,
+    scanChain,
+} from './phylaxAccountScan';
 import { getPhylaxAddress } from './phylaxWallet';
 import { WALLET } from './phylaxWallet.fixture';
 
@@ -163,5 +169,14 @@ describe('PHYLAX transactions', () => {
             [undefined, undefined],
             [undefined, undefined],
         ]);
+    });
+});
+
+describe('PHYLAX receive address limit', () => {
+    it('shows at most GAP_LIMIT unused addresses from the first unused one', () => {
+        // nothing used: #0 to #19
+        expect(getLastShownReceiveIndex(0)).toBe(GAP_LIMIT - 1);
+        // #0 used: #1 to #20, so a scan that stops after 20 unused in a row still finds #20
+        expect(getLastShownReceiveIndex(1)).toBe(20);
     });
 });
