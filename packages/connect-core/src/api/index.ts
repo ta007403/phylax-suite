@@ -64,6 +64,7 @@ export { default as verifyMessage } from './verifyMessage';
 export { default as wipeDevice } from './wipeDevice';
 export {
     PhylaxDeleteWallet as phylaxDeleteWallet,
+    PhylaxForgetIgnored as phylaxForgetIgnored,
     PhylaxGetBlocks as phylaxGetBlocks,
     PhylaxGetWallet as phylaxGetWallet,
     PhylaxGetWallets as phylaxGetWallets,

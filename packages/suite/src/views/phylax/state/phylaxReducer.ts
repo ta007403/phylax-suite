@@ -59,6 +59,8 @@ export type PhylaxState = {
     wallets: PhylaxWalletEntry[];
     // Every block's copy of the saved wallets has been read by the main block.
     isStoragePresent: boolean;
+    // Block combinations the main block does not offer as a wallet ("Never"), fingerprints sorted.
+    ignored: number[][];
     isLoaded: boolean;
     error?: string;
     // a call waits for the user on the main block: no stack refresh meanwhile
@@ -77,6 +79,7 @@ export const phylaxInitialState: PhylaxState = {
     blocks: [],
     wallets: [],
     isStoragePresent: false,
+    ignored: [],
     isLoaded: false,
     isPaused: false,
     accounts: {},
@@ -157,6 +160,7 @@ type StackLoadedPayload = {
     blocks: PROTO.PhylaxBlockInfo[];
     wallets: PhylaxWalletEntry[];
     isStoragePresent: boolean;
+    ignored: number[][];
 };
 
 const phylaxSlice = createSlice({
@@ -175,6 +179,7 @@ const phylaxSlice = createSlice({
             state.blocks = action.payload.blocks;
             state.wallets = action.payload.wallets;
             state.isStoragePresent = action.payload.isStoragePresent;
+            state.ignored = action.payload.ignored;
             state.isLoaded = true;
             delete state.error;
         },

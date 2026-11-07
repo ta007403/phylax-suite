@@ -61,6 +61,8 @@ const readStack = async (devicePath: string, knownWallets: PhylaxWalletEntry[]) 
         blocks: blocks.payload.blocks,
         wallets: entries,
         isStoragePresent: wallets.payload.storage_present,
+        // empty from firmware without the list
+        ignored: wallets.payload.ignored.map(set => set.fingerprints),
     };
 };
 
@@ -88,8 +90,16 @@ export const refreshPhylaxStackThunk = createThunk<
         if (result.kind === 'error') {
             dispatch(phylaxActions.stackFailed({ devicePath, error: result.error }));
         } else {
-            const { blocks, wallets, isStoragePresent } = result;
-            dispatch(phylaxActions.stackLoaded({ devicePath, blocks, wallets, isStoragePresent }));
+            const { blocks, wallets, isStoragePresent, ignored } = result;
+            dispatch(
+                phylaxActions.stackLoaded({
+                    devicePath,
+                    blocks,
+                    wallets,
+                    isStoragePresent,
+                    ignored,
+                }),
+            );
         }
     } finally {
         if (stackRefreshInFlight === running) stackRefreshInFlight = undefined;

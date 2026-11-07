@@ -98,7 +98,9 @@ export const PhylaxWalletActions = ({
                 </Row>
                 <Text typographyStyle="body-sm" priority="secondary">
                     Deleting removes the wallet from every block. Its coins stay on the blockchain
-                    and still need its keys: keep the descriptor before you delete.
+                    and still need its keys: keep the descriptor before you delete. The main block
+                    then no longer offers these blocks as a wallet, until you choose Ask again under
+                    Never on the PHYLAX Snap page.
                 </Text>
                 <Row>
                     <Button

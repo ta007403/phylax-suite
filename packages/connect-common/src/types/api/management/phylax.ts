@@ -35,3 +35,11 @@ export declare function phylaxDeleteWallet(
 export declare function phylaxUnlockBlock(
     params: Params<PROTO.PhylaxUnlockBlock>,
 ): Response<PROTO.Success>;
+
+/**
+ * Forget a "Never" for this combination of blocks (PhylaxWallets.ignored): the main block offers it
+ * as a wallet again the next time they are all attached. No confirmation on the main block.
+ */
+export declare function phylaxForgetIgnored(
+    params: Params<PROTO.PhylaxForgetIgnored>,
+): Response<PROTO.Success>;

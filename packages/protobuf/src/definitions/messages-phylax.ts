@@ -46,6 +46,14 @@ export const PhylaxDeleteWallet = Type.Object(
     { $id: 'PhylaxDeleteWallet' },
 );
 
+export type PhylaxForgetIgnored = Static<typeof PhylaxForgetIgnored>;
+export const PhylaxForgetIgnored = Type.Object(
+    {
+        fingerprints: Type.Array(Type.Number()),
+    },
+    { $id: 'PhylaxForgetIgnored' },
+);
+
 export type PhylaxGetBlocks = Static<typeof PhylaxGetBlocks>;
 export const PhylaxGetBlocks = Type.Record(Type.Never(), Type.Never(), { $id: 'PhylaxGetBlocks' });
 
@@ -61,6 +69,14 @@ export type PhylaxGetWallets = Static<typeof PhylaxGetWallets>;
 export const PhylaxGetWallets = Type.Record(Type.Never(), Type.Never(), {
     $id: 'PhylaxGetWallets',
 });
+
+export type PhylaxIgnoredSet = Static<typeof PhylaxIgnoredSet>;
+export const PhylaxIgnoredSet = Type.Object(
+    {
+        fingerprints: Type.Array(Type.Number()),
+    },
+    { $id: 'PhylaxIgnoredSet' },
+);
 
 export type PhylaxSelectBlock = Static<typeof PhylaxSelectBlock>;
 export const PhylaxSelectBlock = Type.Object(
@@ -126,6 +142,7 @@ export const PhylaxWallets = Type.Object(
     {
         wallets: Type.Array(PhylaxWalletSummary),
         storage_present: Type.Boolean(),
+        ignored: Type.Array(PhylaxIgnoredSet),
     },
     { $id: 'PhylaxWallets' },
 );

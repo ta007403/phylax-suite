@@ -143,3 +143,27 @@ export class PhylaxUnlockBlock extends AbstractMethod<
         return response.message;
     }
 }
+
+export class PhylaxForgetIgnored extends AbstractMethod<
+    'phylaxForgetIgnored',
+    PROTO.PhylaxForgetIgnored
+> {
+    constructor(message: MethodMessage<'phylaxForgetIgnored'>) {
+        const { payload } = message;
+        Assert(PROTO.PhylaxForgetIgnored, payload);
+        super(message, { fingerprints: payload.fingerprints });
+        this.useDeviceState = false;
+        this.skipFinalReload = true;
+    }
+
+    get requiredPermissions() {
+        return PHYLAX_PERMISSIONS;
+    }
+
+    async run() {
+        const cmd = this.getDevice().getCommands();
+        const response = await cmd.typedCall('PhylaxForgetIgnored', 'Success', this.params);
+
+        return response.message;
+    }
+}

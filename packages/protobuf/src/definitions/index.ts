@@ -234,6 +234,7 @@ import { NostrEventSignature, NostrGetPubkey, NostrPubkey, NostrSignEvent } from
 import {
     PhylaxBlocks,
     PhylaxDeleteWallet,
+    PhylaxForgetIgnored,
     PhylaxGetBlocks,
     PhylaxGetWallet,
     PhylaxGetWallets,
@@ -579,6 +580,7 @@ export const MessageType = Type.Object(
         PhylaxSetWalletName,
         PhylaxDeleteWallet,
         PhylaxUnlockBlock,
+        PhylaxForgetIgnored,
         RippleGetAddress,
         RippleAddress,
         RippleSignTx,
@@ -794,6 +796,7 @@ export type WireInMessage =
     | 'PhylaxSetWalletName'
     | 'PhylaxDeleteWallet'
     | 'PhylaxUnlockBlock'
+    | 'PhylaxForgetIgnored'
     | 'RippleGetAddress'
     | 'RippleSignTx'
     | 'SolanaGetPublicKey'

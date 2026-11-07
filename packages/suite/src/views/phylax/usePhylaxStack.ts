@@ -64,6 +64,7 @@ export const usePhylaxStack = () => {
     return {
         blocks: stack.blocks,
         wallets: stack.wallets,
+        ignored: stack.ignored,
         isStoragePresent: stack.isStoragePresent,
         error: stack.error,
         isLoaded: stack.isLoaded,

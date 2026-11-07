@@ -8,6 +8,7 @@ import type { PROTO } from '@trezor/connect';
 
 import { useSelector } from 'src/hooks/suite';
 
+import { PhylaxNeverList } from './PhylaxNeverList';
 import { type PhylaxWakeUp, WakeUpButton, usePhylaxWakeUp } from './PhylaxWakeUp';
 import { PhylaxWalletRow } from './PhylaxWalletRow';
 import { PHYLAX_MAIN_BLOCK_ADDRESS, countConnectedDevices } from './phylaxIdentity';
@@ -73,7 +74,7 @@ const Stack = ({ blocks, wakeUp, isDeviceBusy }: StackProps) => (
 export const PhylaxPage = () => {
     const isPhylaxDevice = useSelector(selectIsPhylaxDevice);
     const devices = useSelector(selectDevices);
-    const { blocks, wallets, isStoragePresent, error, isLoaded, isPaused, runOnDevice } =
+    const { blocks, wallets, ignored, isStoragePresent, error, isLoaded, isPaused, runOnDevice } =
         usePhylaxStack();
     const [network, setNetwork] = useState<PhylaxNetwork>('mainnet');
     const lockedKeyBlocks = getLockedKeyBlocks(blocks);
@@ -125,6 +126,12 @@ export const PhylaxPage = () => {
                     blocks={blocks}
                 />
             ))}
+            <PhylaxNeverList
+                ignored={ignored}
+                blocks={blocks}
+                runOnDevice={runOnDevice}
+                isDeviceBusy={isPaused}
+            />
         </Column>
     );
 };

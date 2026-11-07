@@ -15,6 +15,7 @@ import type { getSettings } from './getSettings';
 import type { loadDevice } from './loadDevice';
 import type {
     phylaxDeleteWallet,
+    phylaxForgetIgnored,
     phylaxGetBlocks,
     phylaxGetWallet,
     phylaxGetWallets,
@@ -61,6 +62,7 @@ const TrezorConnectManagementBase = Type.Object({
     phylaxSetWalletName: Type.Unsafe<typeof phylaxSetWalletName>(),
     phylaxDeleteWallet: Type.Unsafe<typeof phylaxDeleteWallet>(),
     phylaxUnlockBlock: Type.Unsafe<typeof phylaxUnlockBlock>(),
+    phylaxForgetIgnored: Type.Unsafe<typeof phylaxForgetIgnored>(),
 });
 
 // Evolu identity operations export secret key material, so they belong to the privileged tier and

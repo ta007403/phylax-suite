@@ -118,6 +118,20 @@ describe('PHYLAX account store', () => {
         expect(phylax).toEqual({ ...phylaxInitialState, devicePath: '2' });
     });
 
+    it('keeps the "Never" combinations the main block reports', () => {
+        const phylax = phylaxReducer(
+            state.phylax,
+            phylaxActions.stackLoaded({
+                devicePath: '1',
+                blocks: [],
+                wallets: [],
+                isStoragePresent: true,
+                ignored: [[1, 2]],
+            }),
+        );
+        expect(phylax.ignored).toEqual([[1, 2]]);
+    });
+
     it('drops a stack read from a device that is no longer selected', () => {
         const phylax = phylaxReducer(
             state.phylax,
@@ -126,6 +140,7 @@ describe('PHYLAX account store', () => {
                 blocks: [],
                 wallets: [],
                 isStoragePresent: true,
+                ignored: [],
             }),
         );
         expect(phylax.wallets).toHaveLength(1);
