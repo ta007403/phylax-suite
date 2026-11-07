@@ -1,3 +1,4 @@
+import TrezorConnect from '@trezor/connect';
 import { createMockDispatch } from '@trezor/redux-utils/mocks';
 
 import {
@@ -13,6 +14,8 @@ import {
     SEND_RECHECK_DELAY_MS,
     refreshPhylaxAccountAfterSendThunk,
     refreshPhylaxAccountThunk,
+    subscribePhylaxAccountThunk,
+    unsubscribePhylaxAccountThunk,
 } from './phylaxThunks';
 import { type PhylaxAccountData, scanPhylaxAccount } from '../phylaxAccountScan';
 import { WALLET } from '../phylaxWallet.fixture';
@@ -179,5 +182,61 @@ describe('PHYLAX account refresh', () => {
                 error: 'Websocket closed',
             }),
         );
+    });
+});
+
+describe('PHYLAX backend subscription', () => {
+    const subscribeState = (connected: boolean, withData: boolean) => ({
+        phylax: {
+            ...state.phylax,
+            accounts: withData
+                ? { [KEY]: { data: serializePhylaxAccountData(DATA), isRefreshing: false } }
+                : {},
+        },
+        wallet: { blockchain: { btc: { connected } } },
+    });
+
+    beforeEach(() => {
+        jest.spyOn(TrezorConnect, 'blockchainSubscribe').mockResolvedValue({
+            success: true,
+            payload: { subscribed: true },
+        });
+        jest.spyOn(TrezorConnect, 'blockchainUnsubscribe').mockResolvedValue({
+            success: true,
+            payload: { subscribed: false },
+        });
+    });
+
+    afterEach(() => jest.restoreAllMocks());
+
+    it('subscribes the scanned addresses, nothing before the first scan', async () => {
+        let current = subscribeState(true, false);
+        const { dispatch } = createMockDispatch({ getState: () => current as never, extra: {} });
+
+        await dispatch(subscribePhylaxAccountThunk({ slot: 0, network: 'mainnet' }));
+        expect(TrezorConnect.blockchainSubscribe).not.toHaveBeenCalled();
+
+        current = subscribeState(true, true);
+        await dispatch(subscribePhylaxAccountThunk({ slot: 0, network: 'mainnet' }));
+        const [params] = jest.mocked(TrezorConnect.blockchainSubscribe).mock.calls[0]!;
+        expect(params).toMatchObject({ coin: 'btc', blocks: false });
+        expect(params.accounts?.[0]?.descriptor).toBe(`phylax:${KEY}`);
+        expect(params.accounts?.[0]?.addresses?.used.map(a => a.address)).toEqual(['bc1q']);
+    });
+
+    it('unsubscribes only from a connected backend (it would connect it again)', async () => {
+        let current = subscribeState(false, true);
+        const { dispatch } = createMockDispatch({ getState: () => current as never, extra: {} });
+
+        await dispatch(unsubscribePhylaxAccountThunk({ key: KEY, network: 'mainnet' }));
+        expect(TrezorConnect.blockchainUnsubscribe).not.toHaveBeenCalled();
+
+        current = subscribeState(true, true);
+        await dispatch(unsubscribePhylaxAccountThunk({ key: KEY, network: 'mainnet' }));
+        expect(TrezorConnect.blockchainUnsubscribe).toHaveBeenCalledWith({
+            coin: 'btc',
+            blocks: false,
+            accounts: [{ descriptor: `phylax:${KEY}` }],
+        });
     });
 });

@@ -1,6 +1,7 @@
 // PHYLAX Blocks (fork): reading the stack from the main block, and the account data of each saved
 // wallet from Suite's backend.
 
+import { type BlockchainRootState, selectNetworkBlockchainInfo } from '@suite-common/wallet-core';
 import TrezorConnect, { type DeviceUniquePath, type PROTO } from '@trezor/connect';
 import { createThunk } from '@trezor/redux-utils';
 
@@ -8,6 +9,7 @@ import {
     type PhylaxRootState,
     type PhylaxWalletEntry,
     getPhylaxAccountKey,
+    getPhylaxSubscriptionDescriptor,
     phylaxActions,
     selectPhylaxAccountByKey,
     selectPhylaxDevicePath,
@@ -15,7 +17,8 @@ import {
     serializePhylaxAccountData,
 } from './phylaxReducer';
 import { scanPhylaxAccount } from '../phylaxAccountScan';
-import type { PhylaxNetwork } from '../phylaxWallet';
+import { getPhylaxSubscriptionAccount } from '../phylaxSubscription';
+import { PHYLAX_COIN_SYMBOLS, type PhylaxNetwork, getPhylaxNetworkSymbol } from '../phylaxWallet';
 
 const PHYLAX_PREFIX = '@suite/phylax';
 
@@ -192,4 +195,46 @@ export const refreshPhylaxAccountAfterSendThunk = createThunk<
     await dispatch(refreshPhylaxAccountThunk(params));
     await new Promise(resolve => setTimeout(resolve, SEND_RECHECK_DELAY_MS));
     await dispatch(refreshPhylaxAccountThunk(params));
+});
+
+type SubscribePhylaxAccountThunkState = RefreshPhylaxAccountThunkState;
+
+/**
+ * Asks Suite's backend to watch the wallet's addresses (the used ones and the next unused ones,
+ * from the last scan): it then notifies about a new transaction on them at once.
+ */
+export const subscribePhylaxAccountThunk = createThunk<
+    void,
+    RefreshPhylaxAccountParams,
+    { state: SubscribePhylaxAccountThunkState }
+>(`${PHYLAX_PREFIX}/subscribeAccount`, async ({ slot, network }, { getState }) => {
+    const entry = selectPhylaxWallets(getState()).find(wallet => wallet.summary.slot === slot);
+    if (!entry?.details) return;
+    const key = getPhylaxAccountKey(entry.summary, network);
+    const data = selectPhylaxAccountByKey(getState(), key)?.data;
+    if (!data) return;
+
+    await TrezorConnect.blockchainSubscribe({
+        coin: PHYLAX_COIN_SYMBOLS[network],
+        blocks: false,
+        accounts: [getPhylaxSubscriptionAccount(entry.details, network, key, data)],
+    });
+});
+
+type UnsubscribePhylaxAccountThunkState = PhylaxRootState & BlockchainRootState;
+
+/** Stops the backend watching a wallet's addresses (the wallet or the device is gone). */
+export const unsubscribePhylaxAccountThunk = createThunk<
+    void,
+    { key: string; network: PhylaxNetwork },
+    { state: UnsubscribePhylaxAccountThunkState }
+>(`${PHYLAX_PREFIX}/unsubscribeAccount`, async ({ key, network }, { getState }) => {
+    // a disconnected backend watches nothing; asking it would connect it again
+    const symbol = getPhylaxNetworkSymbol(network);
+    if (!selectNetworkBlockchainInfo(getState(), symbol)?.connected) return;
+    await TrezorConnect.blockchainUnsubscribe({
+        coin: PHYLAX_COIN_SYMBOLS[network],
+        blocks: false,
+        accounts: [{ descriptor: getPhylaxSubscriptionDescriptor(key) }],
+    });
 });

@@ -3,7 +3,7 @@
 
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit';
 
-import type { PROTO } from '@trezor/connect';
+import { BLOCKCHAIN, type PROTO } from '@trezor/connect';
 
 import type {
     PhylaxAccountData,
@@ -66,6 +66,9 @@ export type PhylaxState = {
     selectedAccount?: PhylaxSelectedAccount;
     // by getPhylaxAccountKey
     accounts: Record<string, PhylaxAccountState>;
+    // by getPhylaxAccountKey: how many backend notifications arrived for the wallet's addresses
+    // (a transaction to or from them entered the mempool or a block)
+    notifications: Record<string, number>;
 };
 
 export type PhylaxRootState = { phylax: PhylaxState };
@@ -77,7 +80,27 @@ export const phylaxInitialState: PhylaxState = {
     isLoaded: false,
     isPaused: false,
     accounts: {},
+    notifications: {},
 };
+
+/**
+ * The backend's notifications for a wallet's addresses come back with the descriptor it was
+ * subscribed with (blockchainSubscribe): this prefix and the account key. Suite ignores them (no
+ * Suite account has such a descriptor).
+ */
+const SUBSCRIPTION_PREFIX = 'phylax:';
+
+export const getPhylaxSubscriptionDescriptor = (accountKey: string) =>
+    `${SUBSCRIPTION_PREFIX}${accountKey}`;
+
+type BlockchainNotificationAction = {
+    type: typeof BLOCKCHAIN.NOTIFICATION;
+    payload: { notification: { descriptor: string } };
+};
+
+const isBlockchainNotification = (action: {
+    type: string;
+}): action is BlockchainNotificationAction => action.type === BLOCKCHAIN.NOTIFICATION;
 
 /** One account per wallet version and network: a wallet saved again in the same slot is new. */
 export const getPhylaxAccountKey = (summary: PROTO.PhylaxWalletSummary, network: PhylaxNetwork) =>
@@ -196,6 +219,15 @@ const phylaxSlice = createSlice({
             };
         },
     },
+    extraReducers: builder => {
+        // Connect's blockchain events are dispatched as actions (connectInitThunks)
+        builder.addMatcher(isBlockchainNotification, (state, action) => {
+            const { descriptor } = action.payload.notification;
+            if (!descriptor.startsWith(SUBSCRIPTION_PREFIX)) return;
+            const key = descriptor.slice(SUBSCRIPTION_PREFIX.length);
+            state.notifications[key] = (state.notifications[key] ?? 0) + 1;
+        });
+    },
 });
 
 export const phylaxActions = phylaxSlice.actions;
@@ -207,5 +239,7 @@ export const selectPhylaxWallets = (state: PhylaxRootState) => state.phylax.wall
 export const selectPhylaxIsPaused = (state: PhylaxRootState) => state.phylax.isPaused;
 export const selectPhylaxIsLoaded = (state: PhylaxRootState) => state.phylax.isLoaded;
 export const selectPhylaxSelectedAccount = (state: PhylaxRootState) => state.phylax.selectedAccount;
+export const selectPhylaxNotificationCount = (state: PhylaxRootState, key: string) =>
+    state.phylax.notifications[key] ?? 0;
 export const selectPhylaxAccountByKey = (state: PhylaxRootState, key: string) =>
     state.phylax.accounts[key];

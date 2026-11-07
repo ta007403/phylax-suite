@@ -3,7 +3,9 @@
 // - once, when a wallet has no data yet;
 // - on a new block, the wallets with a pending transaction (it may be confirmed now);
 // - every FULL_SCAN_BLOCKS blocks (about an hour), every wallet (coins received meanwhile);
-// - after a send, and with the Refresh button (usePhylaxAccount).
+// - after a send, and with the Refresh button (usePhylaxAccount);
+// - at once when the backend notifies about a new transaction on its addresses
+//   (PhylaxWalletSubscription).
 // Never while Suite discovers its own accounts: both use the same backend connection.
 
 import { useEffect, useRef } from 'react';
@@ -17,8 +19,9 @@ import { injectDispatch } from '@trezor/redux-utils';
 
 import { useSelector } from 'src/hooks/suite';
 
+import { PhylaxWalletSubscription } from './PhylaxWalletSubscription';
 import { type PhylaxNetwork, getPhylaxNetworkSymbol } from './phylaxWallet';
-import { selectPhylaxWallets } from './state/phylaxReducer';
+import { getPhylaxAccountKey, selectPhylaxWallets } from './state/phylaxReducer';
 import { refreshPhylaxAccountsThunk } from './state/phylaxThunks';
 
 export const FULL_SCAN_BLOCKS = 6;
@@ -53,5 +56,15 @@ export const PhylaxNetworkSync = ({ network }: PhylaxNetworkSyncProps) => {
         dispatch(refreshPhylaxAccountsThunk({ network, which: isFullScanDue ? 'all' : 'pending' }));
     }, [dispatch, network, blockHeight, hasRunningDiscovery]);
 
-    return null;
+    return (
+        <>
+            {wallets.map(({ summary }) => (
+                <PhylaxWalletSubscription
+                    key={getPhylaxAccountKey(summary, network)}
+                    summary={summary}
+                    network={network}
+                />
+            ))}
+        </>
+    );
 };
