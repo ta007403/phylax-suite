@@ -1,7 +1,8 @@
 // PHYLAX Blocks (fork): instant incoming payments for one wallet on one network, as Suite does for
 // its own accounts. Suite's backend watches the wallet's addresses (subscribed again whenever the
 // set changes or the backend reconnects) and notifies about a new transaction on any of them; the
-// wallet is then scanned again. Never while Suite discovers its own accounts (same backend
+// wallet is then scanned again, and once more a little later (the backend may not have the
+// amount yet). Never while Suite discovers its own accounts (same backend
 // connection): the scan waits until the discovery is done.
 
 import { useEffect, useRef } from 'react';
@@ -20,7 +21,7 @@ import {
     selectPhylaxNotificationCount,
 } from './state/phylaxReducer';
 import {
-    refreshPhylaxAccountThunk,
+    refreshPhylaxAccountAndRecheckThunk,
     subscribePhylaxAccountThunk,
     unsubscribePhylaxAccountThunk,
 } from './state/phylaxThunks';
@@ -67,7 +68,7 @@ export const PhylaxWalletSubscription = ({ summary, network }: PhylaxWalletSubsc
         if (notificationCount === handledCount.current || hasRunningDiscovery) return;
         const timeout = setTimeout(() => {
             handledCount.current = notificationCount;
-            dispatch(refreshPhylaxAccountThunk({ slot, network }));
+            dispatch(refreshPhylaxAccountAndRecheckThunk({ slot, network }));
         }, NOTIFICATION_SCAN_DELAY_MS);
 
         return () => clearTimeout(timeout);

@@ -16,7 +16,7 @@ import {
     selectPhylaxAccountByKey,
 } from './state/phylaxReducer';
 import {
-    refreshPhylaxAccountAfterSendThunk,
+    refreshPhylaxAccountAndRecheckThunk,
     refreshPhylaxAccountThunk,
 } from './state/phylaxThunks';
 
@@ -55,7 +55,7 @@ export const usePhylaxAccount = (
         dispatch(refreshPhylaxAccountThunk({ slot, network }));
     }, [dispatch, slot, network]);
     const refreshAfterSend = useCallback(() => {
-        dispatch(refreshPhylaxAccountAfterSendThunk({ slot, network }));
+        dispatch(refreshPhylaxAccountAndRecheckThunk({ slot, network }));
     }, [dispatch, slot, network]);
 
     const storedData = account?.data;

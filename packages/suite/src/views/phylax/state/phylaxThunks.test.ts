@@ -11,8 +11,8 @@ import {
     serializePhylaxAccountData,
 } from './phylaxReducer';
 import {
-    SEND_RECHECK_DELAY_MS,
-    refreshPhylaxAccountAfterSendThunk,
+    RECHECK_DELAY_MS,
+    refreshPhylaxAccountAndRecheckThunk,
     refreshPhylaxAccountThunk,
     subscribePhylaxAccountThunk,
     unsubscribePhylaxAccountThunk,
@@ -175,11 +175,11 @@ describe('PHYLAX account refresh', () => {
         jest.mocked(scanPhylaxAccount).mockResolvedValue(DATA);
         const { actions, dispatch } = setUp();
 
-        const done = dispatch(refreshPhylaxAccountAfterSendThunk({ slot: 0, network: 'mainnet' }));
+        const done = dispatch(refreshPhylaxAccountAndRecheckThunk({ slot: 0, network: 'mainnet' }));
         await jest.advanceTimersByTimeAsync(0);
         expect(scanPhylaxAccount).toHaveBeenCalledTimes(1);
 
-        await jest.advanceTimersByTimeAsync(SEND_RECHECK_DELAY_MS);
+        await jest.advanceTimersByTimeAsync(RECHECK_DELAY_MS);
         await done;
         expect(scanPhylaxAccount).toHaveBeenCalledTimes(2);
         expect(loadedTypes(actions)).toHaveLength(2);

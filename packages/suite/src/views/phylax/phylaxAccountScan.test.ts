@@ -118,6 +118,23 @@ describe('PHYLAX chain scan', () => {
         expect(detailsOf(0)).toEqual(['txs']);
         expect(detailsOf(2)).toEqual(['basic', 'txs']);
     });
+
+    it('takes the balance from the coins (Blockbook may still say 0 for a new payment)', async () => {
+        const lookUp = jest.mocked(TrezorConnect.getAccountInfo).getMockImplementation()!;
+        jest.mocked(TrezorConnect.getAccountInfo).mockImplementation((async (
+            params: Parameters<typeof lookUp>[0],
+        ) => {
+            const response = (await lookUp(params)) as unknown as {
+                payload: { availableBalance: string };
+            };
+            response.payload.availableBalance = '0';
+
+            return response;
+        }) as unknown as typeof TrezorConnect.getAccountInfo);
+        const result = await scanChain(WALLET, 'testnet', 0);
+        expect(result.balance).toBe(50_000n);
+        expect(result.used.map(u => u.balance)).toEqual([50_000n, 0n]);
+    });
 });
 
 describe('PHYLAX transactions', () => {

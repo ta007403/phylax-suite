@@ -22,9 +22,9 @@ import { PHYLAX_COIN_SYMBOLS, type PhylaxNetwork, getPhylaxNetworkSymbol } from 
 
 const PHYLAX_PREFIX = '@suite/phylax';
 
-// After a send, Blockbook may not list the new transaction yet: look again after this delay
-// (new blocks trigger further scans until it confirms).
-export const SEND_RECHECK_DELAY_MS = 10_000;
+// After a send or a payment's notification, Blockbook may not list the transaction (or its amount)
+// yet: look again after this delay (new blocks trigger further scans until it confirms).
+export const RECHECK_DELAY_MS = 10_000;
 
 const getWalletVersionKey = (summary: PROTO.PhylaxWalletSummary) =>
     `${summary.slot}:${summary.name}:${summary.threshold}:${summary.fingerprints.join(',')}`;
@@ -191,19 +191,19 @@ export const refreshPhylaxAccountsThunk = createThunk<
     }
 });
 
-type RefreshPhylaxAccountAfterSendThunkState = RefreshPhylaxAccountThunkState;
+type RefreshPhylaxAccountAndRecheckThunkState = RefreshPhylaxAccountThunkState;
 
 /**
- * After a broadcast: scan now (the spent coins and the new change), and again a little later
- * in case the backend did not list the new transaction yet.
+ * After a broadcast or a payment's notification: scan now, and again a little later in case the
+ * backend did not list the new transaction (or its amount) yet.
  */
-export const refreshPhylaxAccountAfterSendThunk = createThunk<
+export const refreshPhylaxAccountAndRecheckThunk = createThunk<
     void,
     RefreshPhylaxAccountParams,
-    { state: RefreshPhylaxAccountAfterSendThunkState }
->(`${PHYLAX_PREFIX}/refreshAccountAfterSend`, async (params, { dispatch }) => {
+    { state: RefreshPhylaxAccountAndRecheckThunkState }
+>(`${PHYLAX_PREFIX}/refreshAccountAndRecheck`, async (params, { dispatch }) => {
     await dispatch(refreshPhylaxAccountThunk(params));
-    await new Promise(resolve => setTimeout(resolve, SEND_RECHECK_DELAY_MS));
+    await new Promise(resolve => setTimeout(resolve, RECHECK_DELAY_MS));
     await dispatch(refreshPhylaxAccountThunk(params));
 });
 

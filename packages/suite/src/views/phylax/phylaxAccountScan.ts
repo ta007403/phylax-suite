@@ -251,7 +251,6 @@ export const scanChain = async (
     // addresses used at the last scan: their details are asked for at once (one lookup each)
     knownUsed: ReadonlySet<string> = new Set(),
 ) => {
-    let balance = 0n;
     let usedAddressCount = 0;
     let lastUsedIndex = -1;
     let nextIndex = 0;
@@ -294,10 +293,9 @@ export const scanChain = async (
                 index: from + offset,
                 address: addresses[offset]!,
                 transactions: info.history.total + info.history.unconfirmed,
-                balance: BigInt(info.availableBalance),
+                // from its coins, below
+                balance: 0n,
             });
-            // Blockbook: confirmed balance plus the pending (unconfirmed) change
-            balance += BigInt(info.availableBalance);
             usedAt.push({
                 address: addresses[offset]!,
                 index: from + offset,
@@ -325,11 +323,20 @@ export const scanChain = async (
         };
     });
 
+    // The balances come from the coins (pending ones included, as in Suite), not from Blockbook's
+    // balance: right after a payment's notification, Blockbook may list its coin while its balance
+    // still says 0, and the coins are what Send spends.
+    const utxos = details.flatMap(item => item.utxos);
+    for (const utxo of utxos) {
+        const address = used.find(item => item.index === utxo.index);
+        if (address) address.balance += utxo.value;
+    }
+
     return {
-        balance,
+        balance: utxos.reduce((sum, utxo) => sum + utxo.value, 0n),
         usedAddressCount,
         lastUsedIndex,
-        utxos: details.flatMap(item => item.utxos),
+        utxos,
         transactions: details.flatMap(item => item.transactions),
         scanned,
         used,
