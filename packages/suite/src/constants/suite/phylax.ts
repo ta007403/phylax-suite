@@ -33,4 +33,4 @@ export const PHYLAX_IS_COINJOIN_ENABLED: boolean = false;
  * wallet instead of one per address to Suite's backend. Empty: not used. Settings > Debug can set
  * another one (for any network). Without an answer, scans fall back to Suite's backend.
  */
-export const PHYLAX_API_DEFAULT_URL: string = '';
+export const PHYLAX_API_DEFAULT_URL: string = 'https://phylax-api.bitcoin4thai.com';

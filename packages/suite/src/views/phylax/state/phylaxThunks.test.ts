@@ -22,6 +22,11 @@ import {
 import { type PhylaxAccountData, scanPhylaxAccount } from '../phylaxAccountScan';
 import { WALLET } from '../phylaxWallet.fixture';
 
+// no built-in PHYLAX API in the tests: never a real network request
+jest.mock('src/constants/suite/phylax', () => ({
+    ...jest.requireActual('src/constants/suite/phylax'),
+    PHYLAX_API_DEFAULT_URL: '',
+}));
 jest.mock('../phylaxAccountScan', () => ({
     ...jest.requireActual('../phylaxAccountScan'),
     scanPhylaxAccount: jest.fn(),
