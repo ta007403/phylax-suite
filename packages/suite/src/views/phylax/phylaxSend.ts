@@ -339,6 +339,15 @@ export const getPhylaxSignParams = (
     ],
 });
 
+/** The transaction id of a signed transaction (without its witness), or undefined if unreadable. */
+export const getSignedTxid = (network: PhylaxNetwork, serializedTx: string): string | undefined => {
+    try {
+        return Transaction.fromHex(serializedTx, { network: UTXO_NETWORKS[network] }).getId();
+    } catch {
+        return undefined;
+    }
+};
+
 /**
  * Checks the signed transaction from the main block against the plan before it is broadcast:
  * exactly the planned coins, and exactly the planned outputs (recipient, and change to the

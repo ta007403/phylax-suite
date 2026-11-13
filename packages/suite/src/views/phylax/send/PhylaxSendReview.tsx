@@ -1,7 +1,8 @@
-// PHYLAX Blocks (fork): the last check before signing, then the signing itself. The main block
-// takes one SignTx and runs it past each key block first (pass 1, confirmed on the key block's
-// screen) and then signs itself (pass 2, confirmed on its own screen); see the firmware's
-// phylax_relay.h. Before anything is broadcast, the signed transaction is checked against the plan.
+// PHYLAX Blocks (fork): the last check before signing, the signing, and the broadcast. The main
+// block takes one SignTx and runs it past each key block first (pass 1, confirmed on the key
+// block's screen) and then signs itself (pass 2, confirmed on its own screen); see the firmware's
+// phylax_relay.h. The signed transaction is checked against the plan, then shown ("Signed - ready
+// to send", as in Suite after signing): it is broadcast only on Send, or discarded.
 
 import { useState } from 'react';
 
@@ -12,16 +13,26 @@ import { ArrowLeftIcon, PaperPlaneTiltIcon } from '@trezor/icons';
 
 import { PhylaxTotalLine } from './PhylaxTotalLine';
 import type { PhylaxAmountFormat } from '../phylaxAmount';
-import { type PhylaxSendPlan, checkSignedTx, getPhylaxSignParams } from '../phylaxSend';
+import {
+    type PhylaxSendPlan,
+    checkSignedTx,
+    getPhylaxSignParams,
+    getSignedTxid,
+} from '../phylaxSend';
 import { PHYLAX_COIN_SYMBOLS, type PhylaxNetwork, getFingerprintHex } from '../phylaxWallet';
 import type { RunOnDevice } from '../usePhylaxStack';
+
+/** A signed transaction that matches the plan, not broadcast yet. */
+type SignedTx = { serializedTx: string; txid: string };
 
 type SendState =
     | { status: 'review' }
     | { status: 'signing' }
-    | { status: 'broadcasting' }
+    | { status: 'signed'; signed: SignedTx; isHexCopied: boolean }
+    | { status: 'broadcasting'; signed: SignedTx }
     | { status: 'sent'; txid: string; isCopied: boolean }
-    | { status: 'error'; text: string };
+    // `signed`: the broadcast failed, the signed transaction can still be sent or copied
+    | { status: 'error'; text: string; signed?: SignedTx; isHexCopied?: boolean };
 
 type PhylaxSendReviewProps = {
     wallet: PROTO.PhylaxWallet;
@@ -58,6 +69,12 @@ export const PhylaxSendReview = ({
 }: PhylaxSendReviewProps) => {
     const [state, setState] = useState<SendState>({ status: 'review' });
     const isBusy = state.status === 'signing' || state.status === 'broadcasting';
+    const signed =
+        state.status === 'signed' || state.status === 'broadcasting' || state.status === 'error'
+            ? state.signed
+            : undefined;
+    const isHexCopied =
+        (state.status === 'signed' || state.status === 'error') && !!state.isHexCopied;
     const amount = plan.recipients.reduce((sum, recipient) => sum + recipient.amount, 0n);
     const keyBlocks = wallet.keys
         .map(key => key.fingerprint)
@@ -95,24 +112,48 @@ export const PhylaxSendReview = ({
         }
         const { serializedTx } = result.value.payload;
         const mismatch = checkSignedTx(wallet, network, plan, serializedTx);
-        if (mismatch) {
-            setState({ status: 'error', text: `${mismatch} Nothing was broadcast.` });
+        const txid = getSignedTxid(network, serializedTx);
+        if (mismatch || !txid) {
+            setState({
+                status: 'error',
+                text: `${mismatch ?? 'The signed transaction could not be read.'} Nothing was broadcast.`,
+            });
 
             return;
         }
+        // nothing is broadcast until Send
+        setState({ status: 'signed', signed: { serializedTx, txid }, isHexCopied: false });
+    };
 
-        setState({ status: 'broadcasting' });
-        const pushed = await TrezorConnect.pushTransaction({ tx: serializedTx, coin });
+    const handleBroadcast = async (signed: SignedTx) => {
+        setState({ status: 'broadcasting', signed });
+        const pushed = await TrezorConnect.pushTransaction({
+            tx: signed.serializedTx,
+            coin: PHYLAX_COIN_SYMBOLS[network],
+        });
         if (!pushed.success) {
             setState({
                 status: 'error',
-                text: `Signed, but the broadcast failed: ${pushed.error.message}`,
+                text: `The broadcast failed: ${pushed.error.message}. The transaction is signed: send it again, or copy it and broadcast it elsewhere.`,
+                signed,
             });
 
             return;
         }
         setState({ status: 'sent', txid: pushed.payload.txid, isCopied: false });
         onSent();
+    };
+
+    // the signed transaction is forgotten: nothing was broadcast
+    const handleDiscard = () => setState({ status: 'review' });
+
+    const handleCopyHex = async (signed: SignedTx) => {
+        await copyToClipboard(signed.serializedTx);
+        setState(current =>
+            current.status === 'signed' || current.status === 'error'
+                ? { ...current, isHexCopied: true }
+                : current,
+        );
     };
 
     const handleCopyTxid = async () => {
@@ -146,7 +187,7 @@ export const PhylaxSendReview = ({
     return (
         <Card data-testid="@phylax/send/review-card">
             <Column gap={12} alignItems="stretch">
-                <H3>{title}</H3>
+                <H3>{signed ? 'Signed – ready to send' : title}</H3>
                 {plan.recipients.map((recipient, index) => (
                     <Column
                         key={`${recipient.address}:${index}`}
@@ -203,32 +244,76 @@ export const PhylaxSendReview = ({
                         address, amount and the fee on each screen.
                     </Text>
                 )}
+                {signed && (
+                    <Column gap={4} alignItems="stretch" data-testid="@phylax/send/signed">
+                        <Text typographyStyle="body-sm" priority="secondary">
+                            Every block signed, and the signed transaction matches the above.
+                            Nothing is broadcast until you press Send. Transaction id:
+                        </Text>
+                        <Text isMonospaced typographyStyle="body-sm">
+                            <span style={{ wordBreak: 'break-all' }}>{signed.txid}</span>
+                        </Text>
+                    </Column>
+                )}
                 {state.status === 'error' && (
                     <Text intent="critical" data-testid="@phylax/send/error">
                         {state.text}
                     </Text>
                 )}
-                <Row gap={12} justifyContent="space-between" flexWrap="wrap">
-                    <Button
-                        priority="secondary"
-                        iconLeft={ArrowLeftIcon}
-                        onClick={onBack}
-                        isDisabled={isBusy}
-                        data-testid="@phylax/send/back"
-                    >
-                        Back
-                    </Button>
-                    <Button
-                        size="large"
-                        iconLeft={PaperPlaneTiltIcon}
-                        onClick={handleSign}
-                        isDisabled={isDeviceBusy || isBusy}
-                        isLoading={isBusy}
-                        data-testid="@phylax/send/sign"
-                    >
-                        {state.status === 'broadcasting' ? 'Broadcasting…' : 'Sign on the blocks'}
-                    </Button>
-                </Row>
+                {signed ? (
+                    <Row gap={12} justifyContent="space-between" flexWrap="wrap">
+                        <Row gap={8} flexWrap="wrap">
+                            <Button
+                                priority="secondary"
+                                onClick={handleDiscard}
+                                isDisabled={isBusy}
+                                data-testid="@phylax/send/discard"
+                            >
+                                Discard
+                            </Button>
+                            <Button
+                                priority="secondary"
+                                onClick={() => handleCopyHex(signed)}
+                                isDisabled={isBusy}
+                                data-testid="@phylax/send/copy-hex"
+                            >
+                                {isHexCopied ? 'Copied' : 'Copy signed transaction'}
+                            </Button>
+                        </Row>
+                        <Button
+                            size="large"
+                            iconLeft={PaperPlaneTiltIcon}
+                            onClick={() => handleBroadcast(signed)}
+                            isDisabled={isBusy}
+                            isLoading={state.status === 'broadcasting'}
+                            data-testid="@phylax/send/broadcast"
+                        >
+                            {state.status === 'broadcasting' ? 'Sending…' : 'Send'}
+                        </Button>
+                    </Row>
+                ) : (
+                    <Row gap={12} justifyContent="space-between" flexWrap="wrap">
+                        <Button
+                            priority="secondary"
+                            iconLeft={ArrowLeftIcon}
+                            onClick={onBack}
+                            isDisabled={isBusy}
+                            data-testid="@phylax/send/back"
+                        >
+                            Back
+                        </Button>
+                        <Button
+                            size="large"
+                            iconLeft={PaperPlaneTiltIcon}
+                            onClick={handleSign}
+                            isDisabled={isDeviceBusy || isBusy}
+                            isLoading={isBusy}
+                            data-testid="@phylax/send/sign"
+                        >
+                            Sign on the blocks
+                        </Button>
+                    </Row>
+                )}
             </Column>
         </Card>
     );

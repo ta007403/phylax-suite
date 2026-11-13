@@ -11,6 +11,7 @@ import {
     getCoinId,
     getOutputScript,
     getPhylaxSignParams,
+    getSignedTxid,
     parseBtc,
     planPhylaxSend,
 } from './phylaxSend';
@@ -354,6 +355,17 @@ describe('checkSignedTx', () => {
 
     it('accepts the planned transaction', () => {
         expect(checkSignedTx(WALLET, 'testnet', p, signed())).toBeUndefined();
+    });
+
+    it('reads the transaction id (the witness does not change it)', () => {
+        const txid = getSignedTxid('testnet', signed());
+        expect(txid).toBe(Transaction.fromHex(signed(), { network: networks.testnet }).getId());
+        expect(txid).toMatch(/^[0-9a-f]{64}$/);
+        const otherSignatures = signed({
+            witness: [Buffer.alloc(0), sig(7), sig(8), witnessScript],
+        });
+        expect(getSignedTxid('testnet', otherSignatures)).toBe(txid);
+        expect(getSignedTxid('testnet', 'zz')).toBeUndefined();
     });
 
     it('refuses other amounts', () => {
