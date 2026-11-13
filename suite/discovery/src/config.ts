@@ -22,7 +22,9 @@ export const SHOULD_ROUTER_APP_START_DISCOVERY: Record<RouterApp, boolean> = {
     'switch-device': false,
     onboarding: false,
     'password-manager': false,
-    phylax: false,
+    // PHYLAX Blocks (fork): unlocks the main block (PIN), and the PHYLAX pages read the stack only
+    // once Suite's discovery of the main block is done.
+    phylax: true,
     settings: false,
     recovery: false,
     backup: false,
