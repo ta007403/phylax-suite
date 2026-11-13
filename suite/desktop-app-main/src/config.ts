@@ -40,6 +40,10 @@ export const allowedDomains = [
     'xrplcluster.com', // XRP Ledger cluster, hosted by XRP Ledger Foundation
     'xrpl.ws', // XRP Ledger cluster, hosted by XRP Ledger Foundation
     's2.ripple.com', // XRP Ledger cluster, hosted by Ripple
+    // PHYLAX Blocks (fork): the built-in PHYLAX API (PHYLAX_API_DEFAULT_URL in
+    // packages/suite/src/constants/suite/phylax.ts), for scans of PHYLAX wallets. Only this host:
+    // a PHYLAX API set in Settings > Debug elsewhere than here or localhost is blocked.
+    'phylax-api.bitcoin4thai.com',
     ...(isDevEnv ? allowedDomainsDev : []),
 ];
 

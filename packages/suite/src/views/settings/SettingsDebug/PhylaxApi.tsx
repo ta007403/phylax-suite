@@ -27,7 +27,7 @@ export const PhylaxApi = () => {
             title="PHYLAX API URL"
             description={`Scans of PHYLAX wallets (any network). Empty: ${
                 PHYLAX_API_DEFAULT_URL || 'none built in'
-            } (mainnet). Without an answer, scans use the coin's backend.`}
+            } (mainnet). Without an answer, scans use the coin's backend. The desktop app reaches only the built-in host and localhost.`}
             actions={
                 <Input
                     data-testid="@settings/debug/phylax-api/url-input"
