@@ -33,6 +33,8 @@ export interface DebugModeOptions {
     isN4w1BackupEnabled: boolean;
     showTranslationKeys: boolean;
     isAppsEmbeddingEnabled: boolean;
+    // PHYLAX Blocks (fork): a PHYLAX API to use instead of the built-in one (any network)
+    phylaxApiUrl?: string;
 }
 
 export interface AutodetectSettings {

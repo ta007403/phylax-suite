@@ -8,6 +8,7 @@ import type { PROTO } from '@trezor/connect';
 
 import { useSelector } from 'src/hooks/suite';
 
+import { PhylaxApiNote } from './PhylaxApiNote';
 import { PhylaxNeverList } from './PhylaxNeverList';
 import { type PhylaxWakeUp, WakeUpButton, usePhylaxWakeUp } from './PhylaxWakeUp';
 import { PhylaxWalletRow } from './PhylaxWalletRow';
@@ -109,6 +110,7 @@ export const PhylaxPage = () => {
                     data-testid="@phylax/network"
                 />
             </Row>
+            <PhylaxApiNote network={network} />
             {!isStoragePresent && (
                 <Text priority="secondary">Reading the wallet copies of every block…</Text>
             )}

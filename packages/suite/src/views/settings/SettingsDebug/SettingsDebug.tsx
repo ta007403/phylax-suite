@@ -37,6 +37,7 @@ import { GithubIssue } from './GithubIssue';
 import { Metadata } from './Metadata';
 import { N4w1Backup } from './N4w1Backup';
 import { OAuthApi } from './OAuthApi';
+import { PhylaxApi } from './PhylaxApi';
 import { PingDevice } from './PingDevice';
 import { PlatformEncryption } from './PlatformEncryption';
 import { QuotaManagerSettings } from './QuotaManagerSettings';
@@ -91,6 +92,9 @@ export const SettingsDebug = () => {
             </SettingsSection>
             <SettingsSection hasVerticalLayout={hasContentBelowTabletWidth} title="Apps embedding">
                 <AppsEmbeddingSwitch />
+            </SettingsSection>
+            <SettingsSection hasVerticalLayout={hasContentBelowTabletWidth} title="PHYLAX">
+                <PhylaxApi />
             </SettingsSection>
             <SettingsSection hasVerticalLayout={hasContentBelowTabletWidth} title="Earn">
                 <EarnApi />

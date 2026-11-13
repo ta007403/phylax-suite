@@ -1,8 +1,10 @@
+import type { SuiteSettingsRootState } from '@suite/settings';
 import TrezorConnect from '@trezor/connect';
 import { createMockDispatch } from '@trezor/redux-utils/mocks';
 
 import {
     type PhylaxRootState,
+    type PhylaxState,
     deserializePhylaxAccountData,
     getPhylaxAccountKey,
     phylaxActions,
@@ -20,7 +22,10 @@ import {
 import { type PhylaxAccountData, scanPhylaxAccount } from '../phylaxAccountScan';
 import { WALLET } from '../phylaxWallet.fixture';
 
-jest.mock('../phylaxAccountScan', () => ({ scanPhylaxAccount: jest.fn() }));
+jest.mock('../phylaxAccountScan', () => ({
+    ...jest.requireActual('../phylaxAccountScan'),
+    scanPhylaxAccount: jest.fn(),
+}));
 
 const SUMMARY = {
     slot: WALLET.slot,
@@ -67,7 +72,8 @@ const DATA: PhylaxAccountData = {
     ],
 };
 
-const state: PhylaxRootState = {
+const state: PhylaxRootState & SuiteSettingsRootState = {
+    suiteSettings: { debug: {} } as unknown as SuiteSettingsRootState['suiteSettings'],
     phylax: {
         ...phylaxInitialState,
         devicePath: '1',
@@ -253,5 +259,118 @@ describe('PHYLAX backend subscription', () => {
             blocks: false,
             accounts: [{ descriptor: `phylax:${KEY}` }],
         });
+    });
+});
+
+describe('PHYLAX API scans', () => {
+    const API = 'http://127.0.0.1:8095';
+    let fetchMock: jest.Mock;
+
+    // a store whose PHYLAX state follows the dispatched actions
+    const setUpWithApi = () => {
+        const base: typeof state = {
+            ...state,
+            suiteSettings: {
+                ...state.suiteSettings,
+                debug: { ...state.suiteSettings.debug, phylaxApiUrl: API },
+            },
+        };
+        let { phylax } = base;
+        const getState = (): typeof state => ({ ...base, phylax });
+        const { actions, dispatch } = createMockDispatch({ getState, extra: {} });
+        const sync = () => {
+            phylax = actions.reduce<PhylaxState>(
+                (current, action) => phylaxReducer(current, action as never),
+                base.phylax,
+            );
+        };
+
+        return { actions, dispatch, sync, getState };
+    };
+
+    const apiStatus = (actions: unknown[]) =>
+        actions
+            .filter(action => phylaxActions.apiStatusChanged.match(action as never))
+            .map(action => (action as ReturnType<typeof phylaxActions.apiStatusChanged>).payload);
+
+    beforeEach(() => {
+        jest.mocked(scanPhylaxAccount).mockReset().mockResolvedValue(DATA);
+        fetchMock = jest.fn();
+        global.fetch = fetchMock as never;
+    });
+
+    it('scans through the API when it answers', async () => {
+        // every asked address unused
+        fetchMock.mockImplementation((_url: string, init: { body: string }) => {
+            const { addresses } = JSON.parse(init.body) as { addresses: string[] };
+
+            return Promise.resolve({
+                ok: true,
+                json: () =>
+                    Promise.resolve({
+                        network: 'mainnet',
+                        tipHeight: 1,
+                        transactions: {},
+                        addresses: addresses.map(address => ({
+                            address,
+                            txCount: 0,
+                            unconfirmedTxCount: 0,
+                            utxos: [],
+                            txids: [],
+                        })),
+                    }),
+            });
+        });
+        const { actions, dispatch } = setUpWithApi();
+        await dispatch(refreshPhylaxAccountThunk({ slot: 0, network: 'mainnet' }));
+
+        // one request: twice GAP_LIMIT addresses on each chain
+        expect(fetchMock).toHaveBeenCalledTimes(1);
+        const [url, init] = fetchMock.mock.calls[0];
+        expect(url).toBe(`${API}/v1/scan`);
+        expect(JSON.parse(init.body).addresses).toHaveLength(80);
+        // the scan got the API lookup
+        expect(jest.mocked(scanPhylaxAccount).mock.calls[0]?.[3]).toBeDefined();
+        expect(apiStatus(actions)).toEqual([
+            { network: 'mainnet', status: { status: 'ok', url: API } },
+        ]);
+    });
+
+    it("falls back to the coin's backend, and tries the API again only after a while", async () => {
+        fetchMock.mockRejectedValue(new TypeError('Failed to fetch'));
+        const { actions, dispatch, sync } = setUpWithApi();
+        await dispatch(refreshPhylaxAccountThunk({ slot: 0, network: 'mainnet' }));
+
+        // the backend scan (no lookup given), and the data is kept
+        expect(jest.mocked(scanPhylaxAccount)).toHaveBeenCalledTimes(1);
+        expect(jest.mocked(scanPhylaxAccount).mock.calls[0]?.[3]).toBeUndefined();
+        expect(loadedTypes(actions)).toHaveLength(1);
+        const [fallback] = apiStatus(actions);
+        expect(fallback?.status).toMatchObject({
+            status: 'fallback',
+            url: API,
+            error: 'Failed to fetch',
+        });
+
+        // within the pause: no request to the API
+        sync();
+        fetchMock.mockClear();
+        await dispatch(refreshPhylaxAccountThunk({ slot: 0, network: 'mainnet' }));
+        expect(fetchMock).not.toHaveBeenCalled();
+
+        // after it: tried again
+        const now = Date.now();
+        const spy = jest.spyOn(Date, 'now').mockReturnValue(now + 6 * 60_000);
+        sync();
+        await dispatch(refreshPhylaxAccountThunk({ slot: 0, network: 'mainnet' }));
+        expect(fetchMock).toHaveBeenCalledTimes(1);
+        spy.mockRestore();
+    });
+
+    it('uses no API for testnet unless set in Settings', async () => {
+        const { dispatch } = setUp();
+        await dispatch(refreshPhylaxAccountThunk({ slot: 0, network: 'testnet' }));
+        expect(fetchMock).not.toHaveBeenCalled();
+        expect(jest.mocked(scanPhylaxAccount).mock.calls[0]?.[3]).toBeUndefined();
     });
 });

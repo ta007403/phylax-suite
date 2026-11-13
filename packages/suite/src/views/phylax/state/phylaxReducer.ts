@@ -52,6 +52,12 @@ export type PhylaxAccountState = {
 
 export type PhylaxSelectedAccount = { slot: number; network: PhylaxNetwork };
 
+/** How the last scan on a network went with the PHYLAX API (phylaxApi.ts). */
+export type PhylaxApiStatus =
+    | { status: 'ok'; url: string }
+    // it failed: Suite's backend until retryAt (unix ms)
+    | { status: 'fallback'; url: string; error: string; retryAt: number };
+
 export type PhylaxState = {
     // the device the stack was read from; everything below belongs to it
     devicePath?: string;
@@ -71,6 +77,8 @@ export type PhylaxState = {
     // by getPhylaxAccountKey: how many backend notifications arrived for the wallet's addresses
     // (a transaction to or from them entered the mempool or a block)
     notifications: Record<string, number>;
+    // by network; none while no PHYLAX API is set
+    api: Partial<Record<PhylaxNetwork, PhylaxApiStatus>>;
 };
 
 export type PhylaxRootState = { phylax: PhylaxState };
@@ -84,6 +92,7 @@ export const phylaxInitialState: PhylaxState = {
     isPaused: false,
     accounts: {},
     notifications: {},
+    api: {},
 };
 
 /**
@@ -197,6 +206,17 @@ const phylaxSlice = createSlice({
         selectAccount(state: PhylaxState, action: PayloadAction<PhylaxSelectedAccount>) {
             state.selectedAccount = action.payload;
         },
+        apiStatusChanged(
+            state: PhylaxState,
+            action: PayloadAction<{ network: PhylaxNetwork; status: PhylaxApiStatus | undefined }>,
+        ) {
+            const { network, status } = action.payload;
+            if (status) {
+                state.api[network] = status;
+            } else {
+                delete state.api[network];
+            }
+        },
         accountRefreshStarted(state: PhylaxState, action: PayloadAction<{ key: string }>) {
             const account = state.accounts[action.payload.key];
             if (account) {
@@ -246,5 +266,7 @@ export const selectPhylaxIsLoaded = (state: PhylaxRootState) => state.phylax.isL
 export const selectPhylaxSelectedAccount = (state: PhylaxRootState) => state.phylax.selectedAccount;
 export const selectPhylaxNotificationCount = (state: PhylaxRootState, key: string) =>
     state.phylax.notifications[key] ?? 0;
+export const selectPhylaxApiStatus = (state: PhylaxRootState, network: PhylaxNetwork) =>
+    state.phylax.api[network];
 export const selectPhylaxAccountByKey = (state: PhylaxRootState, key: string) =>
     state.phylax.accounts[key];

@@ -1,22 +1,32 @@
 // PHYLAX Blocks (fork): reading the stack from the main block, and the account data of each saved
 // wallet from Suite's backend.
 
+import { type SuiteSettingsRootState, selectDebugSettings } from '@suite/settings';
 import { type BlockchainRootState, selectNetworkBlockchainInfo } from '@suite-common/wallet-core';
 import TrezorConnect, { type DeviceUniquePath, type PROTO } from '@trezor/connect';
 import { createThunk } from '@trezor/redux-utils';
 
+import { PHYLAX_API_DEFAULT_URL } from 'src/constants/suite/phylax';
+
 import {
     type PhylaxRootState,
     type PhylaxWalletEntry,
+    type StoredPhylaxAccountData,
     getPhylaxAccountKey,
     getPhylaxSubscriptionDescriptor,
     phylaxActions,
     selectPhylaxAccountByKey,
+    selectPhylaxApiStatus,
     selectPhylaxDevicePath,
     selectPhylaxWallets,
     serializePhylaxAccountData,
 } from './phylaxReducer';
-import { scanPhylaxAccount } from '../phylaxAccountScan';
+import { type PhylaxAccountData, scanPhylaxAccount } from '../phylaxAccountScan';
+import {
+    PHYLAX_API_RETRY_AFTER_MS,
+    createPhylaxApiLookup,
+    getPhylaxPrefetchAddresses,
+} from '../phylaxApi';
 import { getPhylaxSubscriptionAccount } from '../phylaxSubscription';
 import { PHYLAX_COIN_SYMBOLS, type PhylaxNetwork, getPhylaxNetworkSymbol } from '../phylaxWallet';
 
@@ -111,7 +121,72 @@ type RefreshPhylaxAccountParams = { slot: number; network: PhylaxNetwork };
 // Scans running now, by account key; a request during a scan runs one more scan after it.
 const accountScans = new Map<string, { isRerunRequested: boolean }>();
 
-type RefreshPhylaxAccountThunkState = PhylaxRootState;
+/** The PHYLAX API for scans on `network`: Settings > Debug's, else the built-in one (mainnet). */
+export const selectPhylaxApiUrl = (
+    state: SuiteSettingsRootState,
+    network: PhylaxNetwork,
+): string | undefined => {
+    const override = selectDebugSettings(state).phylaxApiUrl?.trim();
+    if (override) return override;
+    if (network === 'mainnet' && PHYLAX_API_DEFAULT_URL) return PHYLAX_API_DEFAULT_URL;
+
+    return undefined;
+};
+
+type PhylaxScanState = PhylaxRootState & SuiteSettingsRootState;
+
+/**
+ * A scan through the PHYLAX API if one is set (and did not fail in the last few minutes), else
+ * address by address through Suite's backend; after an API failure, through the backend too.
+ */
+const scanWithApiOrBackend = async (
+    wallet: PROTO.PhylaxWallet,
+    network: PhylaxNetwork,
+    previous: StoredPhylaxAccountData | undefined,
+    dispatch: (action: ReturnType<typeof phylaxActions.apiStatusChanged>) => unknown,
+    getState: () => PhylaxScanState,
+): Promise<PhylaxAccountData> => {
+    const url = selectPhylaxApiUrl(getState(), network);
+    const status = selectPhylaxApiStatus(getState(), network);
+    if (!url) {
+        if (status) dispatch(phylaxActions.apiStatusChanged({ network, status: undefined }));
+    } else if (
+        status?.status !== 'fallback' ||
+        status.url !== url ||
+        Date.now() >= status.retryAt
+    ) {
+        try {
+            const lookup = createPhylaxApiLookup(url);
+            await lookup.prefetch(
+                network,
+                getPhylaxPrefetchAddresses(wallet, network, {
+                    receive: previous?.nextReceiveIndex ?? 0,
+                    change: previous?.nextChangeIndex ?? 0,
+                }),
+            );
+            const data = await scanPhylaxAccount(wallet, network, previous?.usedAddresses, lookup);
+            dispatch(phylaxActions.apiStatusChanged({ network, status: { status: 'ok', url } }));
+
+            return data;
+        } catch (error) {
+            dispatch(
+                phylaxActions.apiStatusChanged({
+                    network,
+                    status: {
+                        status: 'fallback',
+                        url,
+                        error: error instanceof Error ? error.message : String(error),
+                        retryAt: Date.now() + PHYLAX_API_RETRY_AFTER_MS,
+                    },
+                }),
+            );
+        }
+    }
+
+    return scanPhylaxAccount(wallet, network, previous?.usedAddresses);
+};
+
+type RefreshPhylaxAccountThunkState = PhylaxScanState;
 
 /** Scans one wallet's addresses on one network and keeps the result in the store. */
 export const refreshPhylaxAccountThunk = createThunk<
@@ -137,10 +212,12 @@ export const refreshPhylaxAccountThunk = createThunk<
             dispatch(phylaxActions.accountRefreshStarted({ key }));
             try {
                 const previous = selectPhylaxAccountByKey(getState(), key)?.data;
-                const data = await scanPhylaxAccount(
+                const data = await scanWithApiOrBackend(
                     entry.details,
                     network,
-                    previous?.usedAddresses,
+                    previous,
+                    dispatch,
+                    getState,
                 );
                 dispatch(
                     phylaxActions.accountLoaded({

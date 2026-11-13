@@ -4,6 +4,7 @@ import { Button, Card, Column, Row, Text } from '@trezor/components';
 import { ArrowsClockwiseIcon } from '@trezor/icons';
 
 import { PhylaxTransactionList } from './PhylaxTransactionList';
+import { PhylaxApiNote } from '../PhylaxApiNote';
 import type { PhylaxNetwork } from '../phylaxWallet';
 import type { PhylaxAccount } from '../usePhylaxAccount';
 import { usePhylaxAmountFormat } from '../usePhylaxAmountFormat';
@@ -75,6 +76,7 @@ export const PhylaxOverview = ({ account, network, onSpeedUp }: PhylaxOverviewPr
                                 Last refresh failed: {account.error}
                             </Text>
                         )}
+                        <PhylaxApiNote network={network} />
                     </Column>
                 </Row>
             </Card>

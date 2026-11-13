@@ -27,3 +27,10 @@ export const PHYLAX_IS_BLUETOOTH_ENABLED: boolean = false;
 
 /** Coinjoin accounts (SLIP-25). */
 export const PHYLAX_IS_COINJOIN_ENABLED: boolean = false;
+
+/**
+ * The PHYLAX API (phylax-api) for scans of PHYLAX wallets on Bitcoin mainnet: one request per
+ * wallet instead of one per address to Suite's backend. Empty: not used. Settings > Debug can set
+ * another one (for any network). Without an answer, scans fall back to Suite's backend.
+ */
+export const PHYLAX_API_DEFAULT_URL: string = '';

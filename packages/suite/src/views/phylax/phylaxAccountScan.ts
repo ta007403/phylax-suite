@@ -122,12 +122,56 @@ const RETRY_DELAYS_MS = [2000, 5000];
 
 const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
+/** One input or output of a transaction, as the scan reads it. */
+type PhylaxScanTxIo = {
+    txid?: string;
+    vout?: number;
+    // satoshis, decimal string
+    value?: string;
+    addresses?: string[];
+    isAddress?: boolean;
+};
+
+/** A transaction of one address, as the scan reads it (Blockbook's, or the PHYLAX API's). */
+export type PhylaxScanTx = {
+    txid: string;
+    // 0 or less (or undefined) while in the mempool
+    blockHeight?: number;
+    blockTime?: number;
+    // satoshis, decimal string
+    fee: string;
+    rbf?: boolean;
+    vsize?: number;
+    details: { vin: PhylaxScanTxIo[]; vout: PhylaxScanTxIo[] };
+};
+
+/** What the scan needs to know about one address. */
+export type PhylaxAddressInfo = {
+    // confirmed and pending transactions
+    history: { total: number; unconfirmed: number; transactions?: PhylaxScanTx[] };
+    // its coins (with the details only)
+    utxo?: { txid: string; vout: number; amount: string; confirmations: number }[];
+};
+
+/**
+ * Where the scan looks addresses up. `lookUp` answers for a list of addresses: with the details
+ * (coins, transactions) when `hasDetails`, else `details` is asked for each used one.
+ */
+export type PhylaxAddressLookup = {
+    lookUp: (
+        network: PhylaxNetwork,
+        addresses: string[],
+        knownUsed: ReadonlySet<string>,
+    ) => Promise<{ info: PhylaxAddressInfo; hasDetails: boolean }[]>;
+    details: (network: PhylaxNetwork, address: string) => Promise<PhylaxAddressInfo>;
+};
+
 // 'basic': history and balance only. 'txs' also returns the coins (UTXOs) and the transactions.
 const lookUpAddress = async (
     network: PhylaxNetwork,
     address: string,
     details: 'basic' | 'txs' = 'basic',
-) => {
+): Promise<PhylaxAddressInfo> => {
     let lastError = '';
     for (let attempt = 1; attempt <= LOOKUP_ATTEMPTS; attempt++) {
         const result = await TrezorConnect.getAccountInfo({
@@ -147,11 +191,9 @@ const lookUpAddress = async (
     throw new Error(lastError);
 };
 
-type AddressInfo = Awaited<ReturnType<typeof lookUpAddress>>;
+type AddressInfo = PhylaxAddressInfo;
 
-type AddressTransactions = NonNullable<
-    Awaited<ReturnType<typeof lookUpAddress>>['history']['transactions']
->;
+type AddressTransactions = PhylaxScanTx[];
 
 /** fn over items, at most `limit` at a time, results in order. */
 export const mapLimited = async <T, R>(items: T[], limit: number, fn: (item: T) => Promise<R>) => {
@@ -166,6 +208,21 @@ export const mapLimited = async <T, R>(items: T[], limit: number, fn: (item: T) 
     await Promise.all(Array.from({ length: Math.min(limit, items.length) }, worker));
 
     return results;
+};
+
+/**
+ * Suite's own backend (Trezor's Blockbook, or a custom one): one request per address. Connect's
+ * bundled getAccountInfo needs a device for its progress events, and these lookups need none.
+ */
+export const trezorBackendLookup: PhylaxAddressLookup = {
+    lookUp: (network, addresses, knownUsed) =>
+        mapLimited(addresses, CONCURRENT_LOOKUPS, async address => {
+            const isKnownUsed = knownUsed.has(address);
+            const info = await lookUpAddress(network, address, isKnownUsed ? 'txs' : 'basic');
+
+            return { info, hasDetails: isKnownUsed };
+        }),
+    details: (network, address) => lookUpAddress(network, address, 'txs'),
 };
 
 const isPending = (blockHeight: number | undefined) => !blockHeight || blockHeight <= 0;
@@ -250,6 +307,7 @@ export const scanChain = async (
     chain: PhylaxChain,
     // addresses used at the last scan: their details are asked for at once (one lookup each)
     knownUsed: ReadonlySet<string> = new Set(),
+    lookup: PhylaxAddressLookup = trezorBackendLookup,
 ) => {
     let usedAddressCount = 0;
     let lastUsedIndex = -1;
@@ -275,14 +333,7 @@ export const scanChain = async (
         );
         nextIndex = to + 1;
 
-        // One request per address: connect's bundled getAccountInfo needs a device for its progress
-        // events, and these lookups need none.
-        const results = await mapLimited(addresses, CONCURRENT_LOOKUPS, async address => {
-            const isKnownUsed = knownUsed.has(address);
-            const info = await lookUpAddress(network, address, isKnownUsed ? 'txs' : 'basic');
-
-            return { info, hasDetails: isKnownUsed };
-        });
+        const results = await lookup.lookUp(network, addresses, knownUsed);
 
         results.forEach(({ info, hasDetails }, offset) => {
             const isUsed = info.history.total > 0 || info.history.unconfirmed > 0;
@@ -308,7 +359,7 @@ export const scanChain = async (
     // (newly used addresses only: the others came with their details already)
     const details = await mapLimited(usedAt, CONCURRENT_LOOKUPS, async used => {
         const { address, index } = used;
-        const info = used.info ?? (await lookUpAddress(network, address, 'txs'));
+        const info = used.info ?? (await lookup.details(network, address));
 
         return {
             utxos: (info.utxo ?? []).map((utxo): PhylaxUtxo => ({
@@ -349,12 +400,13 @@ export const scanPhylaxAccount = async (
     network: PhylaxNetwork,
     // the last scan's used addresses: fewer lookups this time
     knownUsed: readonly string[] = [],
+    lookup: PhylaxAddressLookup = trezorBackendLookup,
 ): Promise<PhylaxAccountData> => {
     const knownUsedSet = new Set(knownUsed);
     // one chain after the other, not both at once (see CONCURRENT_LOOKUPS)
     const chains = [];
     for (const chain of CHAINS) {
-        chains.push(await scanChain(wallet, network, chain, knownUsedSet));
+        chains.push(await scanChain(wallet, network, chain, knownUsedSet, lookup));
     }
     const ownAddresses = new Map(chains.flatMap(chain => chain.scanned));
 
