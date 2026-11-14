@@ -245,3 +245,35 @@ export type InAppBrowserHostEvent =
           outcome: 'denied' | 'opened-in-app';
       }
     | { type: 'navigation-blocked'; url: string };
+
+// PHYLAX Blocks (fork): the PHYLAX wallet station (Raspberry Pi CM5 image, phylax-station repo).
+// Its image marks it with /etc/phylax-station-release; elsewhere these are not available.
+export type PhylaxStationInfo = {
+    imageVersion: string;
+    imageKind: string;
+    suiteVersion: string;
+    base: string;
+};
+
+export type PhylaxWifiState = 'connected' | 'connecting' | 'disconnected' | 'off' | 'missing';
+
+export type PhylaxWifiStatus = {
+    wifi: PhylaxWifiState;
+    // the network in use (connected or connecting)
+    ssid?: string;
+    ipAddress?: string;
+    ethernet: 'connected' | 'disconnected' | 'missing';
+    // networks saved on the station (they connect by themselves)
+    savedNetworks: string[];
+};
+
+export type PhylaxWifiNetwork = {
+    ssid: string;
+    // 0-100
+    signal: number;
+    secured: boolean;
+    inUse: boolean;
+    saved: boolean;
+};
+
+export type PhylaxStationPowerAction = 'poweroff' | 'reboot';

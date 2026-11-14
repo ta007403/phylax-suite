@@ -17,6 +17,7 @@ import {
 import { PHYLAX_ARE_EXTRA_SETTINGS_SHOWN } from 'src/constants/suite/phylax';
 import { useDiscovery, useLayout, useSelector } from 'src/hooks/suite';
 import { AccountHeaderProvider } from 'src/support/suite/AccountHeaderProvider';
+import { usePhylaxStationInfo } from 'src/views/phylax/station/usePhylaxStationInfo';
 import { SettingsLoading } from 'src/views/settings/SettingsLoader';
 
 type SettingsLayoutProps = {
@@ -29,6 +30,8 @@ const SettingsHeader = () => {
     const isDebugModeActive = useSelector(selectIsDebugModeActive);
 
     const { dispatch } = useServices(injectDispatch);
+    // PHYLAX Blocks (fork): the Station tab only on the PHYLAX wallet station
+    const isPhylaxStation = usePhylaxStationInfo() !== null;
 
     const settingsSubpages = useMemo<Array<NavigationItem>>(
         () => [
@@ -69,6 +72,15 @@ const SettingsHeader = () => {
                     ),
             },
             {
+                id: 'settings-station',
+                title: 'Station',
+                position: 'primary',
+                isHidden: !isPhylaxStation,
+                'data-testid': '@settings/menu/station',
+                callback: () =>
+                    dispatch(gotoThunk({ routeName: 'settings-station', preserveParams: true })),
+            },
+            {
                 id: 'settings-debug',
                 title: <Translation id="TR_DEBUG_SETTINGS" />,
                 position: 'primary',
@@ -78,7 +90,7 @@ const SettingsHeader = () => {
                     dispatch(gotoThunk({ routeName: 'settings-debug', preserveParams: true })),
             },
         ],
-        [dispatch, isDebugModeActive],
+        [dispatch, isDebugModeActive, isPhylaxStation],
     );
 
     return (

@@ -35,6 +35,7 @@ export const SETTINGS_ROUTES: Route['name'][] = [
     'settings-coins',
     'settings-debug',
     'settings-connected-apps',
+    'settings-station',
 ] as const;
 
 const EARN_ROUTES: Route['name'][] = [

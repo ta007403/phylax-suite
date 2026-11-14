@@ -20,6 +20,11 @@ export type {
     InAppBrowserBounds,
     InAppBrowserHostEvent,
     InAppBrowserOpenPayload,
+    PhylaxStationInfo,
+    PhylaxWifiState,
+    PhylaxWifiStatus,
+    PhylaxWifiNetwork,
+    PhylaxStationPowerAction,
 } from './messages';
 export { inAppBrowserBounds, inAppBrowserOpenPayload } from './messages';
 

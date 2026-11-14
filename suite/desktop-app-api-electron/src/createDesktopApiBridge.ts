@@ -231,6 +231,35 @@ export const createDesktopApiBridge = <R extends StrictIpcRenderer<any, IpcRende
     // Browser Window
     reloadBrowserWindow: () => ipcRenderer.invoke('browser-window/reload'),
 
+    // PHYLAX Blocks (fork): the PHYLAX wallet station
+    phylaxStationGetInfo: () => ipcRenderer.invoke('phylax-station/get-info'),
+    phylaxStationWifiStatus: () => ipcRenderer.invoke('phylax-station/wifi-status'),
+    phylaxStationWifiScan: () => ipcRenderer.invoke('phylax-station/wifi-scan'),
+    phylaxStationWifiConnect: params => {
+        if (validation.isObject({ ssid: 'string', password: ['string', true] }, params)) {
+            return ipcRenderer.invoke('phylax-station/wifi-connect', {
+                ssid: params.ssid,
+                password: params.password,
+            });
+        }
+
+        return Promise.resolve({ success: false, error: 'invalid params' });
+    },
+    phylaxStationWifiForget: params => {
+        if (validation.isObject({ ssid: 'string' }, params)) {
+            return ipcRenderer.invoke('phylax-station/wifi-forget', { ssid: params.ssid });
+        }
+
+        return Promise.resolve({ success: false, error: 'invalid params' });
+    },
+    phylaxStationPower: action => {
+        if (action === 'poweroff' || action === 'reboot') {
+            return ipcRenderer.invoke('phylax-station/power', action);
+        }
+
+        return Promise.resolve({ success: false, error: 'invalid params' });
+    },
+
     // In-app browser (debug-only)
     inAppBrowserOpenView: payload => {
         if (inAppBrowserOpenPayload.safeParse(payload).success) {

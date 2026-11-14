@@ -250,4 +250,10 @@ export const webComponents: Record<PageName, LazyExoticComponent<ComponentType>>
             /* webpackChunkName: "settings" */ 'src/views/settings/SettingsConnectedApps/SettingsConnectedApps'
         ).then(({ SettingsConnectedApps }) => ({ default: SettingsConnectedApps })),
     ),
+    // PHYLAX Blocks (fork): only on the PHYLAX station (desktop); the web shows a note
+    'settings-station': lazy(() =>
+        import(
+            /* webpackChunkName: "settings" */ 'src/views/settings/SettingsStation/SettingsStation'
+        ).then(({ SettingsStation }) => ({ default: SettingsStation })),
+    ),
 };

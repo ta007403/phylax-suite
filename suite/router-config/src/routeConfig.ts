@@ -220,6 +220,12 @@ export const routes = [
         app: 'settings',
     },
     {
+        // PHYLAX Blocks (fork): Wi-Fi and power of the PHYLAX wallet station (shown only there)
+        name: 'settings-station',
+        pattern: '/settings/station',
+        app: 'settings',
+    },
+    {
         name: 'settings-connected-apps',
         pattern: '/settings/connected-apps',
         app: 'settings',

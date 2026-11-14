@@ -28,6 +28,7 @@ import { SettingsConnectedApps } from 'src/views/settings/SettingsConnectedApps/
 import { SettingsDebug } from 'src/views/settings/SettingsDebug/SettingsDebug';
 import { SettingsDevice } from 'src/views/settings/SettingsDevice/SettingsDevice';
 import { DesktopSettingsGeneral } from 'src/views/settings/SettingsGeneral/DesktopSettingsGeneral';
+import { SettingsStation } from 'src/views/settings/SettingsStation/SettingsStation';
 import Notification from 'src/views/suite/notifications';
 import WalletAnonymize from 'src/views/wallet/anonymize';
 import WalletDetails from 'src/views/wallet/details';
@@ -117,4 +118,5 @@ export const desktopComponents: Record<PageName, ComponentType> = {
     'settings-debug': SettingsDebug,
     'settings-device': SettingsDevice,
     'settings-connected-apps': SettingsConnectedApps,
+    'settings-station': SettingsStation,
 };

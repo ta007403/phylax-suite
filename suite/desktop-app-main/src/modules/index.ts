@@ -30,6 +30,7 @@ import type {
     ModuleLoad,
     ModuleQuit,
 } from './module';
+import * as phylaxStation from './phylax-station';
 import * as powerMonitor from './power-monitor';
 import * as requestFilter from './request-filter';
 import * as requestInterceptor from './request-interceptor';
@@ -82,6 +83,8 @@ const MODULES: Module[] = [
     mcpServer,
     responseHeaders,
     appsEmbedding,
+    // PHYLAX Blocks (fork): Wi-Fi and power on the PHYLAX wallet station (inactive elsewhere)
+    phylaxStation,
 ];
 
 const MODULES_BACKGROUND: ModuleBackground[] = [bridge, trezorConnect, httpReceiverModule, tray];

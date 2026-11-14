@@ -18,6 +18,10 @@ import {
     type InAppBrowserOpenPayload,
     type InvokeResult,
     type LoggerConfig,
+    type PhylaxStationInfo,
+    type PhylaxStationPowerAction,
+    type PhylaxWifiNetwork,
+    type PhylaxWifiStatus,
     type Status,
     type SuiteThemeVariant,
     type TorSettings,
@@ -183,6 +187,14 @@ export interface InvokeChannels {
     // Browser Window
     'browser-window/reload': () => void;
 
+    // PHYLAX Blocks (fork): the PHYLAX wallet station; get-info answers null elsewhere
+    'phylax-station/get-info': () => InvokeResult<PhylaxStationInfo | null>;
+    'phylax-station/wifi-status': () => InvokeResult<PhylaxWifiStatus>;
+    'phylax-station/wifi-scan': () => InvokeResult<PhylaxWifiNetwork[]>;
+    'phylax-station/wifi-connect': (params: { ssid: string; password?: string }) => InvokeResult;
+    'phylax-station/wifi-forget': (params: { ssid: string }) => InvokeResult;
+    'phylax-station/power': (action: PhylaxStationPowerAction) => InvokeResult;
+
     // In app browser (debug-only)
     'in-app-browser/open-view': (payload: InAppBrowserOpenPayload) => void;
     'in-app-browser/close-view': () => void;
@@ -285,6 +297,14 @@ export type DesktopApi = {
 
     // Browser Window
     reloadBrowserWindow: DesktopApiInvoke<'browser-window/reload'>;
+
+    // PHYLAX Blocks (fork): the PHYLAX wallet station
+    phylaxStationGetInfo: DesktopApiInvoke<'phylax-station/get-info'>;
+    phylaxStationWifiStatus: DesktopApiInvoke<'phylax-station/wifi-status'>;
+    phylaxStationWifiScan: DesktopApiInvoke<'phylax-station/wifi-scan'>;
+    phylaxStationWifiConnect: DesktopApiInvoke<'phylax-station/wifi-connect'>;
+    phylaxStationWifiForget: DesktopApiInvoke<'phylax-station/wifi-forget'>;
+    phylaxStationPower: DesktopApiInvoke<'phylax-station/power'>;
 
     // In-app browser (debug-only)
     inAppBrowserOpenView: DesktopApiInvoke<'in-app-browser/open-view'>;
