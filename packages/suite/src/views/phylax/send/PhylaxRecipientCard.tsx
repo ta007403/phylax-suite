@@ -1,17 +1,24 @@
-// PHYLAX Blocks (fork): one recipient of a PHYLAX send: address, amount in BTC and in the user's
-// currency (linked), and "Send max".
+// PHYLAX Blocks (fork): one recipient of a PHYLAX send: address (typed or scanned from a QR code,
+// as in Suite's own Send), amount in BTC and in the user's currency (linked), and "Send max".
 
-import { Card, Checkbox, Column, IconButton, Input, Row, Text } from '@trezor/components';
-import { TrashIcon } from '@trezor/icons';
+import { useState } from 'react';
 
-import type { PhylaxRecipientDraft } from './phylaxSendForm';
+import { openDeferredModal, preserveModal } from '@suite/modal';
+import { Card, Checkbox, Column, Icon, IconButton, Input, Row, Text } from '@trezor/components';
+import { useServices } from '@trezor/dependency-injection';
+import { QrCodeIcon, TrashIcon } from '@trezor/icons';
+import { injectDispatch } from '@trezor/redux-utils';
+
+import { type PhylaxRecipientDraft, readScannedPayment } from './phylaxSendForm';
 import type { PhylaxFiat } from './usePhylaxFiat';
 import type { PhylaxAmountFormat } from '../phylaxAmount';
+import type { PhylaxNetwork } from '../phylaxWallet';
 
 type PhylaxRecipientCardProps = {
     recipient: PhylaxRecipientDraft;
     index: number;
     count: number;
+    network: PhylaxNetwork;
     amountFormat: PhylaxAmountFormat;
     fiat: PhylaxFiat;
     // the amount the plan gives a send-max recipient
@@ -26,6 +33,7 @@ export const PhylaxRecipientCard = ({
     recipient,
     index,
     count,
+    network,
     amountFormat,
     fiat,
     sendMaxAmount,
@@ -33,6 +41,8 @@ export const PhylaxRecipientCard = ({
     onChange,
     onRemove,
 }: PhylaxRecipientCardProps) => {
+    const { dispatch } = useServices(injectDispatch);
+    const [scanError, setScanError] = useState<string>();
     const testId = `@phylax/send/recipient/${index}`;
     const maxText = sendMaxAmount !== undefined ? amountFormat.formatValue(sendMaxAmount) : '';
     const maxFiatText = sendMaxAmount !== undefined ? fiat.toFiatText(sendMaxAmount) : '';
@@ -43,6 +53,32 @@ export const PhylaxRecipientCard = ({
             ...recipient,
             amountText,
             fiatText: amount !== undefined ? fiat.toFiatText(amount) : '',
+        });
+    };
+
+    // Suite's QR scanner (camera), as in its own Send: an address, or a "bitcoin:" request whose
+    // amount fills the amount too. Kept open: the PHYLAX page talks to the main block every few
+    // seconds, and the end of each call would otherwise close it (as in Suite's signing flows).
+    const handleScanQr = async () => {
+        setScanError(undefined);
+        const scanned = dispatch(openDeferredModal({ type: 'qr-reader' }));
+        dispatch(preserveModal());
+        const text = await scanned;
+        if (typeof text !== 'string') return;
+        const payment = readScannedPayment(text, network);
+        if (!payment.success) {
+            setScanError(payment.error);
+
+            return;
+        }
+        onChange({
+            ...recipient,
+            address: payment.address,
+            ...(payment.amount !== undefined && {
+                amountText: amountFormat.formatValue(payment.amount),
+                fiatText: fiat.toFiatText(payment.amount),
+                isSendMax: false,
+            }),
         });
     };
 
@@ -77,7 +113,19 @@ export const PhylaxRecipientCard = ({
                 <Input
                     label="Address"
                     value={recipient.address}
-                    onChange={event => onChange({ ...recipient, address: event.target.value })}
+                    onChange={event => {
+                        setScanError(undefined);
+                        onChange({ ...recipient, address: event.target.value });
+                    }}
+                    rightContent={
+                        <Icon
+                            as={QrCodeIcon}
+                            onClick={handleScanQr}
+                            data-testid={`${testId}/scan-qr`}
+                        />
+                    }
+                    bottomText={scanError}
+                    hasError={!!scanError}
                     data-testid={`${testId}/address`}
                 />
                 <Row gap={12} alignItems="flex-start" flexWrap="wrap">

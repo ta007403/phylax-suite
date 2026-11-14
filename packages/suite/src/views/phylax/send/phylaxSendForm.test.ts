@@ -3,6 +3,7 @@ import {
     getCustomFeeWarnings,
     getSendRequest,
     parseFeeRate,
+    readScannedPayment,
 } from './phylaxSendForm';
 
 describe('PHYLAX send form', () => {
@@ -46,6 +47,61 @@ describe('PHYLAX send form', () => {
             recipients: [{ address: 'tb1q', amount: 0n, isSendMax: true }],
             feeRate: 2,
             coinIds: ['aa:0'],
+        });
+    });
+});
+
+describe('readScannedPayment (QR code)', () => {
+    // BIP 173 test vectors
+    const MAINNET = 'bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4';
+    const TESTNET = 'tb1qw508d6qejxtdg4y5r3zarvary0c5xw7kxpjzsx';
+
+    it('reads a plain address, also in capitals', () => {
+        expect(readScannedPayment(` ${MAINNET} `, 'mainnet')).toEqual({
+            success: true,
+            address: MAINNET,
+            amount: undefined,
+        });
+        expect(readScannedPayment(MAINNET.toUpperCase(), 'mainnet')).toMatchObject({
+            success: true,
+            address: MAINNET,
+        });
+    });
+
+    it('reads a bitcoin: payment request with its amount', () => {
+        expect(
+            readScannedPayment(`bitcoin:${MAINNET}?amount=0.00012&label=Coffee`, 'mainnet'),
+        ).toEqual({ success: true, address: MAINNET, amount: 12000n });
+        expect(readScannedPayment(`BITCOIN:${MAINNET.toUpperCase()}?amount=1`, 'mainnet')).toEqual({
+            success: true,
+            address: MAINNET,
+            amount: 100000000n,
+        });
+        expect(readScannedPayment(`bitcoin:${TESTNET}`, 'testnet')).toEqual({
+            success: true,
+            address: TESTNET,
+            amount: undefined,
+        });
+    });
+
+    it('refuses other networks, other coins, and text that is no address', () => {
+        expect(readScannedPayment(TESTNET, 'mainnet')).toEqual({
+            success: false,
+            error: 'This QR code has no Bitcoin address.',
+        });
+        expect(readScannedPayment(`bitcoin:${MAINNET}`, 'testnet')).toEqual({
+            success: false,
+            error: 'This QR code has no Testnet address.',
+        });
+        expect(
+            readScannedPayment('ethereum:0x0000000000000000000000000000000000000000', 'mainnet'),
+        ).toMatchObject({ success: false, error: 'This QR code is not for Bitcoin (on-chain).' });
+        expect(readScannedPayment('lightning:lnbc1...', 'mainnet')).toMatchObject({
+            success: false,
+        });
+        expect(readScannedPayment('hello', 'mainnet')).toMatchObject({ success: false });
+        expect(readScannedPayment(`bitcoin:${MAINNET}?amount=abc`, 'mainnet')).toMatchObject({
+            success: false,
         });
     });
 });

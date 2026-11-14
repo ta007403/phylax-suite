@@ -167,6 +167,7 @@ export const PhylaxSendPage = ({
                         recipient={recipient}
                         index={index}
                         count={recipients.length}
+                        network={network}
                         amountFormat={amountFormat}
                         fiat={fiat}
                         sendMaxAmount={

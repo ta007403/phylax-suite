@@ -1,7 +1,11 @@
 // PHYLAX Blocks (fork): the Send page's form values and the checks on them (no React).
 
+import { asNetworkSymbol } from '@suite-common/networks';
+import { parseTransferUri } from '@suite-common/transfer-uri';
+
 import type { PhylaxFeeLevel } from './usePhylaxFeeRates';
-import { type PhylaxSendRequest, parseBtc } from '../phylaxSend';
+import { type PhylaxSendRequest, getOutputScript, parseBtc } from '../phylaxSend';
+import type { PhylaxNetwork } from '../phylaxWallet';
 
 export type PhylaxRecipientDraft = {
     id: number;
@@ -88,4 +92,51 @@ export const getSendRequest = (
     }
 
     return { recipients: parsed, feeRate, coinIds };
+};
+
+export type PhylaxScannedPayment =
+    { success: true; address: string; amount?: bigint } | { success: false; error: string };
+
+// QR codes often hold bech32 addresses in capitals (a smaller QR code)
+const BECH32_CAPITALS = /^(BC|TB|BCRT)1[02-9AC-HJ-NP-Z]+$/;
+
+/**
+ * What a scanned QR code pays: a plain address, or a "bitcoin:" payment request (BIP 21) with
+ * its address and, if it has one, its amount. Only an address of this network is accepted.
+ */
+export const readScannedPayment = (text: string, network: PhylaxNetwork): PhylaxScannedPayment => {
+    const value = text.trim();
+    let address = value;
+    let amount: bigint | undefined;
+    if (/^bitcoin:/i.test(value)) {
+        const uri = parseTransferUri(value, protocol =>
+            protocol === 'bitcoin' ? asNetworkSymbol('btc') : null,
+        );
+        if (!uri.success || !('address' in uri.payload)) {
+            return { success: false, error: 'This QR code is not a Bitcoin payment request.' };
+        }
+        address = uri.payload.address;
+        // the shared parser leaves out an amount it cannot read: say so instead
+        const rawAmount = new URLSearchParams(value.split('?')[1] ?? '').get('amount');
+        if (rawAmount !== null) {
+            amount = parseBtc(rawAmount);
+            if (amount === undefined || amount <= 0n) {
+                return { success: false, error: 'The amount in this QR code is not valid.' };
+            }
+        }
+    } else if (/^[a-z][a-z0-9+.-]*:/i.test(value)) {
+        return { success: false, error: 'This QR code is not for Bitcoin (on-chain).' };
+    }
+    if (BECH32_CAPITALS.test(address)) address = address.toLowerCase();
+    if (!getOutputScript(network, address)) {
+        return {
+            success: false,
+            error:
+                network === 'mainnet'
+                    ? 'This QR code has no Bitcoin address.'
+                    : 'This QR code has no Testnet address.',
+        };
+    }
+
+    return { success: true, address, amount };
 };
