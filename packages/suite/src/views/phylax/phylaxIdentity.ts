@@ -59,3 +59,31 @@ export const getPhylaxIdentity = (
 /** Number of different Trezor-type devices plugged in (wallet instances of one device count once). */
 export const countConnectedDevices = (devices: { connected: boolean; path?: string }[]) =>
     new Set(devices.filter(device => device.connected).map(device => device.path)).size;
+
+type WalletsResponse =
+    | { success: true; payload: PROTO.PhylaxWallets }
+    | { success: false; error: { message: string } };
+
+/**
+ * For a change to the main block's saved list (rename, delete): the connected main block must
+ * hold this wallet in this slot. Unlike getPhylaxIdentity it does not need the main block's own
+ * key in the wallet, so a wallet saved without it (old firmware: key blocks only) can be deleted.
+ * Returns why not, or undefined if it does.
+ */
+export const getSavedWalletProblem = (
+    response: WalletsResponse,
+    slot: number,
+    fingerprints: number[],
+) => {
+    if (!response.success) {
+        return `The selected device did not answer as a PHYLAX main block (${response.error.message}). Nothing was sent. ${ANOTHER_TREZOR_HINT}`;
+    }
+    const saved = response.payload.wallets.find(wallet => wallet.slot === slot);
+    const isSame =
+        saved?.fingerprints.length === fingerprints.length &&
+        saved.fingerprints.every(fingerprint => fingerprints.includes(fingerprint));
+
+    return isSame
+        ? undefined
+        : 'The connected main block does not hold this wallet. Nothing was sent.';
+};

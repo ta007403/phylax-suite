@@ -1,4 +1,4 @@
-import { countConnectedDevices, getPhylaxIdentity } from './phylaxIdentity';
+import { countConnectedDevices, getPhylaxIdentity, getSavedWalletProblem } from './phylaxIdentity';
 
 const MAIN = 0x25a66c01;
 const KEY = 0x2b69c617;
@@ -64,5 +64,41 @@ describe('countConnectedDevices', () => {
                 { connected: true, path: '2' },
             ]),
         ).toBe(2);
+    });
+});
+
+describe('getSavedWalletProblem', () => {
+    const KEY_2 = 0x31da3384;
+    const KEY_3 = 0xe5989437;
+    // the hardware case: a 3-of-3 of the key blocks only, saved on the main block in slot 4
+    const keysOnly = [KEY, KEY_2, KEY_3];
+    const saved = {
+        success: true as const,
+        payload: {
+            storage_present: true,
+            ignored: [],
+            wallets: [
+                { slot: 3, name: '3-of-3 #1', threshold: 3, fingerprints: [MAIN, KEY, KEY_3] },
+                { slot: 4, name: '3-of-3 #2', threshold: 3, fingerprints: keysOnly },
+            ],
+        },
+    };
+
+    it('lets the main block holding the wallet rename or delete it, also without its own key', () => {
+        expect(getPhylaxIdentity(blocks(MAIN), keysOnly).kind).toBe('wrong-device');
+        expect(getSavedWalletProblem(saved, 4, [KEY_3, KEY, KEY_2])).toBeUndefined();
+    });
+
+    it('refuses a main block that does not hold the wallet in that slot', () => {
+        expect(getSavedWalletProblem(saved, 3, keysOnly)).toMatch(/does not hold this wallet/);
+        expect(getSavedWalletProblem(saved, 5, keysOnly)).toMatch(/does not hold this wallet/);
+        expect(getSavedWalletProblem(saved, 4, [KEY, KEY_2])).toMatch(/does not hold this wallet/);
+        expect(
+            getSavedWalletProblem(
+                { success: false, error: { message: 'Unknown message' } },
+                4,
+                keysOnly,
+            ),
+        ).toMatch(/did not answer as a PHYLAX main block/);
     });
 });

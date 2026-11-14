@@ -8,6 +8,7 @@ import TrezorConnect, { type PROTO } from '@trezor/connect';
 import { useServices } from '@trezor/dependency-injection';
 import { injectDispatch } from '@trezor/redux-utils';
 
+import { getSavedWalletProblem } from '../phylaxIdentity';
 import type { PhylaxTarget, RunOnDevice } from '../usePhylaxStack';
 
 const NAME_MAX_LENGTH = 15; // the main block's limit
@@ -39,7 +40,18 @@ export const PhylaxWalletActions = ({
         doneText: string,
     ) => {
         setAction({ status: 'waiting', text: waitingText });
-        const result = await runOnDevice(call, summary.fingerprints);
+        // Rename and delete change the main block's saved list: they need the main block that
+        // holds this wallet (not the main block's key in it), and are confirmed on its screen.
+        const result = await runOnDevice(async target => {
+            const problem = getSavedWalletProblem(
+                await TrezorConnect.phylaxGetWallets(target),
+                summary.slot,
+                summary.fingerprints,
+            );
+            if (problem) return { success: false as const, error: { message: problem } };
+
+            return call(target);
+        });
         if (result.kind === 'not-connected') {
             setAction({ status: 'error', text: 'The main block is not connected.' });
         } else if (result.kind === 'wrong-device') {
