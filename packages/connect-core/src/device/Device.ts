@@ -49,7 +49,7 @@ import { DeviceCommands } from './DeviceCommands';
 import type { TypedCallProvider } from './DeviceCurrentSession';
 import { DeviceCurrentSession } from './DeviceCurrentSession';
 import { checkFirmwareRevision } from './checkFirmwareRevision';
-import { classifyPhylaxProbe, isPhylaxBootloader } from './phylax';
+import { classifyPhylaxProbe, isPhylaxBootloader, isRegularTrezor } from './phylax';
 import { abortThpWorkflow, getThpChannel } from './thp';
 import { getAllNetworks } from '../data/coinInfo';
 import {
@@ -1180,6 +1180,11 @@ export class Device extends TypedEmitter<DeviceEvents> implements IDevice {
             availableTranslations: this.availableTranslations,
             authenticityChecks: this.authenticityChecks,
             phylax: this.phylax === true,
+            regularTrezor: isRegularTrezor({
+                features: this.features,
+                phylax: this.phylax,
+                phylaxKey: this.phylaxKey,
+            }),
             thp: this.getDeviceThp(),
         };
     }

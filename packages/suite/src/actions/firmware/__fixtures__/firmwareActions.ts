@@ -1,4 +1,8 @@
-import { firmwareActions, firmwareUpdateThunk } from '@suite-common/firmware';
+import {
+    PHYLAX_NO_FIRMWARE_INSTALL_ERROR,
+    firmwareActions,
+    firmwareUpdateThunk,
+} from '@suite-common/firmware';
 import { mockGetFirmwareReleaseConfigInfo, mockSuiteDevice } from '@suite-common/suite-types/mocks';
 import { FirmwareType, UI_EVENTS } from '@trezor/connect';
 import { DeviceModelInternal } from '@trezor/device-utils';
@@ -40,115 +44,50 @@ const firmwareUpdateResponsePayload = {
 };
 
 export const actions = [
-    {
-        description: 'Success T2T1',
-        action: () => firmwareUpdateThunk({ firmwareType: FirmwareType.Universal }),
-        mocks: {
-            connect: {
-                success: true,
-                payload: firmwareUpdateResponsePayload,
-            },
-        },
-        initialState: {
-            device: {
-                devices: [bootloaderDevice],
-                selectedDevice: bootloaderDevice,
-            },
-        },
-        result: {
-            actions: [
-                { type: firmwareActions.setStatus.type, payload: 'started' },
-                { type: firmwareActions.setTargetType.type, payload: FirmwareType.Universal },
-                { type: firmwareActions.cacheDevice.type, payload: bootloaderDevice },
-                { type: firmwareActions.setStatus.type, payload: 'done' },
-            ],
-            state: { firmware: { status: 'done' } },
-        },
-    },
-    {
-        description: 'Success T2T1 - install Bitcoin-only firmware',
-        action: () => firmwareUpdateThunk({ firmwareType: FirmwareType.BitcoinOnly }),
-        mocks: {
-            connect: {
-                success: true,
-                payload: firmwareUpdateResponsePayload,
-            },
-        },
-        initialState: {
-            device: {
-                devices: [bootloaderDevice],
-                selectedDevice: bootloaderDevice,
-            },
-        },
-        result: {
-            actions: [
-                { type: firmwareActions.setStatus.type, payload: 'started' },
-                { type: firmwareActions.setTargetType.type, payload: FirmwareType.BitcoinOnly },
-                { type: firmwareActions.cacheDevice.type, payload: bootloaderDevice },
-                { type: firmwareActions.setStatus.type, payload: 'done' },
-            ],
-            state: { firmware: { status: 'done' } },
-        },
-    },
-    {
-        description: 'Success T1B1 (with intermediary)',
-        action: () => firmwareUpdateThunk({ firmwareType: FirmwareType.Universal }),
-        mocks: {
-            connect: {
-                success: true,
-                payload: firmwareUpdateResponsePayload,
-            },
-        },
-        initialState: {
-            device: {
-                selectedDevice: bootloaderDeviceNeedsIntermediary,
-                devices: [bootloaderDeviceNeedsIntermediary],
-            },
-        },
-        result: {
-            actions: [
-                { type: firmwareActions.setStatus.type, payload: 'started' },
-                { type: firmwareActions.setTargetType.type, payload: FirmwareType.Universal },
-                {
-                    type: firmwareActions.cacheDevice.type,
-                    payload: bootloaderDeviceNeedsIntermediary,
+    // PHYLAX Blocks (fork): PHYLAX Suite never installs firmware. Whatever the device or the
+    // firmware type, the thunk fails before Trezor Connect is asked to install anything (even a
+    // Connect that would succeed).
+    ...[
+        { name: 'Trezor Model T in bootloader mode', device: bootloaderDevice },
+        { name: 'Trezor One, intermediary needed', device: bootloaderDeviceNeedsIntermediary },
+        { name: 'Trezor One, no intermediary', device: bootloaderDeviceNoIntermediaryT1 },
+    ].flatMap(({ name, device }) =>
+        [FirmwareType.Universal, FirmwareType.BitcoinOnly].map(firmwareType => ({
+            description: `PHYLAX: no firmware installation (${name}, ${firmwareType})`,
+            action: () => firmwareUpdateThunk({ firmwareType }),
+            mocks: {
+                connect: {
+                    success: true,
+                    payload: firmwareUpdateResponsePayload,
                 },
-                { type: firmwareActions.setStatus.type, payload: 'done' },
-            ],
-            state: { firmware: { status: 'done' } },
-        },
-    },
-    {
-        description: 'Success T1B1 (without intermediary)',
-        action: () => firmwareUpdateThunk({ firmwareType: FirmwareType.Universal }),
-        mocks: {
-            connect: {
-                success: true,
-                payload: firmwareUpdateResponsePayload,
             },
-        },
-        initialState: {
-            device: {
-                selectedDevice: bootloaderDeviceNoIntermediaryT1,
-                devices: [bootloaderDeviceNoIntermediaryT1],
-            },
-        },
-        result: {
-            actions: [
-                { type: firmwareActions.setStatus.type, payload: 'started' },
-                { type: firmwareActions.setTargetType.type, payload: FirmwareType.Universal },
-                {
-                    type: firmwareActions.cacheDevice.type,
-                    payload: bootloaderDeviceNoIntermediaryT1,
+            initialState: {
+                device: {
+                    devices: [device],
+                    selectedDevice: device,
                 },
-                { type: firmwareActions.setStatus.type, payload: 'done' },
-            ],
-            state: { firmware: { status: 'done' } },
-        },
-    },
+            },
+            result: {
+                actions: [
+                    { type: firmwareActions.setStatus.type, payload: 'error' },
+                    {
+                        type: firmwareActions.setFirmwareUpdateError.type,
+                        payload: PHYLAX_NO_FIRMWARE_INSTALL_ERROR,
+                    },
+                    {
+                        type: firmwareUpdateThunk.rejected.type,
+                        payload: { error: PHYLAX_NO_FIRMWARE_INSTALL_ERROR },
+                    },
+                ],
+                state: { firmware: { status: 'error', error: PHYLAX_NO_FIRMWARE_INSTALL_ERROR } },
+            },
+        })),
+    ),
     {
         description: 'Errors for missing device',
         action: () => firmwareUpdateThunk({ firmwareType: FirmwareType.Universal }),
+        // typed like the PHYLAX entries above (spread entries are not unified with these)
+        mocks: undefined,
         initialState: {
             device: {
                 selectedDevice: undefined,
@@ -156,81 +95,6 @@ export const actions = [
         },
         result: {
             state: { firmware: { status: 'error' } },
-        },
-    },
-    {
-        description: 'FirmwareUpdate call to connect errors',
-        action: () => firmwareUpdateThunk({ firmwareType: FirmwareType.Universal }),
-        initialState: {
-            device: {
-                selectedDevice: bootloaderDevice,
-                devices: [bootloaderDevice],
-            },
-        },
-        mocks: {
-            connect: {
-                success: false,
-                error: {
-                    message: 'foo',
-                },
-            },
-        },
-        result: {
-            actions: [
-                { type: firmwareActions.setStatus.type, payload: 'started' },
-                { type: firmwareActions.setTargetType.type, payload: FirmwareType.Universal },
-                { type: firmwareActions.cacheDevice.type, payload: bootloaderDevice },
-                { type: firmwareActions.setStatus.type, payload: 'error' },
-                { type: firmwareActions.setFirmwareUpdateError.type, payload: 'foo' },
-                {
-                    type: firmwareUpdateThunk.rejected.type,
-                    payload: {
-                        device: bootloaderDevice,
-                        error: 'foo',
-                        toBtcOnly: false,
-                        toFwVersion: '2.0.0',
-                    },
-                },
-            ],
-        },
-    },
-    {
-        description: 'FirmwareUpdate call to connect errors due to cancelling on device',
-        action: () => firmwareUpdateThunk({ firmwareType: FirmwareType.Universal }),
-        initialState: {
-            device: {
-                selectedDevice: bootloaderDevice,
-                devices: [bootloaderDevice],
-            },
-        },
-        mocks: {
-            connect: {
-                success: false,
-                error: {
-                    message: 'Firmware install failed',
-                },
-            },
-        },
-        result: {
-            actions: [
-                { type: firmwareActions.setStatus.type, payload: 'started' },
-                { type: firmwareActions.setTargetType.type, payload: FirmwareType.Universal },
-                { type: firmwareActions.cacheDevice.type, payload: bootloaderDevice },
-                { type: firmwareActions.setStatus.type, payload: 'error' },
-                {
-                    type: firmwareActions.setFirmwareUpdateError.type,
-                    payload: 'Firmware install failed',
-                },
-                {
-                    type: firmwareUpdateThunk.rejected.type,
-                    payload: {
-                        device: bootloaderDevice,
-                        error: 'Firmware install failed',
-                        toBtcOnly: false,
-                        toFwVersion: '2.0.0',
-                    },
-                },
-            ],
         },
     },
     {

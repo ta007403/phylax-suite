@@ -17,12 +17,10 @@ import { ConnectionGlobalModalManager } from 'src/components/connection/Connecti
 import { FirmwareInstallationProgressCheck } from 'src/components/firmware/ProgressCheck/FirmwareInstallationProgressCheck';
 import { useSelector } from 'src/hooks/suite';
 import { PhylaxNoFirmwareUpdate } from 'src/views/phylax/PhylaxNoFirmwareUpdate';
-import { isPhylaxBlock } from 'src/views/phylax/phylaxBlock';
 
 import { StepCheckSeed } from './Steps/StepCheckSeed';
 import { StepDone } from './Steps/StepDone';
 import { StepError } from './Steps/StepError';
-import { StepInitial } from './Steps/StepInitial';
 import { StepStarted } from './Steps/StepStarted';
 
 type FirmwareModalProps = {
@@ -32,14 +30,14 @@ type FirmwareModalProps = {
     isCustomFirmwareUploaded?: boolean;
 };
 
+// PHYLAX Blocks (fork): `children` (the initial step's content) is no longer shown: the initial
+// step is the "PHYLAX Suite never installs firmware" notice.
 export const FirmwareModal = ({
-    children,
     heading,
     install,
     isCustomFirmwareUploaded,
 }: FirmwareModalProps) => {
-    const { resetReducer, status, setStatus, deviceWillBeWiped, error } =
-        useFirmwareDesktopUpdate();
+    const { resetReducer, status, deviceWillBeWiped, error } = useFirmwareDesktopUpdate();
     const device = useSelector(selectSelectedDevice);
 
     const { dispatch } = useServices(injectDispatch);
@@ -65,22 +63,8 @@ export const FirmwareModal = ({
             case 'error':
                 return <StepError error={error} onClose={handleClose} />;
             case 'initial':
-                // PHYLAX Blocks (fork): never offer Trezor's firmware to a PHYLAX block
-                if (device && isPhylaxBlock(device)) {
-                    return <PhylaxNoFirmwareUpdate device={device} onClose={handleClose} />;
-                }
-
-                return (
-                    <StepInitial
-                        onClose={handleClose}
-                        install={install}
-                        setStatus={setStatus}
-                        isCustomFirmwareUploaded={isCustomFirmwareUploaded}
-                        modalHeading={heading}
-                    >
-                        {children}
-                    </StepInitial>
-                );
+                // PHYLAX Blocks (fork): PHYLAX Suite never installs firmware, on any device
+                return <PhylaxNoFirmwareUpdate device={device} onClose={handleClose} />;
             case 'check-seed':
                 return (
                     <StepCheckSeed

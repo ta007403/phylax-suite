@@ -17,3 +17,10 @@ export const isPhylaxBlock = (device: TrezorDevice | undefined) =>
     (device.phylax === true ||
         isPhylaxCheck(device.authenticityChecks?.firmwareHash) ||
         isPhylaxCheck(device.authenticityChecks?.firmwareRevision));
+
+/**
+ * A regular Trezor (any model), never a PHYLAX block: PHYLAX Suite does not use it and shows
+ * "use Trezor Suite" instead. Connect decides it only when it is certain (see `regularTrezor`).
+ */
+export const isRegularTrezor = (device: TrezorDevice | undefined) =>
+    device?.type === 'acquired' && device.regularTrezor === true;

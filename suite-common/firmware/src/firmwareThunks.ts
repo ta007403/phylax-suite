@@ -27,6 +27,10 @@ export type FirmwareUpdateResult = {
     connectResponse?: Awaited<ReturnType<typeof TrezorConnect.firmwareUpdate>>;
 };
 
+const PHYLAX_NEVER_INSTALLS_FIRMWARE = true;
+export const PHYLAX_NO_FIRMWARE_INSTALL_ERROR =
+    'PHYLAX Suite never installs firmware. For a Trezor device, use Trezor Suite.';
+
 export type FirmwareUpdateThunkState = DeviceRootState & FirmwareRootState;
 
 export type FirmwareUpdateThunkDeps = WithServices<
@@ -47,6 +51,16 @@ export const firmwareUpdateThunk = createThunk<
         { firmwareType, binary, ignoreBaseUrl = false },
         { dispatch, getState, extra, fulfillWithValue, rejectWithValue },
     ) => {
+        // PHYLAX Blocks (fork): PHYLAX Suite never installs firmware, on any device and from any
+        // screen. Trezor's firmware would replace PHYLAX on a PHYLAX block (and a PHYLAX bootloader
+        // may erase the seed for it); a regular Trezor is updated with Trezor Suite.
+        if (PHYLAX_NEVER_INSTALLS_FIRMWARE) {
+            dispatch(firmwareActions.setStatus('error'));
+            dispatch(firmwareActions.setFirmwareUpdateError(PHYLAX_NO_FIRMWARE_INSTALL_ERROR));
+
+            return rejectWithValue({ error: PHYLAX_NO_FIRMWARE_INSTALL_ERROR });
+        }
+
         dispatch(firmwareActions.setStatus('started'));
 
         // Temporarily save target firmware type so that it can be displayed during installation.

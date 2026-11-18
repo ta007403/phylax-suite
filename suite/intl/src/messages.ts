@@ -3677,6 +3677,17 @@ export const messages = defineMessages({
         description: 'PHYLAX Blocks (fork): name of the page with the block stack and its wallets',
         id: 'TR_PHYLAX',
     },
+    TR_PHYLAX_REGULAR_TREZOR_HEADING: {
+        defaultMessage: 'This is a Trezor, not a PHYLAX block',
+        description: 'PHYLAX Blocks (fork): a regular Trezor device is connected to PHYLAX Suite',
+        id: 'TR_PHYLAX_REGULAR_TREZOR_HEADING',
+    },
+    TR_PHYLAX_REGULAR_TREZOR_DESCRIPTION: {
+        defaultMessage:
+            'PHYLAX Suite works only with PHYLAX blocks and never installs firmware. Use Trezor Suite for this device. PHYLAX Suite has not changed anything on it.',
+        description: 'PHYLAX Blocks (fork): a regular Trezor device is connected to PHYLAX Suite',
+        id: 'TR_PHYLAX_REGULAR_TREZOR_DESCRIPTION',
+    },
     TR_SETTINGS: {
         defaultMessage: 'Settings',
         id: 'TR_SETTINGS',

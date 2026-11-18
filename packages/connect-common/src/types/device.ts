@@ -166,6 +166,12 @@ export type KnownDevice = BaseDevice & {
     };
     /** PHYLAX Blocks (fork): a Trezor One running PHYLAX main-block firmware. */
     phylax?: boolean;
+    /**
+     * PHYLAX Blocks (fork): definitely a regular Trezor, never a PHYLAX block (main or key): its
+     * Trezor firmware did not know the PHYLAX probe, or it is a model PHYLAX does not use.
+     * False while that is not known yet.
+     */
+    regularTrezor?: boolean;
     transportSessionOwner?: undefined;
     hid?: undefined;
     usb_connected?: boolean; // true if the device is powered/charged from USB, regardless of transport selection.

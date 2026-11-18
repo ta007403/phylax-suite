@@ -28,10 +28,8 @@ const handleDeviceRedirect = (dispatch: Dispatch, state: AppState, device?: Trez
         return;
     }
 
-    // device firmware update required, redirect to "firmware update"
-    if (device.firmware === 'required') {
-        dispatch(gotoThunk({ routeName: 'firmware-index' }));
-    }
+    // PHYLAX Blocks (fork): no redirect to "firmware update" when Trezor's firmware is required:
+    // PHYLAX Suite never installs firmware.
 
     const selected = selectSelectedDevice(state);
 

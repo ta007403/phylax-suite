@@ -13,6 +13,7 @@ import { exhaustive } from '@trezor/type-utils';
 
 import { redirectAfterWalletSelectedThunk } from 'src/actions/wallet/addWalletThunk';
 import type { ForegroundAppProps, TrezorDevice } from 'src/types/suite';
+import { isRegularTrezor } from 'src/views/phylax/phylaxBlock';
 
 import { getDeviceResolveStatusCTAMessage } from './getDeviceResolveStatusCTAMessage';
 
@@ -155,6 +156,17 @@ export const NeedsAttentionBanner = ({
                 return exhaustive(deviceStatus);
         }
     };
+
+    // PHYLAX Blocks (fork): a regular Trezor is not used here, whatever its state; in particular no
+    // "Install firmware" for one whose Trezor firmware is too old for this Suite
+    if (isRegularTrezor(device)) {
+        return (
+            <Banner
+                intent="info"
+                description={<Translation id="TR_PHYLAX_REGULAR_TREZOR_HEADING" />}
+            />
+        );
+    }
 
     const onIssueClick = createOnIssueClickHandler();
 

@@ -3,6 +3,8 @@
 // them. Official Trezor firmware is not signed for the PHYLAX bootloader, which would refuse it as
 // unofficial and may erase the block's seed.
 
+import { DeviceModelInternal } from '@trezor/device-utils';
+
 /**
  * Hashes of the PHYLAX bootloaders (as Features.bootloader_hash reports them), one per release;
  * the same list as phylax_bl_hashes.h in the PHYLAX firmware.
@@ -30,4 +32,25 @@ export const classifyPhylaxProbe = (error?: { code?: string; message?: string })
     if (error.code === 'Failure_UnexpectedMessage') return 'stock';
 
     return 'unknown';
+};
+
+type RegularTrezorParams = {
+    features?: { bootloader_hash?: string | null; internal_model?: string } | null;
+    /** the PHYLAX probe's answer: true main block, false not a main block, undefined not asked */
+    phylax?: boolean;
+    phylaxKey?: boolean;
+};
+
+/**
+ * Definitely a regular Trezor, never a PHYLAX block: a model PHYLAX does not use, or a Trezor One
+ * whose firmware answered the probe as Trezor firmware does. Only a definite answer counts: a
+ * Trezor One not asked yet (busy, in bootloader mode with Trezor's bootloader) is not one.
+ */
+export const isRegularTrezor = ({ features, phylax, phylaxKey }: RegularTrezorParams) => {
+    if (!features?.internal_model || phylax || phylaxKey || isPhylaxBootloader(features)) {
+        return false;
+    }
+    if (features.internal_model !== DeviceModelInternal.T1B1) return true;
+
+    return phylax === false;
 };

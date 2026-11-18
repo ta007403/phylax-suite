@@ -224,6 +224,19 @@ const fixtures: Fixture[] = [
         ],
     },
     {
+        // PHYLAX Blocks (fork)
+        description: 'does not start discovery on a regular Trezor (PHYLAX Suite does not use it)',
+        state: {
+            router: { app: 'dashboard' },
+        },
+        steps: [
+            {
+                action: deviceActions.selectDevice({ ...selectedDevice, regularTrezor: true }),
+                expectedCallCount: 0,
+            },
+        ],
+    },
+    {
         description: 'does not start discovery when compromised device warning should be displayed',
         state: {
             router: { app: 'dashboard' },

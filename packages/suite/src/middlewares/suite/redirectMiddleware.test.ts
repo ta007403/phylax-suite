@@ -97,7 +97,8 @@ const initStore = (state: State) =>
 
 describe('redirectMiddleware', () => {
     describe('redirects on DEVICE.CONNECT event', () => {
-        it('DEVICE.CONNECT firmware=required', () => {
+        // PHYLAX Blocks (fork): PHYLAX Suite never installs firmware, so no redirect to it
+        it('DEVICE.CONNECT firmware=required does not open the firmware update', () => {
             const store = initStore(getInitialState());
 
             const connectDevice = mockConnectDevice({ mode: 'normal', firmware: 'required' });
@@ -106,7 +107,7 @@ describe('redirectMiddleware', () => {
             const device = store.getState().device.devices.find(d => d.id === connectDevice.id);
             store.dispatch({ type: deviceActions.selectDevice.type, payload: device });
 
-            expect(store.getState().router.route?.name).toBe('firmware-index');
+            expect(store.getState().router.route?.name).not.toBe('firmware-index');
         });
 
         it('SUITE.SELECT_DEVICE reset wallet params', () => {

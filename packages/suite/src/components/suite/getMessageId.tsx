@@ -116,6 +116,10 @@ export const getMessageId = ({
         'firmware-missing': defaultKey,
         'firmware-required': defaultKey,
         'multi-share-backup-in-progress': defaultKey,
+        'phylax-regular-trezor': {
+            heading: 'TR_PHYLAX_REGULAR_TREZOR_HEADING',
+            description: 'TR_PHYLAX_REGULAR_TREZOR_DESCRIPTION',
+        },
     };
 
     return map[prerequisite];
