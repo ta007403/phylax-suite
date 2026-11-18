@@ -100,4 +100,21 @@ describe('migration 25.11.0', () => {
 
         migratedDb.close();
     });
+
+    // PHYLAX Blocks (fork)
+    test('leaves a new install (no settings at all) to the defaults', async () => {
+        const db = await openDB(DB_NAME, INITIAL_VERSION, {
+            upgrade(db) {
+                db.createObjectStore('suiteSettings');
+                db.createObjectStore('walletSettings');
+            },
+        });
+        db.close();
+
+        const migratedDb = await runMigration();
+
+        expect(await migratedDb.get('walletSettings', 'wallet')).toBeUndefined();
+
+        migratedDb.close();
+    });
 });

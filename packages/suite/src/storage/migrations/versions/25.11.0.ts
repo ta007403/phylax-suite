@@ -23,6 +23,10 @@ export default createMigration<SuiteDBSchema>('25.11.0', async (db, tx) => {
     const hasAnyWalletSettings = (await walletSettingsStore.count()) > 0;
 
     if (!hasAnyWalletSettings) {
+        // PHYLAX Blocks (fork): a new install (no settings of any kind yet) keeps the reducer's
+        // defaults, e.g. auto-eject on. Writing "off" here (no previous value) overrode them.
+        if (suiteSettings === undefined) return;
+
         await walletSettingsStore.put(
             {
                 ...initialWalletSettingsState,
