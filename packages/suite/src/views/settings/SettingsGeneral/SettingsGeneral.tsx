@@ -79,7 +79,7 @@ export const SettingsGeneral = ({ torSettings }: SettingsGeneralProps) => {
     const isLegacyLabelingVisible = useSelector(selectIsLegacyLabelingVisible);
     const hasContentBelowTabletWidth = useIsContentBelowBreakpoint(breakpoints.tablet);
     const hasContentBelowMobileWidth = useIsContentBelowBreakpoint(breakpoints.mobile);
-    // PHYLAX Blocks (fork): the station is a kiosk: no start-at-login nor tray icon
+    // PHYLAX Blocks (fork): the station is a kiosk: no start-at-login, tray icon or log export
     const isPhylaxStation = usePhylaxStationInfo() !== null;
 
     const hasBitcoinNetworks = enabledNetworks.some(symbol => {
@@ -156,7 +156,9 @@ export const SettingsGeneral = ({ torSettings }: SettingsGeneralProps) => {
                 {PHYLAX_ARE_EXTRA_SETTINGS_SHOWN && <Theme />}
                 {/* PHYLAX Blocks (fork): analytics are off in the fork, nothing to choose */}
                 {PHYLAX_ARE_PROMOTIONS_ENABLED && <Analytics />}
-                <ShowApplicationLog />
+                {/* PHYLAX Blocks (fork): on the station a saved log stays on the station (no way to
+                    take it off), so no log there */}
+                {!isPhylaxStation && <ShowApplicationLog />}
                 <ClearStorage />
                 <AutomaticUpdate />
                 <VersionWithUpdate />
