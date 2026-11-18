@@ -30,6 +30,7 @@ import {
     type ChangeCoinVisibilityThunkState,
     blockchainInitialState,
     changeCoinVisibilityThunk,
+    initialWalletSettingsState,
     transactionsActions,
 } from '@suite-common/wallet-core';
 import * as discoveryActions from '@suite-common/wallet-core';
@@ -199,8 +200,12 @@ const getInitialState = (prevState?: Partial<PartialState>, action?: any): State
         accounts: accountsReducer(prevState?.wallet?.accounts, action || ({ type: 'foo' } as any)),
         blockchain: prevState?.wallet?.blockchain ?? blockchainInitialState,
         coinjoin: coinjoinReducer(prevState?.wallet?.coinjoin, action || ({ type: 'foo' } as any)),
+        // PHYLAX Blocks (fork): auto-eject is on by default; these tests are about remembered wallets
         settings: walletSettingsReducer(
-            prevState?.wallet?.settings,
+            prevState?.wallet?.settings ?? {
+                ...initialWalletSettingsState,
+                isAutoEjectEnabled: false,
+            },
             action || ({ type: 'foo' } as any),
         ),
         discovery: discoveryReducer(

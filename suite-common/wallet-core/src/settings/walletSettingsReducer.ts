@@ -35,14 +35,16 @@ export type WalletSettingsRootState = {
 
 export const createMemoizedSelector = createWeakMapSelector.withTypes<WalletSettingsRootState>();
 
+// PHYLAX Blocks (fork): new installs start with Thai baht and auto-eject on (no wallet data kept
+// after the device is disconnected)
 const initialState: WalletSettingsState = {
-    localCurrency: 'usd',
+    localCurrency: 'thb',
     enabledNetworks: [],
     suspiciousTransactionsFilter: {},
     bitcoinAmountUnit: PROTO.AmountUnit.BITCOIN,
     mevProtection: true,
     networkReserve: true,
-    isAutoEjectEnabled: false,
+    isAutoEjectEnabled: true,
     addressDisplayType: AddressDisplayOptions.CHUNKED,
     homeAssetsTableGrouping: 'default',
     areHomeAssetSmallBalancesShown: true,

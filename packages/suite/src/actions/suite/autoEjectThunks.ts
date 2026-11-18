@@ -1,4 +1,4 @@
-import { type GotoThunkDeps, type GotoThunkState, gotoThunk } from '@suite/router';
+import { type GotoThunkDeps, type GotoThunkState, gotoThunk, selectRouterApp } from '@suite/router';
 import { selectDevices } from '@suite-common/device';
 import {
     type SetDeviceAutoEjectThunkState,
@@ -39,7 +39,9 @@ export const setAutoEjectEnabledThunk = createThunk<
     const currentDevices = selectDevices(getState());
     const connectedDevices = currentDevices.filter(device => device.connected && device.state);
 
-    if (connectedDevices.length === 0) {
+    // PHYLAX Blocks (fork): only leave a wallet page (its wallet is gone). Switching auto-eject on in
+    // Settings with no wallet open stays in Settings instead of jumping to the dashboard.
+    if (connectedDevices.length === 0 && selectRouterApp(getState()) === 'wallet') {
         dispatch(gotoThunk({ routeName: 'suite-index' }));
     }
 });
