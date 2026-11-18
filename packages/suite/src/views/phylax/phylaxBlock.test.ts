@@ -1,7 +1,7 @@
 import { type TrezorDevice } from '@suite-common/suite-types';
 import { mockSuiteDevice } from '@suite-common/suite-types/mocks';
 
-import { isPhylaxBlock, isRegularTrezor } from './phylaxBlock';
+import { isPhylaxBlock } from './phylaxBlock';
 
 const phylaxChecks = {
     firmwareHash: { success: false, error: 'phylax-firmware' },
@@ -46,18 +46,5 @@ describe('isPhylaxBlock', () => {
                 phylax: true,
             } as TrezorDevice),
         ).toBe(false);
-    });
-});
-
-describe('isRegularTrezor', () => {
-    it('only when Connect is certain', () => {
-        expect(isRegularTrezor({ ...mockSuiteDevice(), regularTrezor: true } as TrezorDevice)).toBe(
-            true,
-        );
-        expect(isRegularTrezor(mockSuiteDevice())).toBe(false);
-        expect(
-            isRegularTrezor({ ...mockSuiteDevice(), regularTrezor: false } as TrezorDevice),
-        ).toBe(false);
-        expect(isRegularTrezor(undefined)).toBe(false);
     });
 });

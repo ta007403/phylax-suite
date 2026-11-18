@@ -113,13 +113,13 @@ export const getMessageId = ({
         'device-seedless': defaultKey,
         'device-unknown': defaultKey,
         'device-unreadable': defaultKey,
-        'firmware-missing': defaultKey,
+        // PHYLAX Blocks (fork): PHYLAX Suite never installs firmware
+        'firmware-missing': {
+            heading: 'TR_PHYLAX_NO_FIRMWARE_HEADING',
+            description: 'TR_PHYLAX_NO_FIRMWARE_DESCRIPTION',
+        },
         'firmware-required': defaultKey,
         'multi-share-backup-in-progress': defaultKey,
-        'phylax-regular-trezor': {
-            heading: 'TR_PHYLAX_REGULAR_TREZOR_HEADING',
-            description: 'TR_PHYLAX_REGULAR_TREZOR_DESCRIPTION',
-        },
     };
 
     return map[prerequisite];

@@ -3677,16 +3677,33 @@ export const messages = defineMessages({
         description: 'PHYLAX Blocks (fork): name of the page with the block stack and its wallets',
         id: 'TR_PHYLAX',
     },
-    TR_PHYLAX_REGULAR_TREZOR_HEADING: {
-        defaultMessage: 'This is a Trezor, not a PHYLAX block',
-        description: 'PHYLAX Blocks (fork): a regular Trezor device is connected to PHYLAX Suite',
-        id: 'TR_PHYLAX_REGULAR_TREZOR_HEADING',
+    TR_PHYLAX_FIRMWARE_UPDATE_WITH_TREZOR_SUITE: {
+        defaultMessage: 'Update it with Trezor Suite',
+        description:
+            'PHYLAX Blocks (fork): a newer Trezor firmware exists; PHYLAX Suite does not install it',
+        id: 'TR_PHYLAX_FIRMWARE_UPDATE_WITH_TREZOR_SUITE',
     },
-    TR_PHYLAX_REGULAR_TREZOR_DESCRIPTION: {
+    TR_PHYLAX_ONBOARDING_FIRMWARE_HEADING: {
+        defaultMessage: 'Firmware {version}',
+        description: 'PHYLAX Blocks (fork): setup with the firmware the device has',
+        id: 'TR_PHYLAX_ONBOARDING_FIRMWARE_HEADING',
+    },
+    TR_PHYLAX_ONBOARDING_FIRMWARE_DESCRIPTION: {
         defaultMessage:
-            'PHYLAX Suite works only with PHYLAX blocks and never installs firmware. Use Trezor Suite for this device. PHYLAX Suite has not changed anything on it.',
-        description: 'PHYLAX Blocks (fork): a regular Trezor device is connected to PHYLAX Suite',
-        id: 'TR_PHYLAX_REGULAR_TREZOR_DESCRIPTION',
+            'A newer Trezor firmware ({newer}) is available. PHYLAX Suite never installs firmware: you can update it later with Trezor Suite. The setup continues with the firmware this device has.',
+        description: 'PHYLAX Blocks (fork): setup with the firmware the device has',
+        id: 'TR_PHYLAX_ONBOARDING_FIRMWARE_DESCRIPTION',
+    },
+    TR_PHYLAX_NO_FIRMWARE_HEADING: {
+        defaultMessage: 'This device has no firmware yet',
+        description: 'PHYLAX Blocks (fork): a device without firmware (e.g. a brand-new Trezor)',
+        id: 'TR_PHYLAX_NO_FIRMWARE_HEADING',
+    },
+    TR_PHYLAX_NO_FIRMWARE_DESCRIPTION: {
+        defaultMessage:
+            'PHYLAX Suite never installs firmware. For a Trezor, install its firmware with Trezor Suite first, then use it here. For a PHYLAX block, install PHYLAX firmware with trezorctl.',
+        description: 'PHYLAX Blocks (fork): a device without firmware (e.g. a brand-new Trezor)',
+        id: 'TR_PHYLAX_NO_FIRMWARE_DESCRIPTION',
     },
     TR_SETTINGS: {
         defaultMessage: 'Settings',

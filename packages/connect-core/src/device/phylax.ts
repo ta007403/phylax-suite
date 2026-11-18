@@ -54,3 +54,12 @@ export const isRegularTrezor = ({ features, phylax, phylaxKey }: RegularTrezorPa
 
     return phylax === false;
 };
+
+/**
+ * Trezor's "required" firmware (older than the newest release marked required, e.g. Trezor One
+ * below 1.12.1) blocks every call. PHYLAX Suite never installs firmware and lets a regular Trezor
+ * be used with the firmware its owner chose: "required" becomes "outdated" (a reminder only).
+ * Each method's own minimum firmware still applies (FIRMWARE_OLD for that method only).
+ */
+export const getPhylaxFirmwareStatus = <T extends string>(status: T, regularTrezor: boolean) =>
+    regularTrezor && status === 'required' ? ('outdated' as T) : status;

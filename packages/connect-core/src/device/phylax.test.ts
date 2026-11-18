@@ -1,4 +1,9 @@
-import { classifyPhylaxProbe, isPhylaxBootloader, isRegularTrezor } from './phylax';
+import {
+    classifyPhylaxProbe,
+    getPhylaxFirmwareStatus,
+    isPhylaxBootloader,
+    isRegularTrezor,
+} from './phylax';
 
 describe('PHYLAX detection', () => {
     it('counts only definite answers', () => {
@@ -46,5 +51,13 @@ describe('PHYLAX detection', () => {
         expect(isRegularTrezor({ features: { internal_model: 'T2T1' } })).toBe(true);
         expect(isRegularTrezor({ features: { internal_model: 'T3B1' } })).toBe(true);
         expect(isRegularTrezor({ features: undefined, phylax: false })).toBe(false);
+    });
+
+    it('only reminds a regular Trezor of Trezor\'s "required" firmware', () => {
+        expect(getPhylaxFirmwareStatus('required', true)).toBe('outdated');
+        expect(getPhylaxFirmwareStatus('required', false)).toBe('required');
+        (['valid', 'outdated', 'none', 'unknown', 'custom'] as const).forEach(status => {
+            expect(getPhylaxFirmwareStatus(status, true)).toBe(status);
+        });
     });
 });

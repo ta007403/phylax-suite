@@ -1,57 +1,21 @@
-import { type MouseEventHandler } from 'react';
-
-import { events, injectDesktopAnalytics } from '@suite/analytics';
 import { Translation } from '@suite/intl';
-import { gotoThunk } from '@suite/router';
-import { selectSelectedDevice } from '@suite-common/device';
-import { Banner } from '@trezor/components';
-import { useServices } from '@trezor/dependency-injection';
-import { DeviceModelInternal } from '@trezor/device-utils';
 import { CpuIcon } from '@trezor/icons';
-import { injectDispatch, injectGetState } from '@trezor/redux-utils';
 
 import { TroubleshootingTips } from 'src/components/suite/troubleshooting/TroubleshootingTips';
 
-export const DeviceNoFirmware = () => {
-    const { analytics, dispatch, getState } = useServices(
-        injectDesktopAnalytics,
-        injectDispatch,
-        injectGetState,
-    );
-
-    const handleClick: MouseEventHandler = e => {
-        e.stopPropagation();
-        const device = selectSelectedDevice(getState());
-
-        analytics.report(
+// PHYLAX Blocks (fork): PHYLAX Suite never installs firmware, so a device without firmware (a
+// brand-new Trezor) is not set up here: no "go to setup", which would start with installing it.
+export const DeviceNoFirmware = () => (
+    <TroubleshootingTips
+        label={<Translation id="TR_PHYLAX_NO_FIRMWARE_HEADING" />}
+        intent="info"
+        items={[
             {
-                type: events.deviceSetupStartedEvent.name,
-                payload: {
-                    deviceModel: device?.features?.internal_model || DeviceModelInternal.UNKNOWN,
-                },
+                key: 'device-firmware-missing',
+                heading: <Translation id="TR_PHYLAX_NO_FIRMWARE_HEADING" />,
+                description: <Translation id="TR_PHYLAX_NO_FIRMWARE_DESCRIPTION" />,
+                icon: CpuIcon,
             },
-            { force: true },
-        );
-        dispatch(gotoThunk({ routeName: 'onboarding-index' }));
-    };
-
-    return (
-        <TroubleshootingTips
-            label={<Translation id="TR_NO_FIRMWARE" />}
-            cta={
-                <Banner.Button onClick={handleClick}>
-                    <Translation id="TR_GO_TO_ONBOARDING" />
-                </Banner.Button>
-            }
-            intent="info"
-            items={[
-                {
-                    key: 'device-firmware-missing',
-                    heading: <Translation id="TR_NO_FIRMWARE" />,
-                    description: <Translation id="TR_NO_FIRMWARE_EXPLAINED" />,
-                    icon: CpuIcon,
-                },
-            ]}
-        />
-    );
-};
+        ]}
+    />
+);

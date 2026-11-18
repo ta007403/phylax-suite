@@ -35,6 +35,7 @@ import {
 } from 'src/constants/suite/phylax';
 import { useSelector } from 'src/hooks/suite';
 import { useIsContentBelowBreakpoint } from 'src/support/suite/ContentFlex';
+import { usePhylaxStationInfo } from 'src/views/phylax/station/usePhylaxStationInfo';
 
 import { AddressDisplay } from './AddressDisplay';
 import { Analytics } from './Analytics';
@@ -78,6 +79,8 @@ export const SettingsGeneral = ({ torSettings }: SettingsGeneralProps) => {
     const isLegacyLabelingVisible = useSelector(selectIsLegacyLabelingVisible);
     const hasContentBelowTabletWidth = useIsContentBelowBreakpoint(breakpoints.tablet);
     const hasContentBelowMobileWidth = useIsContentBelowBreakpoint(breakpoints.mobile);
+    // PHYLAX Blocks (fork): the station is a kiosk: no start-at-login nor tray icon
+    const isPhylaxStation = usePhylaxStationInfo() !== null;
 
     const hasBitcoinNetworks = enabledNetworks.some(symbol => {
         const networkFeatures = getNetwork(symbol).features;
@@ -186,7 +189,7 @@ export const SettingsGeneral = ({ torSettings }: SettingsGeneralProps) => {
                 {PHYLAX_ARE_EXTRA_SETTINGS_SHOWN && <NftSection />}
             </SettingsSection>
 
-            {isDesktop() && (
+            {isDesktop() && !isPhylaxStation && (
                 <SettingsSection
                     hasVerticalLayout={hasContentBelowTabletWidth}
                     title={<Translation id="TR_TREZOR_CONNECT" />}

@@ -83,10 +83,14 @@ export const UpdateNotificationBanner = ({ onDismiss }: UpdateNotificationBanner
         ? mapSuiteUpdateStatusToHeaderTranslation[updateStatusSuite]
         : mapDeviceUpdateStatusToTranslation[updateStatusDevice];
 
+    // PHYLAX Blocks (fork): PHYLAX Suite never installs firmware, so a newer Trezor firmware is
+    // only a reminder (the click opens the "update it with Trezor Suite" notice)
     const translationCallToAction =
-        mapSuiteUpdateStatusToCallToActionTranslation[
-            shouldUseSuiteUpdateStatus ? updateStatusSuite : updateStatusDevice
-        ];
+        !shouldUseSuiteUpdateStatus && updateStatusDevice === 'update-available'
+            ? 'TR_PHYLAX_FIRMWARE_UPDATE_WITH_TREZOR_SUITE'
+            : mapSuiteUpdateStatusToCallToActionTranslation[
+                  shouldUseSuiteUpdateStatus ? updateStatusSuite : updateStatusDevice
+              ];
 
     if (translationHeader === null || translationCallToAction === null) {
         return null;

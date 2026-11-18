@@ -17,6 +17,7 @@ import { exhaustive } from '@trezor/type-utils';
 
 import { FirmwareInstallationProgressCheck } from 'src/components/firmware/ProgressCheck/FirmwareInstallationProgressCheck';
 import { ThpPairingStep } from 'src/components/onboarding/ThpPairingStep/ThpPairingStep';
+import { PrerequisitesGuide } from 'src/components/suite';
 import { useOnboarding, useSelector } from 'src/hooks/suite';
 
 import { FirmwareInitialStep } from './FirmwareInitialStep';
@@ -54,6 +55,59 @@ export const FirmwareStep = () => {
                 <Fingerprint device={device} />
             </OnboardingCard>
         );
+    }
+
+    // PHYLAX Blocks (fork): PHYLAX Suite never installs firmware. The setup goes on with the firmware
+    // the device has (a newer Trezor firmware is only mentioned); a device without firmware (a
+    // brand-new Trezor) is set up with Trezor Suite first; one in bootloader mode is to be
+    // reconnected normally.
+    if (status === 'initial' && device?.connected && device.features) {
+        if (device.firmware === 'none' || device.features.firmware_present === false) {
+            return (
+                <OnboardingCard
+                    icon={CircuitryIcon}
+                    heading={<Translation id="TR_PHYLAX_NO_FIRMWARE_HEADING" />}
+                    description={<Translation id="TR_PHYLAX_NO_FIRMWARE_DESCRIPTION" />}
+                />
+            );
+        }
+        if (device.mode === 'bootloader') {
+            return <PrerequisitesGuide />;
+        }
+        if (device.firmware === 'outdated' || device.firmware === 'required') {
+            return (
+                <OnboardingCard
+                    icon={CircuitryIcon}
+                    heading={
+                        <Translation
+                            id="TR_PHYLAX_ONBOARDING_FIRMWARE_HEADING"
+                            values={{ version: getFirmwareVersion(device) }}
+                        />
+                    }
+                    description={
+                        <Translation
+                            id="TR_PHYLAX_ONBOARDING_FIRMWARE_DESCRIPTION"
+                            values={{
+                                newer:
+                                    device.firmwareReleaseConfigInfo?.release.version.join('.') ??
+                                    '',
+                            }}
+                        />
+                    }
+                    innerActions={
+                        <OnboardingCard.Button
+                            data-testid="@firmware/continue-button"
+                            onClick={() => {
+                                goToNextStep();
+                                updateAnalytics({ firmware: 'skip' });
+                            }}
+                        >
+                            <Translation id="TR_CONTINUE" />
+                        </OnboardingCard.Button>
+                    }
+                />
+            );
+        }
     }
 
     // edge case 1 - Installation failed

@@ -4,7 +4,6 @@ import { isAdditionalShamirBackupInProgress } from '@suite-common/backup';
 
 import type { TransportState } from 'src/reducers/suite/suiteReducer';
 import type { AppState, TrezorDevice } from 'src/types/suite';
-import { isRegularTrezor } from 'src/views/phylax/phylaxBlock';
 
 type GetPrerequisiteNameParams = {
     router: AppState['router'];
@@ -33,7 +32,6 @@ export const prerequisiteTypes = [
     'device-rebooting',
     'device-bootloader-locked',
     'device-hard-locked',
-    'phylax-regular-trezor',
 ] as const;
 
 export type PrerequisiteType = (typeof prerequisiteTypes)[number];
@@ -76,10 +74,6 @@ export const getPrerequisiteName = ({
 
     // device features unknown (this shouldn't happen tho)
     if (!device.features) return 'device-unknown';
-
-    // PHYLAX Blocks (fork): PHYLAX Suite only uses PHYLAX blocks; a regular Trezor, in any mode,
-    // gets "use Trezor Suite" (never Trezor's firmware update, setup or wallet)
-    if (isRegularTrezor(device)) return 'phylax-regular-trezor';
 
     // device in seedless mode, check it before checking firmware
     // fw may be outdated but it should not be updated by suite

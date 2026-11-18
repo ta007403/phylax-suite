@@ -56,10 +56,6 @@ export const prepareDiscoveryMiddleware = createMiddlewareWithExtraDeps<
     // 1. Discovery should only start on certain apps
     if (!selectShouldRouterAppStartDiscovery(getState())) return action;
 
-    // PHYLAX Blocks (fork): a regular Trezor is not used by PHYLAX Suite (no PIN, passphrase or
-    // accounts asked from it); it gets "use Trezor Suite" instead.
-    if (device.type === 'acquired' && device.regularTrezor === true) return action;
-
     // 2. Device must be idle, not locked.
     const isDeviceReady = selectIsDeviceReadyToStartDiscovery(getState(), isDeviceBecomingAcquired);
     if (!isDeviceReady) return action;

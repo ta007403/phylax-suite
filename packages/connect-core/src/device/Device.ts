@@ -49,7 +49,12 @@ import { DeviceCommands } from './DeviceCommands';
 import type { TypedCallProvider } from './DeviceCurrentSession';
 import { DeviceCurrentSession } from './DeviceCurrentSession';
 import { checkFirmwareRevision } from './checkFirmwareRevision';
-import { classifyPhylaxProbe, isPhylaxBootloader, isRegularTrezor } from './phylax';
+import {
+    classifyPhylaxProbe,
+    getPhylaxFirmwareStatus,
+    isPhylaxBootloader,
+    isRegularTrezor,
+} from './phylax';
 import { abortThpWorkflow, getThpChannel } from './thp';
 import { getAllNetworks } from '../data/coinInfo';
 import {
@@ -764,6 +769,10 @@ export class Device extends TypedEmitter<DeviceEvents> implements IDevice {
             }
             if (probe === 'stock') {
                 this.phylax = false;
+                this._firmwareStatus = getPhylaxFirmwareStatus(
+                    this._firmwareStatus,
+                    isRegularTrezor({ features: this.features, phylax: false }),
+                );
 
                 return;
             }
@@ -885,7 +894,14 @@ export class Device extends TypedEmitter<DeviceEvents> implements IDevice {
             this._firmwareStatus =
                 this.phylax || this.phylaxKey || isPhylaxBootloader(feat)
                     ? 'valid'
-                    : getFirmwareStatus(feat, this._firmwareReleaseConfigInfo);
+                    : getPhylaxFirmwareStatus(
+                          getFirmwareStatus(feat, this._firmwareReleaseConfigInfo),
+                          isRegularTrezor({
+                              features: feat,
+                              phylax: this.phylax,
+                              phylaxKey: this.phylaxKey,
+                          }),
+                      );
             // Bundled release JSONs are production assets, so only seed `currentRelease`
             // from them on production-like channels. On other channels the
             // channel-appropriate release is fetched from remote immediately after,

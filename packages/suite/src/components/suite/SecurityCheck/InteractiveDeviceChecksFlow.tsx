@@ -14,8 +14,6 @@ import {
 } from '@suite-common/persistent-device-data';
 import { Box, Card } from '@trezor/components';
 
-import { isRegularTrezor } from 'src/views/phylax/phylaxBlock';
-
 import { DeviceAuthenticityCheck } from './DeviceAuthenticityCheck';
 import { ManualDeviceCheck } from './ManualDeviceCheck';
 
@@ -62,12 +60,8 @@ export const useInteractiveDeviceChecksFlowState = () => {
     // The flow is displayed (entered) when the checks are still required, but the DAC success screen is sticky,
     // so the flow shall be displayed until the user dismisses the DAC success.
     // Of course, if any of the checks fail, they are still required, so the failure screen sticks naturally.
-    // PHYLAX Blocks (fork): no device checks (and the setup after them) for a regular Trezor: it
-    // gets "use Trezor Suite" instead
     const isInteractiveDeviceChecksFlowDisplayed =
-        (isAnyCheckRequired || isAuthenticityCheckStepActive) &&
-        !isSkippedRoute &&
-        !isRegularTrezor(selectedDevice);
+        (isAnyCheckRequired || isAuthenticityCheckStepActive) && !isSkippedRoute;
 
     return {
         isInteractiveDeviceChecksFlowDisplayed,

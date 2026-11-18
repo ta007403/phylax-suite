@@ -41,7 +41,6 @@ import { selectHasActiveTransport } from 'src/selectors/suite/suiteSelectors';
 import { useIsContentBelowBreakpoint } from 'src/support/suite/ContentFlex';
 import type { TrezorDevice } from 'src/types/suite';
 import { getHowToGetFromBootloaderInstructionsMap } from 'src/utils/device/bootloader';
-import { isRegularTrezor } from 'src/views/phylax/phylaxBlock';
 
 import { AuthenticateDevice } from './AuthenticateDevice';
 import { AutoLock } from './AutoLock';
@@ -98,19 +97,6 @@ export const SettingsDevice = () => {
     const supportsDeviceAuthentication = useSelector(selectIsDeviceAuthenticityCheckSupported);
     // PHYLAX Blocks (fork): no stock firmware update or firmware type change for PHYLAX blocks
     const isPhylaxDevice = useSelector(selectIsPhylaxDevice);
-
-    // PHYLAX Blocks (fork): no settings (PIN, backup, wipe, firmware...) for a regular Trezor
-    if (isRegularTrezor(device)) {
-        return (
-            <SettingsLayout>
-                <DeviceBanner
-                    intent="info"
-                    title={<Translation id="TR_PHYLAX_REGULAR_TREZOR_HEADING" />}
-                    description={<Translation id="TR_PHYLAX_REGULAR_TREZOR_DESCRIPTION" />}
-                />
-            </SettingsLayout>
-        );
-    }
 
     if (noTransportAvailable || deviceSettingsUnavailable(device)) {
         return (
