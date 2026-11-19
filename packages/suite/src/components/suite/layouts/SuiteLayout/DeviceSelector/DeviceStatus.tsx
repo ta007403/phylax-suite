@@ -1,10 +1,11 @@
 import { selectDeviceLabelOrNameById } from '@suite-common/device';
-import { Row, ShortcutBadge, TOOLTIP_DELAY_LONG, Tooltip } from '@trezor/components';
+import { Row, TOOLTIP_DELAY_LONG, Tooltip } from '@trezor/components';
 import { type DeviceModelInternal, getDeviceColorVariant } from '@trezor/device-utils';
 import { RotateDeviceImage } from '@trezor/product-components';
 
 import { useSelector } from 'src/hooks/suite';
 import { type TrezorDevice } from 'src/types/suite';
+import { PhylaxShortcutBadge } from 'src/views/phylax/station/PhylaxShortcutBadge';
 import { DeviceDetail } from 'src/views/suite/SwitchDevice/DeviceItem/DeviceDetail';
 import { DeviceStatusText } from 'src/views/suite/SwitchDevice/DeviceItem/DeviceStatusText';
 
@@ -63,7 +64,7 @@ export const DeviceStatus = ({
                         content={
                             <Row gap={16} alignItems="center">
                                 {content}
-                                <ShortcutBadge shortcut={['ALT', 'KEY_W']} />
+                                <PhylaxShortcutBadge shortcut={['ALT', 'KEY_W']} />
                             </Row>
                         }
                     >

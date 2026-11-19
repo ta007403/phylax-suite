@@ -10,7 +10,6 @@ import {
     type IconComponent,
     Paragraph,
     Row,
-    ShortcutBadge,
     type ShortcutBadgeProps,
     StatusBadge,
     TOOLTIP_DELAY_LONG,
@@ -23,6 +22,7 @@ import { injectDispatch } from '@trezor/redux-utils';
 
 import { useSelector } from 'src/hooks/suite';
 import { useResponsiveContext } from 'src/support/suite/ResponsiveContext';
+import { PhylaxShortcutBadge } from 'src/views/phylax/station/PhylaxShortcutBadge';
 
 const Container = styled.button<{ $isActive?: boolean }>`
     flex: 1;
@@ -134,7 +134,7 @@ const NavItem = ({
                 shortcut ? (
                     <Row gap={12}>
                         <Title nameId={nameId} values={values} />
-                        <ShortcutBadge shortcut={shortcut} />
+                        <PhylaxShortcutBadge shortcut={shortcut} />
                     </Row>
                 ) : (
                     <Title nameId={nameId} values={values} />

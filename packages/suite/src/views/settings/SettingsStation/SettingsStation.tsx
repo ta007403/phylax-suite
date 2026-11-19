@@ -276,24 +276,16 @@ const StationPower = () => {
                             >
                                 Cancel
                             </Button>
-                            <Button intent="critical" onClick={() => run(confirming)}>
+                            <Button intent="brand" onClick={() => run(confirming)}>
                                 {confirming === 'poweroff' ? 'Shut down' : 'Restart'}
                             </Button>
                         </Row>
                     ) : (
                         <Row gap={8}>
-                            <Button
-                                intent="neutral"
-                                priority="secondary"
-                                onClick={() => setConfirming('reboot')}
-                            >
+                            <Button intent="brand" onClick={() => setConfirming('reboot')}>
                                 Restart
                             </Button>
-                            <Button
-                                intent="neutral"
-                                priority="secondary"
-                                onClick={() => setConfirming('poweroff')}
-                            >
+                            <Button intent="brand" onClick={() => setConfirming('poweroff')}>
                                 Shut down
                             </Button>
                         </Row>

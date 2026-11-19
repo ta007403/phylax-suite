@@ -2,13 +2,14 @@ import { useState } from 'react';
 
 import { Translation } from '@suite/intl';
 import { openModal } from '@suite/modal';
-import { Box, Icon, Row, ShortcutBadge, TOOLTIP_DELAY_NORMAL, Tooltip } from '@trezor/components';
+import { Box, Icon, Row, TOOLTIP_DELAY_NORMAL, Tooltip } from '@trezor/components';
 import { useServices } from '@trezor/dependency-injection';
 import { PlusIcon } from '@trezor/icons';
 import { injectDispatch } from '@trezor/redux-utils';
 
 import { useDiscovery } from 'src/hooks/suite';
 import { type TrezorDevice } from 'src/types/suite';
+import { PhylaxShortcutBadge } from 'src/views/phylax/station/PhylaxShortcutBadge';
 
 const getExplanationMessage = (device: TrezorDevice | undefined, discoveryIsRunning: boolean) => {
     if (device && !device.connected) {
@@ -52,7 +53,7 @@ export const AddAccountButton = ({ device }: AddAccountButtonProps) => {
             content={
                 <Row gap={12}>
                     <Translation id="TR_ADD_ACCOUNT" />
-                    <ShortcutBadge shortcut={['ALT', 'KEY_A']} />
+                    <PhylaxShortcutBadge shortcut={['ALT', 'KEY_A']} />
                 </Row>
             }
         >

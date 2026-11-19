@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components';
 
 import { Translation } from '@suite/intl';
 import { selectSelectedDevice } from '@suite-common/device';
-import { Box, Icon, Row, ShortcutBadge, TOOLTIP_DELAY_LONG, Tooltip } from '@trezor/components';
+import { Box, Icon, Row, TOOLTIP_DELAY_LONG, Tooltip } from '@trezor/components';
 import { commonFocusStyles, focusStyleTransition } from '@trezor/components/src/utils/utils';
 import { useServices } from '@trezor/dependency-injection';
 import { CaretCircleDownIcon } from '@trezor/icons';
@@ -16,6 +16,7 @@ import { openSwitchDeviceDialogThunk } from 'src/actions/wallet/addWalletThunk';
 import { useSelector } from 'src/hooks/suite';
 import { selectRecentlyConnectedDevice } from 'src/selectors/suite/suiteSelectors';
 import { useResponsiveContext } from 'src/support/suite/ResponsiveContext';
+import { PhylaxShortcutBadge } from 'src/views/phylax/station/PhylaxShortcutBadge';
 
 import { SidebarDeviceStatus } from './SidebarDeviceStatus';
 import { ExpandedSidebarOnly } from '../Sidebar/ExpandedSidebarOnly';
@@ -116,7 +117,7 @@ export const DeviceSelector = () => {
                     content={
                         <Row gap={12} alignItems="center">
                             <Translation id="TR_GUIDE_KEYBOARD_SHORTCUTS_SWITCH_DEVICE" />
-                            <ShortcutBadge shortcut={['ALT', 'KEY_W']} />
+                            <PhylaxShortcutBadge shortcut={['ALT', 'KEY_W']} />
                         </Row>
                     }
                 >

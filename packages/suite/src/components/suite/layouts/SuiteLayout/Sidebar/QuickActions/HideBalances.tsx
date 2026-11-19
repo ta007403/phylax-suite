@@ -1,10 +1,12 @@
 import { events, injectDesktopAnalytics } from '@suite/analytics';
 import { useTranslation } from '@suite/intl';
 import { useDiscreetMode } from '@suite-common/discreet-mode';
-import { Row, ShortcutBadge } from '@trezor/components';
+import { Row } from '@trezor/components';
 import { useServices } from '@trezor/dependency-injection';
 import { EyeIcon, EyeSlashIcon } from '@trezor/icons';
 import { QuickActionButton } from '@trezor/product-components';
+
+import { PhylaxShortcutBadge } from 'src/views/phylax/station/PhylaxShortcutBadge';
 
 export const HideBalances = () => {
     const { analytics } = useServices(injectDesktopAnalytics);
@@ -27,7 +29,7 @@ export const HideBalances = () => {
                 content: (
                     <Row gap={8}>
                         {translationString(translationLabel)}
-                        <ShortcutBadge shortcut={['ALT', 'KEY_H']} />
+                        <PhylaxShortcutBadge shortcut={['ALT', 'KEY_H']} />
                     </Row>
                 ),
             }}

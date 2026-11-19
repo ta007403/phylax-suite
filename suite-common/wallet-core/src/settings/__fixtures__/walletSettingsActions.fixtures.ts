@@ -5,12 +5,13 @@ import { changeCoinVisibilityThunk } from '../walletSettingsThunks';
 
 export const walletSettingsFixtures = [
     {
-        description: 'No networks enabled by default if no initial state provided',
+        // PHYLAX Blocks (fork): Bitcoin is enabled by default
+        description: 'Only Bitcoin enabled by default if no initial state provided',
         initialState: undefined,
         action: () =>
             changeCoinVisibilityThunk({ symbol: asNetworkSymbol('ltc'), shouldBeVisible: true }),
         result: {
-            enabledNetworks: ['ltc'],
+            enabledNetworks: ['btc', 'ltc'],
         },
     },
     {

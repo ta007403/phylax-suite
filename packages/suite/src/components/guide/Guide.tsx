@@ -18,6 +18,7 @@ import {
 } from 'src/components/guide';
 import { useSelector } from 'src/hooks/suite';
 import { selectGuideIndexNode } from 'src/selectors/suite/guideSelectors';
+import { usePhylaxStationInfo } from 'src/views/phylax/station/usePhylaxStationInfo';
 
 import { GuideItem } from './GuideItem';
 
@@ -39,6 +40,8 @@ export const Guide = () => {
 
     // Keyboard shortcuts are irrelevant on touch devices without a physical keyboard.
     const isTouchDevice = useMediaQuery('(hover: none) and (pointer: coarse)');
+    // PHYLAX Blocks (fork): nor on the PHYLAX wallet station (trackpad only)
+    const isPhylaxStation = usePhylaxStationInfo() !== null;
 
     return (
         <GuideViewWrapper>
@@ -73,7 +76,7 @@ export const Guide = () => {
                         </>
                     )}
                 </GuideContent>
-                {!isTouchDevice && (
+                {!isTouchDevice && !isPhylaxStation && (
                     <Box padding={16}>
                         <GuideItem
                             onClick={handleShortcutsClick}
