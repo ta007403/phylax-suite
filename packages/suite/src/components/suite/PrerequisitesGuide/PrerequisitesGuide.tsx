@@ -12,6 +12,7 @@ import { Column, Illustration, Paragraph, Text, motionEasing } from '@trezor/com
 import { getMessageId } from 'src/components/suite/getMessageId';
 import { useSelector } from 'src/hooks/suite';
 import { selectPrerequisite } from 'src/selectors/suite/suiteSelectors';
+import { useIsShortWindow } from 'src/views/phylax/useIsShortWindow';
 
 import { BannerAndTroubleshooting } from './BannerAndTroubleshooting';
 
@@ -48,6 +49,8 @@ export const PrerequisitesGuide = ({ showDeviceImage = true }: PrerequisitesGuid
     const device = useSelector(selectSelectedDevice);
     const deviceStatus = device ? getStatus(device) : null;
     const prerequisite = useSelector(selectPrerequisite);
+    // PHYLAX Blocks (fork): a smaller picture on the station's short screen keeps the button in view
+    const isShortWindow = useIsShortWindow();
 
     const showWarning =
         !!(device && deviceStatus && deviceNeedsAttention(deviceStatus)) ||
@@ -65,7 +68,9 @@ export const PrerequisitesGuide = ({ showDeviceImage = true }: PrerequisitesGuid
         <>
             <TopAnimation>
                 <Column alignItems="center">
-                    {showDeviceImage && <Illustration name="connectTrezor" width={350} />}
+                    {showDeviceImage && (
+                        <Illustration name="connectTrezor" width={isShortWindow ? 200 : 350} />
+                    )}
                     <Text typographyStyle="headline-md" textWrap="balance" align="center">
                         <Translation id={texts.heading} />
                     </Text>

@@ -11,6 +11,7 @@ import { breakpoints } from '@trezor/theme';
 
 import { useSelector } from 'src/hooks/suite';
 import { ContentFlex } from 'src/support/suite/ContentFlex';
+import { useIsShortWindow } from 'src/views/phylax/useIsShortWindow';
 
 type SecurityCheckLayoutProps = {
     isFailed?: boolean;
@@ -38,6 +39,10 @@ export const SecurityCheckLayout = ({
     const isDeviceImageRotating = imageMode === 'ROTATE' && model !== DeviceModelInternal.T1B1;
     const deviceUnitColor = getDeviceColorVariant(device);
     const image = getLargeModelImagePath(model, deviceUnitColor);
+    // PHYLAX Blocks (fork): on the station's short screen the picture is smaller and stays beside
+    // the text (not above it), so "Yes, I have" is on the screen without scrolling
+    const isShortWindow = useIsShortWindow();
+    const imageHeight = isShortWindow ? 180 : 300;
 
     const getDeviceImage = () => {
         if (isFailed) {
@@ -51,18 +56,23 @@ export const SecurityCheckLayout = ({
             );
         }
 
-        return <Image maxHeight={300} image={image} />;
+        return <Image maxHeight={imageHeight} image={image} />;
     };
 
     return (
-        <ContentFlex breakpoint={breakpoints.tablet} gap={24} alignItems="center" width="100%">
+        <ContentFlex
+            breakpoint={isShortWindow ? breakpoints.mobile : breakpoints.tablet}
+            gap={24}
+            alignItems="center"
+            width="100%"
+        >
             {model && (
                 <Box
                     backgroundColor="surfaceFillRaised"
                     borderRadius={12}
-                    padding={32}
+                    padding={isShortWindow ? 16 : 32}
                     width="100%"
-                    maxWidth={260}
+                    maxWidth={isShortWindow ? 180 : 260}
                 >
                     <Column height="100%" justifyContent="center" alignItems="center">
                         {isDeviceImageRotating ? (
@@ -70,7 +80,7 @@ export const SecurityCheckLayout = ({
                                 type="ROTATE"
                                 deviceModelInternal={model}
                                 deviceUnitColor={deviceUnitColor as any}
-                                height={300}
+                                height={imageHeight}
                                 sizeVariant="LARGE"
                             />
                         ) : (
