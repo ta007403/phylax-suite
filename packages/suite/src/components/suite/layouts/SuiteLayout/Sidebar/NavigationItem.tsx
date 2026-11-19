@@ -23,6 +23,7 @@ import { injectDispatch } from '@trezor/redux-utils';
 import { useSelector } from 'src/hooks/suite';
 import { useResponsiveContext } from 'src/support/suite/ResponsiveContext';
 import { PhylaxShortcutBadge } from 'src/views/phylax/station/PhylaxShortcutBadge';
+import { usePhylaxStationInfo } from 'src/views/phylax/station/usePhylaxStationInfo';
 
 const Container = styled.button<{ $isActive?: boolean }>`
     flex: 1;
@@ -118,7 +119,10 @@ const NavItem = ({
     const isActiveRoute = routes?.some(route => route === activeRoute);
     const isItemActive = isActive || isActiveRoute;
 
-    const isTooltipActive = expanded ? shortcut !== undefined : true;
+    // PHYLAX Blocks (fork): on the station (no keyboard) the expanded item's tooltip only repeats
+    // its visible name, so it is shown only when the sidebar is collapsed (icons only)
+    const isPhylaxStation = usePhylaxStationInfo() !== null;
+    const isTooltipActive = expanded ? shortcut !== undefined && !isPhylaxStation : true;
     const isNewContentBadgeShown = expanded === true && hasNewContentIndicator === true;
     const isNewContentDotShown =
         expanded !== true && hasNewContentIndicator === true && hasIndicator !== true;

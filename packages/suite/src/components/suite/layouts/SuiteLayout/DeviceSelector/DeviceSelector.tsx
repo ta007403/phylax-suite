@@ -17,6 +17,7 @@ import { useSelector } from 'src/hooks/suite';
 import { selectRecentlyConnectedDevice } from 'src/selectors/suite/suiteSelectors';
 import { useResponsiveContext } from 'src/support/suite/ResponsiveContext';
 import { PhylaxShortcutBadge } from 'src/views/phylax/station/PhylaxShortcutBadge';
+import { usePhylaxStationInfo } from 'src/views/phylax/station/usePhylaxStationInfo';
 
 import { SidebarDeviceStatus } from './SidebarDeviceStatus';
 import { ExpandedSidebarOnly } from '../Sidebar/ExpandedSidebarOnly';
@@ -97,6 +98,8 @@ export const DeviceSelector = () => {
     };
 
     const { isSidebarCollapsed } = useResponsiveContext();
+    // PHYLAX Blocks (fork): no "Switch device" shortcut hint on the station (no keyboard)
+    const isPhylaxStation = usePhylaxStationInfo() !== null;
 
     return (
         <Tooltip
@@ -111,7 +114,7 @@ export const DeviceSelector = () => {
                 <Tooltip
                     cursor="pointer"
                     width="100%"
-                    isActive={!isSidebarCollapsed}
+                    isActive={!isSidebarCollapsed && !isPhylaxStation}
                     delayShow={TOOLTIP_DELAY_LONG}
                     placement="right"
                     content={

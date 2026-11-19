@@ -198,7 +198,8 @@ describe(`${DeviceCompromisedScreen.name} component`, () => {
                 services: () => ({ suiteRouterHistory }),
             });
             const { getByText, unmount } = renderWithProviders(
-                { ...services, networks: { networkIcon } },
+                // PHYLAX Blocks (fork): the sidebar asks the desktop API whether it is on the station
+                { ...services, networks: { networkIcon }, desktopApi: { available: false } },
                 <DeviceCompromisedScreen />,
             );
             expect(getByText(result)).not.toBeNull();
