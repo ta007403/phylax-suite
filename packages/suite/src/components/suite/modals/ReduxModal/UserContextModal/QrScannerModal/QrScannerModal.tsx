@@ -5,6 +5,8 @@ import { type UserContextPayload } from '@suite-common/suite-types';
 import { Column, Modal, type ModalProps, Row, Spinner, SubTabs } from '@trezor/components';
 import { CameraIcon, ImageIcon } from '@trezor/icons';
 
+import { usePhylaxStationInfo } from 'src/views/phylax/station/usePhylaxStationInfo';
+
 import { useActiveTab } from './hooks/useActiveTab';
 
 /**
@@ -21,6 +23,9 @@ type QrScannerModalProps = Pick<Extract<UserContextPayload, { type: 'qr-reader' 
 
 export function QrScannerModal({ decision, onCancel }: QrScannerModalProps) {
     const { activeTab, setActiveTab } = useActiveTab('camera');
+    // PHYLAX station: camera only. An image file would mean browsing the station's own files, and
+    // there are no pictures on it to scan (nothing is downloaded there).
+    const isPhylaxStation = usePhylaxStationInfo() !== null;
 
     const handleResult = useCallback(
         (result: string) => {
@@ -33,24 +38,26 @@ export function QrScannerModal({ decision, onCancel }: QrScannerModalProps) {
     return (
         <Modal onCancel={onCancel} heading={<Translation id="TR_SCAN_QR_CODE" />}>
             <Column gap={16}>
-                <Row justifyContent="center">
-                    <SubTabs activeItemId={activeTab} size="small">
-                        <SubTabs.Item
-                            id="camera"
-                            icon={CameraIcon}
-                            onClick={() => setActiveTab('camera')}
-                        >
-                            <Translation id="TR_QR_TAB_CAMERA" />
-                        </SubTabs.Item>
-                        <SubTabs.Item
-                            id="image"
-                            icon={ImageIcon}
-                            onClick={() => setActiveTab('image')}
-                        >
-                            <Translation id="TR_QR_TAB_IMAGE" />
-                        </SubTabs.Item>
-                    </SubTabs>
-                </Row>
+                {!isPhylaxStation && (
+                    <Row justifyContent="center">
+                        <SubTabs activeItemId={activeTab} size="small">
+                            <SubTabs.Item
+                                id="camera"
+                                icon={CameraIcon}
+                                onClick={() => setActiveTab('camera')}
+                            >
+                                <Translation id="TR_QR_TAB_CAMERA" />
+                            </SubTabs.Item>
+                            <SubTabs.Item
+                                id="image"
+                                icon={ImageIcon}
+                                onClick={() => setActiveTab('image')}
+                            >
+                                <Translation id="TR_QR_TAB_IMAGE" />
+                            </SubTabs.Item>
+                        </SubTabs>
+                    </Row>
+                )}
                 <Suspense
                     fallback={
                         <Column height={360} justifyContent="center" alignItems="center">
@@ -58,7 +65,10 @@ export function QrScannerModal({ decision, onCancel }: QrScannerModalProps) {
                         </Column>
                     }
                 >
-                    <QrScannerModalContent activeTab={activeTab} onResult={handleResult} />
+                    <QrScannerModalContent
+                        activeTab={isPhylaxStation ? 'camera' : activeTab}
+                        onResult={handleResult}
+                    />
                 </Suspense>
             </Column>
         </Modal>

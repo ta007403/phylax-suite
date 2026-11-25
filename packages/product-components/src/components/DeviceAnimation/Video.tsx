@@ -38,7 +38,15 @@ export const Video = ({
     };
 
     return (
-        <StyledVideo key={rerenderKey} preload="auto" {...commonProps}>
+        // no Cast / picture-in-picture button over the device animation (Chromium shows a Cast
+        // button over videos when it finds a Cast device on the network, e.g. on the PHYLAX station)
+        <StyledVideo
+            key={rerenderKey}
+            preload="auto"
+            disableRemotePlayback
+            disablePictureInPicture
+            {...commonProps}
+        >
             <source src={resolveStaticPath(src)} type="video/webm" />
         </StyledVideo>
     );
